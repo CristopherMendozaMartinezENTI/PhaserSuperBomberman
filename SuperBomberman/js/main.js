@@ -1,15 +1,13 @@
 var gamePrefs=
 {
-    speedNave:2,
-    speedBullet:-100,
-    speedEnemy:20
+    speedPlayer:50
 }
 
 var config=
 {
     type: Phaser.AUTO,
-    width:128,
-    height:256,
+    width:272,
+    height:208,
     scene:[gameState], //array con los niveles
     render:{
         pixelArt:true
