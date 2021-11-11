@@ -23,7 +23,7 @@ class gameState extends Phaser.Scene
            {
                key:'up',
                frames:this.anims.generateFrameNumbers('bombermanWhite', {start:0, end:2}),
-               frameRate:5,
+               frameRate:7,
                yoyo:true,
                repeat:-1
            }
@@ -32,7 +32,7 @@ class gameState extends Phaser.Scene
             {
                 key:'down',
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:3, end:5}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:-1
             }
@@ -42,7 +42,7 @@ class gameState extends Phaser.Scene
                 key:'left',
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:6, end:8}),
                 frameRate:7,
-                yoyo:false,
+                yoyo:true,
                 repeat:-1
             }
         );
@@ -50,8 +50,8 @@ class gameState extends Phaser.Scene
             {
                 key:'right',
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:9, end:11}),
-                frameRate:5,
-                yoyo:false,
+                frameRate:7,
+                yoyo:true,
                 repeat:-1
             }
         );
