@@ -12,12 +12,15 @@ class gameState extends Phaser.Scene
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
-
+        this.load.image('background', 'Stage1_1.png');
+        this.load.image('hud1', 'HUD_Time0.png');
     }
 
     create()
     { //carga los assets en pantalla desde memoria
-       this.player = this.physics.add.sprite(config.width/2, config.height/2, 'bombermanWhite').setOrigin(0.5).setScale(1);
+        this.hud1 = this.add.tileSprite(0,0,config.width,config.height,'hud1').setOrigin(0);
+        this.bg1 = this.add.tileSprite(0,32,config.width,config.height,'background').setOrigin(0);
+        this.player = this.physics.add.sprite(46, 32, 'bombermanWhite').setOrigin(0).setScale(1);
 
        this.anims.create (
            {
@@ -89,5 +92,7 @@ class gameState extends Phaser.Scene
             this.player.body.velocity.y = 0;
 
         }
+        console.log(this.player.body.x);
+        console.log(this.player.body.y);
     }
 }
