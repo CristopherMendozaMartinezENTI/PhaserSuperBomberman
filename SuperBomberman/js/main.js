@@ -6,7 +6,7 @@ var gamePrefs=
 var config=
 {
     type: Phaser.AUTO,
-    width:272,
+    width:256,
     height:240,
     scene:[gameState], //array con los niveles
     render:{
