@@ -8,5 +8,7 @@ const Directions = {
 
 var gamePrefs=
 {
+    TILE_SIZE:16,
+    INITIAL_HEIGHT: 32 - 8,             //HUD height - halfSprite
     speedPlayer:50
 }

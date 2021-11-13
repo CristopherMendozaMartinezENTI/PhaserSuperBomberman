@@ -5,7 +5,7 @@ class Player extends Phaser.GameObjects.Sprite
         super(_scene, _positionX, _positionY, _sprite);
         _scene.add.existing(this);
         this.setOrigin(0);
-        this.collider = new CollisionBody(_scene, _positionX, _positionY + this.height / 2, 16, 16);
+        this.collider = new CollisionBody(_scene, _positionX, _positionY + 8, 16, 16);
 
         this.dir = Directions.DOWN;
     }

@@ -20,7 +20,7 @@ class gameState extends Phaser.Scene
     { //carga los assets en pantalla desde memoria
         this.hud1 = this.add.tileSprite(0,0,config.width,config.height,'hud1').setOrigin(0);
         this.bg1 = this.add.tileSprite(0,32,config.width,config.height,'background').setOrigin(0);
-        this.player = new Player(this, 46, 32, 'bombermanWhite');
+        this.player = new Player(this, 1*gamePrefs.TILE_SIZE + 8, 1*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
 
         this.anims.create (
            {
