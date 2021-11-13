@@ -5,3 +5,8 @@ const Directions = {
     RIGHT:'right',
     NONE: 'none'
 };
+
+var gamePrefs=
+{
+    speedPlayer:50
+}

@@ -1,8 +1,3 @@
-var gamePrefs=
-{
-    speedPlayer:50
-}
-
 var config=
 {
     type: Phaser.AUTO,
