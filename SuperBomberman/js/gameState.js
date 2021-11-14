@@ -34,15 +34,16 @@ class gameState extends Phaser.Scene
         //Pintamos las capas/layers
         this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
         this.map.createLayer('ground','Lvl1_Tile');
+        this.blocks.debug = true;
 
         //Indicamos las colisiones con bloques
-        this.map.setCollisionBetween(1,17,true,true,'blocks');
+        this.map.setCollisionBetween(1,16,true,true,'blocks');
 
         //Creamos el player
         this.player = new Player(this, 2*gamePrefs.TILE_SIZE, 1*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player,this.blocks);
+        this.physics.add.collider(this.player.collider,this.blocks);
 
         this.anims.create (
            {
