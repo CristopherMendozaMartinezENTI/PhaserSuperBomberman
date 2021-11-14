@@ -1,7 +1,7 @@
 var config=
 {
     type: Phaser.AUTO,
-    width:256,
+    width:272,
     height:240,
     scene:[gameState], //array con los niveles
     render:{
