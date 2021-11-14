@@ -66,8 +66,8 @@ class Player extends Phaser.GameObjects.Sprite
         //Set direccion
         this.dir = _direction;
 
-        //Update posicion player
-        this.x += this.collider.body.velocity.x * _delta;
-        this.y += this.collider.body.velocity.y * _delta;
+        //Update position player
+        this.x = this.collider.body.x - 3;
+        this.y = this.collider.body.y - 12;
     }
 }
