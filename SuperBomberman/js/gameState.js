@@ -23,6 +23,8 @@ class gameState extends Phaser.Scene
 
     create()
     { //carga los assets en pantalla desde memoria
+        this.start = this.getTime();
+
         this.hud1 = this.add.tileSprite(0,0,config.width,config.height,'hud1').setOrigin(0);
 
         //Cargo el JSON
@@ -37,7 +39,7 @@ class gameState extends Phaser.Scene
         this.map.setCollisionBetween(1,17,true,true,'blocks');
 
         //Creamos el player
-        this.player = new Player(this, 32, 48, 'bombermanWhite');
+        this.player = new Player(this, 2*gamePrefs.TILE_SIZE, 1*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
@@ -78,32 +80,51 @@ class gameState extends Phaser.Scene
                 repeat:-1
             }
         );
+        
+        //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
-        this.player.dir = Directions.DOWN;
+        this.cursor.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.cursor.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.cursor.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    }
+
+    getTime()
+    { //Calculate Current Time
+        let d = new Date();
+
+        return d.getTime();
     }
 
     update()
     { //actualiza assets
 
-        if (this.cursor.up.isDown)
+        //Calculate delta time
+        this.delta = (this.getTime() - this.start) / 1000;
+
+        //Inputs
+        if (this.cursor.up.isDown || this.cursor.W.isDown)
         {
-            this.player.update(Directions.UP);
+            this.player.update(Directions.UP, this.delta);
         }
-        else if (this.cursor.down.isDown)
+        else if (this.cursor.down.isDown || this.cursor.S.isDown)
         {
-            this.player.update(Directions.DOWN);
+            this.player.update(Directions.DOWN, this.delta);
         }
-        else if (this.cursor.left.isDown)
+        else if (this.cursor.left.isDown || this.cursor.A.isDown)
         {
-            this.player.update(Directions.LEFT);
+            this.player.update(Directions.LEFT, this.delta);
         }
-        else if (this.cursor.right.isDown)
+        else if (this.cursor.right.isDown || this.cursor.D.isDown)
         {
-            this.player.update(Directions.RIGHT);
+            this.player.update(Directions.RIGHT, this.delta);
         }
         else
         {
-            this.player.update(Directions.NONE);
+            this.player.update(Directions.NONE, this.delta);
         }
+
+        //Update last time
+        this.start = this.getTime();
     }
 }
