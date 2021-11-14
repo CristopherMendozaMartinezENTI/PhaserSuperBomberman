@@ -12,3 +12,8 @@ var gamePrefs=
     INITIAL_HEIGHT: 32 - 8,             //HUD height - halfSprite
     speedPlayer:50
 }
+
+var gameOptions = {
+    gameWidth:272,   
+    gameHeight: 240, 
+}
