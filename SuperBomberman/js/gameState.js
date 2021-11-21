@@ -12,6 +12,8 @@ class gameState extends Phaser.Scene
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
+        this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.image('hud1', 'HUD_Time0.png');
         
         this.load.setPath("assets/Tiles/");
@@ -45,20 +47,36 @@ class gameState extends Phaser.Scene
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player.collider,this.blocks);
 
+        this.createPools();
+        this.createAnimations();
+        
+        //Inputs
+        this.cursor = this.input.keyboard.createCursorKeys();
+        this.cursor.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.cursor.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.cursor.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this.spacePressed = false;
+    }
+
+    createAnimations()
+    {
+        //#region Player
         this.anims.create (
-           {
-               key:Directions.UP,
-               frames:this.anims.generateFrameNumbers('bombermanWhite', {start:0, end:2}),
-               frameRate:7,
-               yoyo:true,
-               repeat:-1
-           }
+        {
+            key:Directions.UP,
+            frames:this.anims.generateFrameNumbers('bombermanWhite', {start:0, end:2}),
+            frameRate:5,
+            yoyo:true,
+            repeat:-1
+        }
         );
         this.anims.create (
             {
                 key:Directions.DOWN,
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:3, end:5}),
-                frameRate:7,
+                frameRate:5,
                 yoyo:true,
                 repeat:-1
             }
@@ -67,7 +85,7 @@ class gameState extends Phaser.Scene
             {
                 key:Directions.LEFT,
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:6, end:8}),
-                frameRate:7,
+                frameRate:5,
                 yoyo:true,
                 repeat:-1
             }
@@ -76,18 +94,135 @@ class gameState extends Phaser.Scene
             {
                 key:Directions.RIGHT,
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:9, end:11}),
-                frameRate:7,
+                frameRate:5,
                 yoyo:true,
                 repeat:-1
             }
         );
+        //#endregion
+
+        //#region Bomb
+        this.anims.create(
+            {
+                key:'bombAnim',
+                frames:this.anims.generateFrameNumbers('bomb', {start:0, end:2}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        //#endregion
+
+        //#region Explosion
+        this.anims.create(
+            {
+                key:Explosion_Tiles.CENTRAL,
+                frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        this.anims.create(
+            {
+                key:Explosion_Tiles.HORIZONTAL_END_LEFT,
+                frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );this.anims.create(
+            {
+                key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
+                frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );this.anims.create(
+            {
+                key:Explosion_Tiles.VERTICAL_END_UP,
+                frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );this.anims.create(
+            {
+                key:Explosion_Tiles.VERTICAL_END_DOWN,
+                frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );this.anims.create(
+            {
+                key:Explosion_Tiles.HORIZONTAL,
+                frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );this.anims.create(
+            {
+                key:Explosion_Tiles.VERTICAL,
+                frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        //#endregion
+    
+    
+    }
+
+    createPools()
+    {
+        this.bombs = this.physics.add.group();
+
+        //#region Explosion Pool
+        this.explosion_horizontal = this.physics.add.group();
+        this.explosion_vertical = this.physics.add.group();
+        this.explosion_left_end = this.physics.add.group();
+        this.explosion_right_end = this.physics.add.group();
+        this.explosion_up_end = this.physics.add.group();
+        this.explosion_down_end = this.physics.add.group();
+        this.explosion_central = this.physics.add.group();
+        //#endregion
+    }
+
+    spawnBomb()
+    {
+        var bomb = this.bombs.getFirst(false);
         
-        //Inputs
-        this.cursor = this.input.keyboard.createCursorKeys();
-        this.cursor.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.cursor.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.cursor.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        var posX = Math.trunc((this.player.collider.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
+        var posY = Math.trunc((this.player.collider.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
+            
+        if(!bomb)
+        {//Generate new bomb
+            console.log("Create bomb");
+            
+            bomb = new bombPrefab(this, posX, posY, 'bomb');
+
+            this.bombs.add(bomb);
+        }
+        else
+        {//Reset bomb
+            console.log("Reset bomb");
+
+            bomb.active = true;
+            
+            bomb.body.reset(posX, posY);
+            bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+        }
+
+        bomb.body.setVelocity(0,0);
+    }
+
+    spawnExplosion(_posX, _posY)
+    {
+
     }
 
     getTime()
@@ -101,28 +236,41 @@ class gameState extends Phaser.Scene
     { //actualiza assets
 
         //Calculate delta time
-        this.delta = (this.getTime() - this.start) / 1000;
+        this._delta = (this.getTime() - this.start) / 1000;
 
         //Inputs
         if (this.cursor.up.isDown || this.cursor.W.isDown)
         {
-            this.player.update(Directions.UP, this.delta);
+            this.player.update(Directions.UP, this._delta);
         }
         else if (this.cursor.down.isDown || this.cursor.S.isDown)
         {
-            this.player.update(Directions.DOWN, this.delta);
+            this.player.update(Directions.DOWN, this._delta);
         }
         else if (this.cursor.left.isDown || this.cursor.A.isDown)
         {
-            this.player.update(Directions.LEFT, this.delta);
+            this.player.update(Directions.LEFT, this._delta);
         }
         else if (this.cursor.right.isDown || this.cursor.D.isDown)
         {
-            this.player.update(Directions.RIGHT, this.delta);
+            this.player.update(Directions.RIGHT, this._delta);
         }
         else
         {
-            this.player.update(Directions.NONE, this.delta);
+            this.player.update(Directions.NONE, this._delta);
+        }
+
+        if(this.cursor.space.isDown)
+        {
+            if(!this.spacePressed)
+            {
+                this.spawnBomb();
+                this.spacePressed = true;
+            }
+        }
+        else
+        {
+            this.spacePressed = false;
         }
 
         //Update last time
