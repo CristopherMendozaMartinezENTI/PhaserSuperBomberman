@@ -1,12 +1,24 @@
 class ExplosionPrefab extends Phaser.GameObjects.Sprite
 {
-    constructor(_scene, _positionX, _positionY, _sprite)
+    constructor(_scene, _positionX, _positionY, _sprite, _explosionTile)
     { //crea la escena
         super(_scene,_positionX, _positionY, _sprite);
-        _scene.physics.add.existing(this);
-        this.setOrigin(0);
+        _scene.add.existing(this);
+        this.setOrigin(.5);
+
+        this.anims.play(_explosionTile);
+    }
+
+    preUpdate(time,delta)
+    {
+        if(!this.anims.isPlaying)
+        {
+            console.log("Explota");
+
+            this.x = -10;
+            this.active = false;
+        }
         
-        var d = new Date();
-        this.spawnTime = d.getTime();
+        super.preUpdate(time, delta);
     }
 }

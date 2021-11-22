@@ -4,11 +4,14 @@ class Player extends Phaser.GameObjects.Sprite
     { 
         //Creamos Sprite del player
         super(_scene, _positionX, _positionY, _sprite);
+        _scene.physics.add.existing(this);
         _scene.add.existing(this);
-        this.setOrigin(0);
+        this.setOrigin(.5);
 
-        //Creamos Rigidbody del player
-        this.collider = new CollisionBody(_scene, _positionX, _positionY, 12, 12);
+        this.body.setSize(12, 12);
+        this.body.setOffset(12/4, 12 / 1.1);
+
+        this.fireDistance = 1;
         
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
@@ -32,31 +35,32 @@ class Player extends Phaser.GameObjects.Sprite
                 this.setFrame(10);
 
             //Anular velocidad del rigidbody
-            this.collider.body.velocity.x = 0;
-            this.collider.body.velocity.y = 0;
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+        
         }
         else
         {
             //Set velocidad rigidbody
             if (_direction == Directions.UP)
             {
-                this.collider.body.velocity.y = gamePrefs.speedPlayer * -1;
-                this.collider.body.velocity.x = 0;
+                this.body.velocity.y = gamePrefs.speedPlayer * -1;
+                this.body.velocity.x = 0;
             }
             else if (_direction == Directions.DOWN)
             {
-                this.collider.body.velocity.y = gamePrefs.speedPlayer;
-                this.collider.body.velocity.x = 0;
+                this.body.velocity.y = gamePrefs.speedPlayer;
+                this.body.velocity.x = 0;
             }
             else if (_direction == Directions.LEFT)
             {
-                this.collider.body.velocity.x = gamePrefs.speedPlayer * -1;
-                this.collider.body.velocity.y = 0;
+                this.body.velocity.x = gamePrefs.speedPlayer * -1;
+                this.body.velocity.y = 0;
             }
             else if (_direction == Directions.RIGHT)
             {
-                this.collider.body.velocity.x = gamePrefs.speedPlayer;
-                this.collider.body.velocity.y = 0;
+                this.body.velocity.x = gamePrefs.speedPlayer;
+                this.body.velocity.y = 0;
             }
 
             //Activar animacion respecto la direccion
@@ -65,9 +69,5 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set direccion
         this.dir = _direction;
-
-        //Update position player
-        this.x = this.collider.body.x - 3;
-        this.y = this.collider.body.y - 12;
     }
 }

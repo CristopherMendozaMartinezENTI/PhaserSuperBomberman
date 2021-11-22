@@ -42,10 +42,10 @@ class gameState extends Phaser.Scene
         this.map.setCollisionBetween(1,16,true,true,'blocks');
 
         //Creamos el player
-        this.player = new Player(this, 2*gamePrefs.TILE_SIZE, 1*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
+        this.player = new Player(this, 2*gamePrefs.TILE_SIZE + 8, 2*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player.collider,this.blocks);
+        this.physics.add.collider(this.player,this.blocks);
 
         this.createPools();
         this.createAnimations();
@@ -120,7 +120,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );
         this.anims.create(
@@ -129,7 +129,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );this.anims.create(
             {
@@ -137,7 +137,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );this.anims.create(
             {
@@ -145,7 +145,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );this.anims.create(
             {
@@ -153,7 +153,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );this.anims.create(
             {
@@ -161,7 +161,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );this.anims.create(
             {
@@ -169,7 +169,7 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
                 frameRate:5,
                 yoyo:true,
-                repeat:-1
+                repeat:0
             }
         );
         //#endregion
@@ -196,9 +196,9 @@ class gameState extends Phaser.Scene
     {
         var bomb = this.bombs.getFirst(false);
         
-        var posX = Math.trunc((this.player.collider.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
-        var posY = Math.trunc((this.player.collider.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
-            
+        var posX = Math.trunc((this.player.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
+        var posY = Math.trunc((this.player.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
+        
         if(!bomb)
         {//Generate new bomb
             console.log("Create bomb");
@@ -212,6 +212,7 @@ class gameState extends Phaser.Scene
             console.log("Reset bomb");
 
             bomb.active = true;
+            bomb.explosionX = posX;
             
             bomb.body.reset(posX, posY);
             bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
@@ -222,7 +223,221 @@ class gameState extends Phaser.Scene
 
     spawnExplosion(_posX, _posY)
     {
+        for (let index = 0; index <= this.player.fireDistance; index++) {
+            var explosion;
+            if(index == 0)//Central
+            {
+                explosion = this.explosion_central.getFirst(false);
 
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX, _posY, 'explosion', Explosion_Tiles.CENTRAL);
+
+                    this.explosion_central.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY);
+                    explosion.anims.play(Explosion_Tiles.CENTRAL);
+                }
+            }
+            else if(index == this.player.fireDistance)
+            {
+                //#region Left end
+                explosion = this.explosion_left_end.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
+
+                    this.explosion_left_end.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
+                    explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
+                }
+                //#endregion
+
+                //#region Right end
+                explosion = this.explosion_right_end.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
+
+                    this.explosion_right_end.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                    explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
+                }
+                //#endregion
+
+                //#region Up end
+                explosion = this.explosion_up_end.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
+
+                    this.explosion_up_end.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
+                    explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
+                }
+                //#endregion
+
+                //#region Down end
+                explosion = this.explosion_down_end.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
+
+                    this.explosion_down_end.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                    explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
+                }
+                //#endregion
+            }
+            else
+            {
+                //#region Vertical
+                explosion = this.explosion_vertical.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
+
+                    this.explosion_vertical.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                    explosion.anims.play(Explosion_Tiles.VERTICAL);
+                }
+
+                explosion = this.explosion_vertical.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
+
+                    this.explosion_vertical.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                    explosion.anims.play(Explosion_Tiles.VERTICAL);
+                }
+                //#endregion
+                
+                //#region Horizontal
+                explosion = this.explosion_vertical.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+
+                    this.explosion_vertical.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                    explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                }
+
+                explosion = this.explosion_vertical.getFirst(false);
+
+                if(!explosion)
+                {
+                    console.log("Create Explosion Centro");
+
+                    explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+
+                    this.explosion_vertical.add(explosion);
+                }
+                else
+                {
+                    console.log("Reset Explosion Centro");
+
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                    explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                }
+                //#endregion
+            }
+        }
+    }
+
+    bombExploded()
+    {
+        var bombs = this.bombs.getChildren();
+
+        bombs.forEach(bomb => {
+            if(bomb.exploded)
+            {
+                console.log("Ha explotado");
+                this.spawnExplosion(bomb.explosionX, bomb.y);
+                bomb.exploded = false;
+            }
+        });
     }
 
     getTime()
@@ -272,6 +487,8 @@ class gameState extends Phaser.Scene
         {
             this.spacePressed = false;
         }
+
+        this.bombExploded();
 
         //Update last time
         this.start = this.getTime();

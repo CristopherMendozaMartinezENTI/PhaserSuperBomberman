@@ -8,6 +8,9 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         this.setOrigin(0.5);
 
         this.anims.play('bombAnim');
+
+        this.exploded = false;
+        this.explosionX = _positionX;
         
         this.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
     }
@@ -17,6 +20,8 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         if(this.liveTime < 0)
         {
             console.log("Explota");
+            
+            this.exploded = true;
             this.x = -10;
             this.active = false;
         }
