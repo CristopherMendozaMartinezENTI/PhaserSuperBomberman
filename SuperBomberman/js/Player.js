@@ -11,7 +11,7 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setSize(12, 12);
         this.body.setOffset(12/4, 12 / 1.1);
 
-        this.fireDistance = 3;
+        this.fireDistance = 1;
         
         //Set de la posicion inicial
         this.dir = Directions.DOWN;

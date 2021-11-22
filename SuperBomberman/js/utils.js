@@ -21,7 +21,7 @@ var gamePrefs=
     TILE_SIZE:16,
     INITIAL_HEIGHT: 32 - 8,             //HUD height - halfSprite
     speedPlayer:50,
-    BOMB_EXPLOSION_TIME: 5000
+    BOMB_EXPLOSION_TIME: 3000
 }
 
 var gameOptions = {

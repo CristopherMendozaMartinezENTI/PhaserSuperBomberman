@@ -14,6 +14,7 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
+        this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
         this.load.image('hud1', 'HUD_Time0.png');
         
         this.load.setPath("assets/Tiles/");
@@ -50,6 +51,11 @@ class gameState extends Phaser.Scene
         this.createPools();
         this.createAnimations();
 
+        this.scoreTotal = this.add.group();
+        this.scoreValue = 0;
+        this.createScore();
+
+
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
         this.cursor.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -58,8 +64,44 @@ class gameState extends Phaser.Scene
         this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         this.spacePressed = false;
+        this.shiftPressed = false;
     }
 
+    createScore()
+    {
+        var score;
+        for (let i = 0; i < 8; i++)
+        {
+            score = new scorePrefab(this, 272/2 - 21 - (i*8),16,'score');
+            if (i == 0)
+                score.setScore(0);
+            this.scoreTotal.add(score);
+        }
+    }
+
+    setAllScore()
+    {
+        var score = this.scoreTotal.getChildren();
+        for (let index = 1; index < score.length; index++) {
+            if (Math.pow(10, index) > this.scoreValue)
+            break;
+            const element = score[index];
+            var tmp = this.scoreValue % Math.pow(10, index + 1);
+            tmp = Math.trunc(tmp/Math.pow(10, index));
+            element.setScore(tmp);
+        }
+    }
+
+    scoreUp(_value)
+    {
+        this.scoreValue += _value;
+        if (this.scoreValue >= 100000000)
+            {
+                var temp = this.scoreTotal.getFirst(true);
+                this.scoreValue = 99999999;
+                temp.setScore(9);
+            }
+    }
     createAnimations()
     {
         //#region Player
@@ -118,7 +160,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.CENTRAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -127,7 +169,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_LEFT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -135,7 +177,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -143,7 +185,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_UP,
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -151,7 +193,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_DOWN,
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -159,7 +201,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -167,7 +209,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
-                frameRate:5,
+                frameRate:7,
                 yoyo:true,
                 repeat:0
             }
@@ -221,17 +263,6 @@ class gameState extends Phaser.Scene
         bomb.body.setVelocity(0,0);
     }
 
-    positionToTileX(_posX)
-    {
-        var value = (_posX - 8) / gamePrefs.TILE_SIZE;
-        return value;
-    }
-
-    positionToTileY(_posY)
-    {
-        var value = (_posY - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE;
-        return value;
-    }
 
     spawnExplosion(_posX, _posY)
     {
@@ -314,7 +345,6 @@ class gameState extends Phaser.Scene
 
                 if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
                 {
-                    console.log(this.positionToTileX(_posX), this.positionToTileY(_posY - index * gamePrefs.TILE_SIZE));
 
                     explosion = this.explosion_up_end.getFirst(false);
     
@@ -339,7 +369,6 @@ class gameState extends Phaser.Scene
 
                 if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
                 {
-                    console.log(this.positionToTileX(_posX), this.positionToTileY(_posY + index * gamePrefs.TILE_SIZE));
                     
                     explosion = this.explosion_down_end.getFirst(false);
     
@@ -530,6 +559,19 @@ class gameState extends Phaser.Scene
             this.spacePressed = false;
         }
 
+        if (this.cursor.shift.isDown)
+        {
+            if (!this.shiftPressed)
+            {   
+                this.scoreUp(100);
+                this.setAllScore();
+                this.shiftPressed = true;
+            }
+        }
+        else
+        {
+            this.shiftPressed = false;
+        }
         this.bombExploded();
 
         //Update last time
