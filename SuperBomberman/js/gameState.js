@@ -46,10 +46,10 @@ class gameState extends Phaser.Scene
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
-
+        
         this.createPools();
         this.createAnimations();
-        
+
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
         this.cursor.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -221,8 +221,25 @@ class gameState extends Phaser.Scene
         bomb.body.setVelocity(0,0);
     }
 
+    positionToTileX(_posX)
+    {
+        var value = (_posX - 8) / gamePrefs.TILE_SIZE;
+        return value;
+    }
+
+    positionToTileY(_posY)
+    {
+        var value = (_posY - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE;
+        return value;
+    }
+
     spawnExplosion(_posX, _posY)
     {
+        var right = false;
+        var left = false;
+        var up = false;
+        var down = false;
+        
         for (let index = 0; index <= this.player.fireDistance; index++) {
             var explosion;
             if(index == 0)//Central
@@ -249,179 +266,204 @@ class gameState extends Phaser.Scene
             }
             else if(index == this.player.fireDistance)
             {
-                //#region Left end
-                explosion = this.explosion_left_end.getFirst(false);
-
-                if(!explosion)
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left) 
                 {
-                    console.log("Create Explosion Centro");
+                    explosion = this.explosion_left_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
+    
+                        this.explosion_left_end.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
+                    }
+                }//Left end
 
-                    explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
-
-                    this.explosion_left_end.add(explosion);
-                }
-                else
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right) 
                 {
-                    console.log("Reset Explosion Centro");
+                    explosion = this.explosion_right_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
+    
+                        this.explosion_right_end.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
+                    }
+                }//Right end
 
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
-                    explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
-                }
-                //#endregion
-
-                //#region Right end
-                explosion = this.explosion_right_end.getFirst(false);
-
-                if(!explosion)
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
                 {
-                    console.log("Create Explosion Centro");
+                    console.log(this.positionToTileX(_posX), this.positionToTileY(_posY - index * gamePrefs.TILE_SIZE));
 
-                    explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
+                    explosion = this.explosion_up_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
+    
+                        this.explosion_up_end.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
+                    }
+                }//Up end
 
-                    this.explosion_right_end.add(explosion);
-                }
-                else
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
                 {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
-                    explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
-                }
-                //#endregion
-
-                //#region Up end
-                explosion = this.explosion_up_end.getFirst(false);
-
-                if(!explosion)
-                {
-                    console.log("Create Explosion Centro");
-
-                    explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
-
-                    this.explosion_up_end.add(explosion);
-                }
-                else
-                {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
-                    explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
-                }
-                //#endregion
-
-                //#region Down end
-                explosion = this.explosion_down_end.getFirst(false);
-
-                if(!explosion)
-                {
-                    console.log("Create Explosion Centro");
-
-                    explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
-
-                    this.explosion_down_end.add(explosion);
-                }
-                else
-                {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
-                    explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
-                }
-                //#endregion
+                    console.log(this.positionToTileX(_posX), this.positionToTileY(_posY + index * gamePrefs.TILE_SIZE));
+                    
+                    explosion = this.explosion_down_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
+    
+                        this.explosion_down_end.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
+                    }
+                }//Down end
             }
             else
             {
-                //#region Vertical
-                explosion = this.explosion_vertical.getFirst(false);
-
-                if(!explosion)
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
                 {
-                    console.log("Create Explosion Centro");
-
-                    explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
-
-                    this.explosion_vertical.add(explosion);
-                }
+                    explosion = this.explosion_vertical.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
+    
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL);
+                    }
+                }//Vertical Up
                 else
+                    up = true;
+
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
                 {
-                    console.log("Reset Explosion Centro");
+                    explosion = this.explosion_vertical.getFirst(false);
 
-                    explosion.active = true;
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
 
-                    explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
-                    explosion.anims.play(Explosion_Tiles.VERTICAL);
-                }
+                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
 
-                explosion = this.explosion_vertical.getFirst(false);
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
 
-                if(!explosion)
-                {
-                    console.log("Create Explosion Centro");
+                        explosion.active = true;
 
-                    explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
-
-                    this.explosion_vertical.add(explosion);
-                }
+                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL);
+                    }
+                }//Vertical Down
                 else
+                    down = true;
+                    
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left)
                 {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
-                    explosion.anims.play(Explosion_Tiles.VERTICAL);
-                }
-                //#endregion
+                    explosion = this.explosion_vertical.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
+    
+                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+    
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+    
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                    }
+                }//Horizontal Left
+                else
+                    left = true;
                 
-                //#region Horizontal
-                explosion = this.explosion_vertical.getFirst(false);
-
-                if(!explosion)
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right)
                 {
-                    console.log("Create Explosion Centro");
+                    explosion = this.explosion_vertical.getFirst(false);
 
-                    explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+                    if(!explosion)
+                    {
+                        console.log("Create Explosion Centro");
 
-                    this.explosion_vertical.add(explosion);
-                }
+                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        console.log("Reset Explosion Centro");
+
+                        explosion.active = true;
+
+                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                    }
+                }//Horizontal Right
                 else
-                {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
-                    explosion.anims.play(Explosion_Tiles.HORIZONTAL);
-                }
-
-                explosion = this.explosion_vertical.getFirst(false);
-
-                if(!explosion)
-                {
-                    console.log("Create Explosion Centro");
-
-                    explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
-
-                    this.explosion_vertical.add(explosion);
-                }
-                else
-                {
-                    console.log("Reset Explosion Centro");
-
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
-                    explosion.anims.play(Explosion_Tiles.HORIZONTAL);
-                }
-                //#endregion
+                    right = true;
+                
             }
         }
     }
