@@ -12,7 +12,8 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setOffset(12/4, 12 / 1.1);
 
         this.fireDistance = 1;
-        
+        this.lives = 3;
+
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
     }
@@ -69,5 +70,17 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set direccion
         this.dir = _direction;
+    }
+
+    resetLives()
+    {
+        this.lives = 3;
+    }
+
+    setLives(_value)
+    {
+        this.lives += _value;
+        if (this.lives <= 0)
+            this.lives = 0;
     }
 }

@@ -55,6 +55,7 @@ class gameState extends Phaser.Scene
         this.scoreValue = 0;
         this.createScore();
 
+        console.log(this.player.lives);
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -102,6 +103,13 @@ class gameState extends Phaser.Scene
                 temp.setScore(9);
             }
     }
+
+    gameOver()
+    {
+        if (this.player.lives <= 0)
+            console.log("GAME OVER");
+    }
+
     createAnimations()
     {
         //#region Player
@@ -563,6 +571,9 @@ class gameState extends Phaser.Scene
         {
             if (!this.shiftPressed)
             {   
+                //Comprobacion de que funciona quitar vidas
+                    //this.player.setLives(-1);
+                    //console.log(this.player.lives);
                 this.scoreUp(100);
                 this.setAllScore();
                 this.shiftPressed = true;
@@ -576,5 +587,7 @@ class gameState extends Phaser.Scene
 
         //Update last time
         this.start = this.getTime();
+
+        this.gameOver();
     }
 }
