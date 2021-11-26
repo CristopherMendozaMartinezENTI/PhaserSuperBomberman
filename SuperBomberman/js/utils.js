@@ -6,6 +6,14 @@ const Directions = {
     NONE: 'none'
 };
 
+const EnemyTypes={
+    PUROPEN: "puropen",
+    BAKUDA:"bakuda",
+    DENKYUN:"denkyun",
+    NUTSSTAR:"nutsStar",
+    PAKUPA:"pakupa"
+};
+
 const Explosion_Tiles={
     CENTRAL: "central",
     HORIZONTAL: "horizontal",
@@ -19,7 +27,7 @@ const Explosion_Tiles={
 var gamePrefs=
 {
     TILE_SIZE:16,
-    INITIAL_HEIGHT: 32 - 8,             //HUD height - halfSprite
+    INITIAL_HEIGHT: 32,             //HUD height
     speedPlayer:50,
     BOMB_EXPLOSION_TIME: 3000
 }

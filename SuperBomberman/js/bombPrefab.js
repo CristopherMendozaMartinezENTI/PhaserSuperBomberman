@@ -22,7 +22,7 @@ class bombPrefab extends Phaser.GameObjects.Sprite
             console.log("Explota");
             
             this.exploded = true;
-            this.x = -10;
+            this.x = -100;
             this.active = false;
         }
         this.liveTime -= delta;

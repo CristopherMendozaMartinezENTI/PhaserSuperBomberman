@@ -12,6 +12,7 @@ class gameState extends Phaser.Scene
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24})
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
@@ -22,6 +23,24 @@ class gameState extends Phaser.Scene
 
         this.load.setPath('assets/Maps/');
         this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
+    }
+
+    convertWorldPositionToTile(_posX, _posY)
+    {
+        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE);
+        var _y = Math.trunc(_posY / gamePrefs.TILE_SIZE) - gamePrefs.INITIAL_HEIGHT;
+        
+        var returnPos = [_x, _y]; 
+        return returnPos;
+    }
+
+    convertTilePositionToWorld(_posX, _posY)
+    {
+        var _x = _posX * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
+        var _y = _posY * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT + gamePrefs.TILE_SIZE / 2;
+        
+        var returnPos = [_x, _y]; 
+        return returnPos;
     }
 
     create()
@@ -39,22 +58,28 @@ class gameState extends Phaser.Scene
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
 
-        //Indicamos las colisiones con bloques
-        this.map.setCollisionBetween(1,16,true,true,'blocks');
-
-        //Creamos el player
-        this.player = new Player(this, 2*gamePrefs.TILE_SIZE + 8, 2*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
-
-        //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player,this.blocks);
-        
         this.createPools();
         this.createAnimations();
 
+        //Indicamos las colisiones con bloques
+        this.map.setCollisionBetween(1,16,true,true,'blocks');
+
+        var tmpPos = this.convertTilePositionToWorld(2, 1);
+
+        console.log(tmpPos);
+        //Creamos el player
+        this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
+
+        //Creamos un listener para detectar colisiones entre el hero y las paredes
+        this.physics.add.collider(this.player,this.blocks);
+
+        //Creamos Enemigos
+        tmpPos = this.convertTilePositionToWorld(5, 7);
+        this.puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN);
+        
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
-
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -102,6 +127,7 @@ class gameState extends Phaser.Scene
                 temp.setScore(9);
             }
     }
+
     createAnimations()
     {
         //#region Player
@@ -216,12 +242,51 @@ class gameState extends Phaser.Scene
         );
         //#endregion
     
-    
+        //#region Puropen
+        this.anims.create(
+            {
+                key:EnemyTypes.PUROPEN + Directions.UP,
+                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:0, end:3}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PUROPEN + Directions.LEFT,
+                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:4, end:7}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PUROPEN + Directions.DOWN,
+                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:8, end:11}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PUROPEN + Directions.RIGHT,
+                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:12, end:15}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        //#endregion
     }
 
     createPools()
     {
         this.bombs = this.physics.add.group();
+
+        this.puropen = this.physics.add.group();
 
         //#region Explosion Pool
         this.explosion_horizontal = this.physics.add.group();
@@ -558,6 +623,8 @@ class gameState extends Phaser.Scene
         {
             this.spacePressed = false;
         }
+
+        this.puropen.updatePuropen();
 
         if (this.cursor.shift.isDown)
         {

@@ -3,7 +3,7 @@ class Player extends Phaser.GameObjects.Sprite
     constructor(_scene, _positionX, _positionY, _sprite)
     { 
         //Creamos Sprite del player
-        super(_scene, _positionX, _positionY, _sprite);
+        super(_scene, _positionX, _positionY - 3, _sprite);
         _scene.physics.add.existing(this);
         _scene.add.existing(this);
         this.setOrigin(.5);
