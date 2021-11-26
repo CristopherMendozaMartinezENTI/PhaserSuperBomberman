@@ -47,6 +47,7 @@ class Player extends Phaser.GameObjects.Sprite
             {
                 this.body.velocity.y = gamePrefs.speedPlayer * -1;
                 this.body.velocity.x = 0;
+                
             }
             else if (_direction == Directions.DOWN)
             {

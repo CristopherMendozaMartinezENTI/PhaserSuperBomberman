@@ -22,6 +22,13 @@ class gameState extends Phaser.Scene
 
         this.load.setPath('assets/Maps/');
         this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
+
+        this.load.setPath('assets/Sounds/')
+        this.load.audio('Walking1','Walking1.wav');
+        this.load.audio('Walking2','Walking2.wav');
+        this.load.audio('PlaceBomb','PlaceBomb.wav');
+        this.load.audio('BombExplodes','BombExplodes.wav');
+        this.load.audio('Area1Music','Area1Music.mp3');
     }
 
     create()
@@ -66,6 +73,20 @@ class gameState extends Phaser.Scene
 
         this.spacePressed = false;
         this.shiftPressed = false;
+
+        //Music
+        this.loadSounds();
+    }
+
+    loadSounds()
+    {
+        this.walking1 = this.sound.add('Walking1');
+        this.walking2 = this.sound.add('Walking2');
+        this.placeBomb = this.sound.add('PlaceBomb');
+        this.bombExplodes = this.sound.add('BombExplodes');
+        this.music = this.sound.add('Area1Music' , {volume: 0.5});
+        this.music.loop = true;
+        this.music.play();
     }
 
     createScore()
@@ -244,6 +265,7 @@ class gameState extends Phaser.Scene
 
     spawnBomb()
     {
+        this.placeBomb.play();
         var bomb = this.bombs.getFirst(false);
         
         var posX = Math.trunc((this.player.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
@@ -274,6 +296,7 @@ class gameState extends Phaser.Scene
 
     spawnExplosion(_posX, _posY)
     {
+        this.bombExplodes.play();
         var right = false;
         var left = false;
         var up = false;
