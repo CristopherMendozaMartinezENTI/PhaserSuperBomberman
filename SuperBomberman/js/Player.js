@@ -14,6 +14,10 @@ class Player extends Phaser.GameObjects.Sprite
         this.fireDistance = 1;
         this.lives = 3;
 
+        this.bombNum = 1;
+
+        this.depth = 2;
+
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
     }
@@ -72,6 +76,11 @@ class Player extends Phaser.GameObjects.Sprite
         //Set direccion
         this.dir = _direction;
     }
+
+    changeBombNum(_value)
+    {
+        this.bombNum = _value;
+    }   
 
     resetLives()
     {
