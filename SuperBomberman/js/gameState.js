@@ -62,9 +62,6 @@ class gameState extends Phaser.Scene
         this.scoreValue = 0;
         this.createScore();
 
-        //Creamos el player
-        this.player = new Player(this, 2*gamePrefs.TILE_SIZE + 8, 2*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
-
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
         
