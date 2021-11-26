@@ -51,7 +51,7 @@ class gameState extends Phaser.Scene
 
         //Creamos el player
         this.player = new Player(this, 2*gamePrefs.TILE_SIZE + 8, 2*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
-
+        
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
         
@@ -62,6 +62,9 @@ class gameState extends Phaser.Scene
         this.scoreValue = 0;
         this.createScore();
 
+        //Creamos un listener para detectar colisiones entre el hero y las paredes
+        this.physics.add.collider(this.player,this.blocks);
+        
         console.log(this.player.lives);
 
         //Inputs
@@ -189,7 +192,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.CENTRAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -198,7 +201,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_LEFT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -206,7 +209,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -214,7 +217,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_UP,
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -222,7 +225,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_DOWN,
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -230,7 +233,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -238,7 +241,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -251,6 +254,8 @@ class gameState extends Phaser.Scene
     createPools()
     {
         this.bombs = this.physics.add.group();
+
+        this.bombs.maxSize = 1;
 
         //#region Explosion Pool
         this.explosion_horizontal = this.physics.add.group();
@@ -265,32 +270,41 @@ class gameState extends Phaser.Scene
 
     spawnBomb()
     {
+       
         this.placeBomb.play();
-        var bomb = this.bombs.getFirst(false);
-        
-        var posX = Math.trunc((this.player.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
-        var posY = Math.trunc((this.player.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
-        
-        if(!bomb)
-        {//Generate new bomb
-            console.log("Create bomb");
+
+        if(this.bombs.getTotalFree())
+        {
+            var bomb = this.bombs.getFirst(false);
+    
+            var posX = Math.trunc((this.player.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
+            var posY = Math.trunc((this.player.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
             
-            bomb = new bombPrefab(this, posX, posY, 'bomb');
-
-            this.bombs.add(bomb);
-        }
-        else
-        {//Reset bomb
-            console.log("Reset bomb");
-
-            bomb.active = true;
-            bomb.explosionX = posX;
+            if(!bomb)
+            {//Generate new bomb
+                console.log("Create bomb");
+                
+                bomb = new bombPrefab(this, posX, posY, 'bomb');
+    
+                this.bombs.add(bomb);
+            }
+            else
+            {//Reset bomb
+                console.log("Reset bomb");
+    
+                bomb.active = true;
+                bomb.explosionX = posX;
+                
+                bomb.body.reset(posX, posY);
+                bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+            }
+    
+            bomb.body.setVelocity(0,0);
             
-            bomb.body.reset(posX, posY);
-            bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+                    bomb.body.immovable = true;
+                    bomb.body.setVelocity(0,0);
+                    this.physics.add.collider(this.player, bomb);
         }
-
-        bomb.body.setVelocity(0,0);
     }
 
 
@@ -551,7 +565,6 @@ class gameState extends Phaser.Scene
 
     update()
     { //actualiza assets
-
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
 
@@ -600,6 +613,11 @@ class gameState extends Phaser.Scene
                 this.scoreUp(100);
                 this.setAllScore();
                 this.shiftPressed = true;
+                
+                this.player.changeBombNum(this.player.bombNum + 1);
+                this.bombs.maxSize = this.player.bombNum;
+    
+                console.log(this.bombs.maxSize);
             }
         }
         else
