@@ -49,6 +49,12 @@ class gameState extends Phaser.Scene
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
 
+        //Creamos el player
+        this.player = new Player(this, 2*gamePrefs.TILE_SIZE + 8, 2*gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT, 'bombermanWhite');
+        
+        //Creamos un listener para detectar colisiones entre el hero y las paredes
+        this.physics.add.collider(this.player,this.blocks);
+        
         this.createPools();
         this.createAnimations();
 
@@ -189,7 +195,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.CENTRAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -198,7 +204,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_LEFT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -206,7 +212,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -214,7 +220,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_UP,
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -222,7 +228,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_DOWN,
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -230,7 +236,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -238,7 +244,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -267,6 +273,7 @@ class gameState extends Phaser.Scene
 
     spawnBomb()
     {
+       
         this.placeBomb.play();
 
         if(this.bombs.getTotalFree())
@@ -296,6 +303,10 @@ class gameState extends Phaser.Scene
             }
     
             bomb.body.setVelocity(0,0);
+            
+                    bomb.body.immovable = true;
+                    bomb.body.setVelocity(0,0);
+                    this.physics.add.collider(this.player, bomb);
         }
     }
 
@@ -557,7 +568,6 @@ class gameState extends Phaser.Scene
 
     update()
     { //actualiza assets
-
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
 
