@@ -23,14 +23,21 @@ class gameState extends Phaser.Scene
 
         this.load.setPath('assets/Maps/');
         this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
+
+        this.load.setPath('assets/Sounds/')
+        this.load.audio('Walking1','Walking1.wav');
+        this.load.audio('Walking2','Walking2.wav');
+        this.load.audio('PlaceBomb','PlaceBomb.wav');
+        this.load.audio('BombExplodes','BombExplodes.wav');
+        this.load.audio('Area1Music','Area1Music.mp3');
     }
 
     convertWorldPositionToTile(_posX, _posY)
     {
-        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE);
-        var _y = Math.trunc(_posY / gamePrefs.TILE_SIZE) - gamePrefs.INITIAL_HEIGHT;
+        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE) + 1;
+        var _y = Math.trunc((_posY - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE);
         
-        var returnPos = [_x, _y]; 
+        var returnPos = [_x, _y];
         return returnPos;
     }
 
@@ -75,11 +82,18 @@ class gameState extends Phaser.Scene
 
         //Creamos Enemigos
         tmpPos = this.convertTilePositionToWorld(5, 7);
-        this.puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN);
+        this.puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
         
+
+
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
+
+        //Creamos un listener para detectar colisiones entre el hero y las paredes
+        this.physics.add.collider(this.player,this.blocks);
+        
+        console.log(this.player.lives);
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -90,6 +104,20 @@ class gameState extends Phaser.Scene
 
         this.spacePressed = false;
         this.shiftPressed = false;
+
+        //Music
+        this.loadSounds();
+    }
+
+    loadSounds()
+    {
+        this.walking1 = this.sound.add('Walking1');
+        this.walking2 = this.sound.add('Walking2');
+        this.placeBomb = this.sound.add('PlaceBomb');
+        this.bombExplodes = this.sound.add('BombExplodes');
+        this.music = this.sound.add('Area1Music' , {volume: 0.5});
+        this.music.loop = true;
+        this.music.play();
     }
 
     createScore()
@@ -126,6 +154,12 @@ class gameState extends Phaser.Scene
                 this.scoreValue = 99999999;
                 temp.setScore(9);
             }
+    }
+
+    gameOver()
+    {
+        if (this.player.lives <= 0)
+            console.log("GAME OVER");
     }
 
     createAnimations()
@@ -186,7 +220,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.CENTRAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -195,7 +229,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_LEFT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -203,7 +237,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -211,7 +245,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_UP,
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -219,7 +253,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_DOWN,
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -227,7 +261,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -235,7 +269,7 @@ class gameState extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
-                frameRate:7,
+                frameRate:9,
                 yoyo:true,
                 repeat:0
             }
@@ -288,6 +322,8 @@ class gameState extends Phaser.Scene
 
         this.puropen = this.physics.add.group();
 
+        this.bombs.maxSize = 1;
+
         //#region Explosion Pool
         this.explosion_horizontal = this.physics.add.group();
         this.explosion_vertical = this.physics.add.group();
@@ -301,36 +337,50 @@ class gameState extends Phaser.Scene
 
     spawnBomb()
     {
-        var bomb = this.bombs.getFirst(false);
-        
-        var posX = Math.trunc((this.player.body.position.x - gamePrefs.TILE_SIZE/2) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
-        var posY = Math.trunc((this.player.body.position.y - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE + 1) * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT;
-        
-        if(!bomb)
-        {//Generate new bomb
-            console.log("Create bomb");
+       
+        this.placeBomb.play();
+
+        if(this.bombs.getTotalFree())
+        {
+            var bomb = this.bombs.getFirst(false);
+    
+            var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
+            pos = this.convertTilePositionToWorld(pos[0], pos[1]);
+
+            var posX = pos[0];
+            var posY = pos[1];
+
+            if(!bomb)
+            {//Generate new bomb
+                console.log("Create bomb");
+                
+                bomb = new bombPrefab(this, posX, posY, 'bomb');
+    
+                this.bombs.add(bomb);
+            }
+            else
+            {//Reset bomb
+                console.log("Reset bomb");
+    
+                bomb.active = true;
+                bomb.explosionX = posX;
+                
+                bomb.body.reset(posX, posY);
+                bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+            }
+    
+            bomb.body.setVelocity(0,0);
             
-            bomb = new bombPrefab(this, posX, posY, 'bomb');
-
-            this.bombs.add(bomb);
+                    bomb.body.immovable = true;
+                    bomb.body.setVelocity(0,0);
+                    this.physics.add.collider(this.player, bomb);
         }
-        else
-        {//Reset bomb
-            console.log("Reset bomb");
-
-            bomb.active = true;
-            bomb.explosionX = posX;
-            
-            bomb.body.reset(posX, posY);
-            bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
-        }
-
-        bomb.body.setVelocity(0,0);
     }
 
 
     spawnExplosion(_posX, _posY)
     {
+        this.bombExplodes.play();
         var right = false;
         var left = false;
         var up = false;
@@ -585,7 +635,6 @@ class gameState extends Phaser.Scene
 
     update()
     { //actualiza assets
-
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
 
@@ -630,9 +679,17 @@ class gameState extends Phaser.Scene
         {
             if (!this.shiftPressed)
             {   
+                //Comprobacion de que funciona quitar vidas
+                    //this.player.setLives(-1);
+                    //console.log(this.player.lives);
                 this.scoreUp(100);
                 this.setAllScore();
                 this.shiftPressed = true;
+                
+                this.player.changeBombNum(this.player.bombNum + 1);
+                this.bombs.maxSize = this.player.bombNum;
+    
+                console.log(this.bombs.maxSize);
             }
         }
         else
@@ -643,5 +700,7 @@ class gameState extends Phaser.Scene
 
         //Update last time
         this.start = this.getTime();
+
+        this.gameOver();
     }
 }

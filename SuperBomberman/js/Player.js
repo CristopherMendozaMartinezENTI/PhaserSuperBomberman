@@ -12,7 +12,12 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setOffset(12/4, 12 / 1.1);
 
         this.fireDistance = 1;
-        
+        this.lives = 3;
+
+        this.bombNum = 1;
+
+        this.depth = 2;
+
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
     }
@@ -46,6 +51,7 @@ class Player extends Phaser.GameObjects.Sprite
             {
                 this.body.velocity.y = gamePrefs.speedPlayer * -1;
                 this.body.velocity.x = 0;
+                
             }
             else if (_direction == Directions.DOWN)
             {
@@ -69,5 +75,22 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set direccion
         this.dir = _direction;
+    }
+
+    changeBombNum(_value)
+    {
+        this.bombNum = _value;
+    }   
+
+    resetLives()
+    {
+        this.lives = 3;
+    }
+
+    setLives(_value)
+    {
+        this.lives += _value;
+        if (this.lives <= 0)
+            this.lives = 0;
     }
 }

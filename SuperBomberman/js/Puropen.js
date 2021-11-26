@@ -1,14 +1,14 @@
 class Puropen extends Enemies
 {
-    constructor(_scene, _positionX, _positionY, _sprite, _enemyType)
+    constructor(_scene, _positionX, _positionY, _sprite, _enemyType, _health, _scoreEarned)
     {
-        super(_scene, _positionX, _positionY - 3, _sprite, _enemyType);
-
-        this.health = 1;
-        this.scoreEarned = 100;
-        this.speed = 2;
+        super(_scene, _positionX, _positionY - 3, _sprite, _enemyType, _health, _scoreEarned);
 
         this.dir = Directions.LEFT;
+
+        
+
+        this.anims.play(this.type+Directions.LEFT);
     }
 
     preUpdate(time,delta)
@@ -26,6 +26,8 @@ class Puropen extends Enemies
 
     updatePuropen()
     {
+        console.log(this.dir);
+
         if(this.dir == Directions.UP)
         {
             this.body.velocity.y = this.speed * -10;
