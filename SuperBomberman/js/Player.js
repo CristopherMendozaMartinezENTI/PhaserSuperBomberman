@@ -14,6 +14,8 @@ class Player extends Phaser.GameObjects.Sprite
         this.fireDistance = 1;
         this.lives = 3;
 
+        this.isInvulnerable = false;
+        this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
         this.bombNum = 1;
 
         this.depth = 2;
@@ -31,6 +33,16 @@ class Player extends Phaser.GameObjects.Sprite
 
     update(_direction, _delta)
     {        
+        if(this.isInvulnerable)
+        {
+            this.invulnerableTime -= _delta;
+            console.log("Invulnerable");
+            if (this.invulnerableTime <= 0)
+            {
+                this.isInvulnerable = false;
+                this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
+            }
+        }
         if(_direction == Directions.NONE)
         {
             //Parar animacion
@@ -89,15 +101,17 @@ class Player extends Phaser.GameObjects.Sprite
         this.bombNum = _value;
     }   
 
-    resetLives()
+   
+    hit(_hero)
     {
-        this.lives = 3;
-    }
-
-    hit(_enemy)
-    {
-        _enemy.lives -= 1;
-        if (this.lives <= 0)
-            this.lives = 0;
+        if (!_hero.isInvulnerable)
+        {
+            _hero.lives -= 1;
+            console.log(_hero.lives);
+            if (_hero.lives <= 0)
+                _hero.lives = 0;
+            _hero.isInvulnerable = true;
+            
+        }
     }
 }

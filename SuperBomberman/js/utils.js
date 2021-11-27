@@ -29,7 +29,8 @@ var gamePrefs=
     TILE_SIZE:16,
     INITIAL_HEIGHT: 32,             //HUD height
     speedPlayer:50,
-    BOMB_EXPLOSION_TIME: 3000
+    BOMB_EXPLOSION_TIME: 3000,
+    INVULNERABLE_TIME: 3
 }
 
 var gameOptions = {

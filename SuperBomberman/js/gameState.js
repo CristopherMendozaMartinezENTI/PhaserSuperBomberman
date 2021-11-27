@@ -92,6 +92,8 @@ class gameState extends Phaser.Scene
         this.physics.add.collider(this.player,this.blocks);
         
         console.log(this.player.lives);
+        this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
+        
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -623,9 +625,10 @@ class gameState extends Phaser.Scene
 
     update()
     { //actualiza assets
+
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
-
+        this.playerLivesManager.setLives(this.player.lives);
         //Inputs
         if (this.cursor.up.isDown || this.cursor.W.isDown)
         {
