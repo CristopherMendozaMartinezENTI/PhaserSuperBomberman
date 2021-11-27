@@ -73,7 +73,6 @@ class gameState extends Phaser.Scene
 
         var tmpPos = this.convertTilePositionToWorld(2, 1);
 
-        console.log(tmpPos);
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
 
@@ -81,10 +80,9 @@ class gameState extends Phaser.Scene
         this.physics.add.collider(this.player,this.blocks);
 
         //Creamos Enemigos
-        tmpPos = this.convertTilePositionToWorld(5, 7);
-        this.puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
-        
+       this.spawnEnemies();
 
+        //this.enemies.add(this.puropen);
 
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
@@ -149,11 +147,13 @@ class gameState extends Phaser.Scene
     {
         this.scoreValue += _value;
         if (this.scoreValue >= 100000000)
-            {
-                var temp = this.scoreTotal.getFirst(true);
-                this.scoreValue = 99999999;
-                temp.setScore(9);
-            }
+        {
+            var temp = this.scoreTotal.getFirst(true);
+            this.scoreValue = 99999999;
+            temp.setScore(9);
+        }
+
+        this.setAllScore();
     }
 
     gameOver()
@@ -316,11 +316,27 @@ class gameState extends Phaser.Scene
         //#endregion
     }
 
+    spawnEnemies()
+    {
+        //This is only for lvl 1 enemies
+        var tmpPos = this.convertTilePositionToWorld(5, 7);
+        var puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        this.enemies.add(puropen);
+
+        tmpPos = this.convertTilePositionToWorld(8, 9);
+        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        this.enemies.add(puropen);
+
+        tmpPos = this.convertTilePositionToWorld(12, 10);
+        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        this.enemies.add(puropen);
+    }
+
     createPools()
     {
         this.bombs = this.physics.add.group();
 
-        this.puropen = this.physics.add.group();
+        this.enemies = this.add.group();
 
         this.bombs.maxSize = 1;
 
@@ -337,7 +353,6 @@ class gameState extends Phaser.Scene
 
     spawnBomb()
     {
-       
         this.placeBomb.play();
 
         if(this.bombs.getTotalFree())
@@ -352,16 +367,12 @@ class gameState extends Phaser.Scene
 
             if(!bomb)
             {//Generate new bomb
-                console.log("Create bomb");
-                
                 bomb = new bombPrefab(this, posX, posY, 'bomb');
     
                 this.bombs.add(bomb);
             }
             else
             {//Reset bomb
-                console.log("Reset bomb");
-    
                 bomb.active = true;
                 bomb.explosionX = posX;
                 
@@ -376,7 +387,6 @@ class gameState extends Phaser.Scene
                     this.physics.add.collider(this.player, bomb);
         }
     }
-
 
     spawnExplosion(_posX, _posY)
     {
@@ -394,16 +404,12 @@ class gameState extends Phaser.Scene
 
                 if(!explosion)
                 {
-                    console.log("Create Explosion Centro");
-
                     explosion = new ExplosionPrefab(this, _posX, _posY, 'explosion', Explosion_Tiles.CENTRAL);
 
                     this.explosion_central.add(explosion);
                 }
                 else
                 {
-                    console.log("Reset Explosion Centro");
-
                     explosion.active = true;
 
                     explosion.body.reset(_posX, _posY);
@@ -418,16 +424,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
     
                         this.explosion_left_end.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
@@ -441,16 +443,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
     
                         this.explosion_right_end.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
@@ -465,16 +463,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
     
                         this.explosion_up_end.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
@@ -489,16 +483,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
     
                         this.explosion_down_end.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
@@ -514,16 +504,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
     
                         this.explosion_vertical.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
@@ -539,16 +525,12 @@ class gameState extends Phaser.Scene
 
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-
                         explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
 
                         this.explosion_vertical.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-
                         explosion.active = true;
 
                         explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
@@ -564,16 +546,12 @@ class gameState extends Phaser.Scene
     
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-    
                         explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
     
                         this.explosion_vertical.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-    
                         explosion.active = true;
     
                         explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
@@ -589,16 +567,12 @@ class gameState extends Phaser.Scene
 
                     if(!explosion)
                     {
-                        console.log("Create Explosion Centro");
-
                         explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
 
                         this.explosion_vertical.add(explosion);
                     }
                     else
                     {
-                        console.log("Reset Explosion Centro");
-
                         explosion.active = true;
 
                         explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
@@ -619,7 +593,6 @@ class gameState extends Phaser.Scene
         bombs.forEach(bomb => {
             if(bomb.exploded)
             {
-                console.log("Ha explotado");
                 this.spawnExplosion(bomb.explosionX, bomb.y);
                 bomb.exploded = false;
             }
@@ -631,6 +604,21 @@ class gameState extends Phaser.Scene
         let d = new Date();
 
         return d.getTime();
+    }
+
+    updateEnemies()
+    {
+        var enemies = this.enemies.getChildren();
+
+        enemies.forEach(_e => {
+            if(_e.killed)
+            {
+                this.scoreUp(_e.scoreEarned);
+                _e.killed = false;
+            }
+            else
+                _e.updatePuropen();
+        });
     }
 
     update()
@@ -673,8 +661,6 @@ class gameState extends Phaser.Scene
             this.spacePressed = false;
         }
 
-        this.puropen.updatePuropen();
-
         if (this.cursor.shift.isDown)
         {
             if (!this.shiftPressed)
@@ -683,13 +669,12 @@ class gameState extends Phaser.Scene
                     //this.player.setLives(-1);
                     //console.log(this.player.lives);
                 this.scoreUp(100);
-                this.setAllScore();
+                //this.setAllScore();
                 this.shiftPressed = true;
                 
                 this.player.changeBombNum(this.player.bombNum + 1);
                 this.bombs.maxSize = this.player.bombNum;
     
-                console.log(this.bombs.maxSize);
             }
         }
         else
@@ -697,6 +682,7 @@ class gameState extends Phaser.Scene
             this.shiftPressed = false;
         }
         this.bombExploded();
+        this.updateEnemies();
 
         //Update last time
         this.start = this.getTime();
