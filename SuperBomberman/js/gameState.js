@@ -16,7 +16,8 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
-        this.load.spritesheet('hud', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
+        this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
+        this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -54,7 +55,8 @@ class gameState extends Phaser.Scene
     { //carga los assets en pantalla desde memoria
         this.start = this.getTime();
 
-        this.hud = this.add.sprite(0,0,'hud').setOrigin(0);
+        this.hudClock = this.add.sprite(0,0,'hudClock').setOrigin(0);
+        this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
         this.map = this.add.tilemap('Stage1_1');
@@ -67,7 +69,8 @@ class gameState extends Phaser.Scene
 
         this.createPools();
         this.createAnimations();
-        this.hud.anims.play("HudTimeAnim")
+        this.hudClock.anims.play("HudClockAnim")
+        this.hudTime.anims.play("HudTimeAnim")
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
@@ -94,7 +97,6 @@ class gameState extends Phaser.Scene
         
         console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
-        
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -206,11 +208,23 @@ class gameState extends Phaser.Scene
         );
         //#endregion
 
-        //#region HudTime
+        //#region HudClock
+        this.anims.create(
+            {
+                key:'HudClockAnim',
+                frames:this.anims.generateFrameNumbers('hudClock', {start:0, end:7}),
+                frameRate:1,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+
+        //#region HudClock
         this.anims.create(
             {
                 key:'HudTimeAnim',
-                frames:this.anims.generateFrameNumbers('hud', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('hudTime', {start:0, end:13}),
                 frameRate:1,
                 yoyo:false,
                 repeat:-1
@@ -638,10 +652,10 @@ class gameState extends Phaser.Scene
 
     update()
     { //actualiza assets
-
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
         this.playerLivesManager.setLives(this.player.lives);
+        
         //Inputs
         if (this.cursor.up.isDown || this.cursor.W.isDown)
         {
