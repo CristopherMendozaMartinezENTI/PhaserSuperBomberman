@@ -220,12 +220,12 @@ class gameState extends Phaser.Scene
         );
         //#endregion
 
-        //#region HudClock
+        //#region HudTime
         this.anims.create(
             {
                 key:'HudTimeAnim',
                 frames:this.anims.generateFrameNumbers('hudTime', {start:0, end:13}),
-                frameRate:1,
+                duration:112000,
                 yoyo:false,
                 repeat:-1
             }   
