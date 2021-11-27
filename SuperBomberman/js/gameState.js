@@ -16,7 +16,7 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
-        this.load.image('hud1', 'HUD_Time0.png');
+        this.load.spritesheet('hud', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -54,7 +54,7 @@ class gameState extends Phaser.Scene
     { //carga los assets en pantalla desde memoria
         this.start = this.getTime();
 
-        this.hud1 = this.add.tileSprite(0,0,config.width,config.height,'hud1').setOrigin(0);
+        this.hud = this.add.sprite(0,0,'hud').setOrigin(0);
 
         //Cargo el JSON
         this.map = this.add.tilemap('Stage1_1');
@@ -67,6 +67,7 @@ class gameState extends Phaser.Scene
 
         this.createPools();
         this.createAnimations();
+        this.hud.anims.play("HudTimeAnim")
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
@@ -202,6 +203,18 @@ class gameState extends Phaser.Scene
                 yoyo:true,
                 repeat:-1
             }
+        );
+        //#endregion
+
+        //#region HudTime
+        this.anims.create(
+            {
+                key:'HudTimeAnim',
+                frames:this.anims.generateFrameNumbers('hud', {start:0, end:7}),
+                frameRate:1,
+                yoyo:false,
+                repeat:-1
+            }   
         );
         //#endregion
 
