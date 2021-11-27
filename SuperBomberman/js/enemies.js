@@ -19,12 +19,12 @@ class Enemies extends Phaser.GameObjects.Sprite
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
 
-        _scene.physics.add.collider(this, _scene.explosion_down_end, this.kill, null, this);
-        _scene.physics.add.collider(this, _scene.explosion_up_end, this.kill, null, this);
-        _scene.physics.add.collider(this, _scene.explosion_left_end, this.kill, null, this);
-        _scene.physics.add.collider(this, _scene.explosion_right_end, this.kill, null, this);
-        _scene.physics.add.collider(this, _scene.explosion_horizontal, this.kill, null, this);
-        _scene.physics.add.collider(this, _scene.explosion_vertical, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_left_end, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
         
         this.type = _enemyType;
     }
