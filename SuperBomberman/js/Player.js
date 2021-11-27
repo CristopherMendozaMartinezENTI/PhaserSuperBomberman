@@ -18,6 +18,13 @@ class Player extends Phaser.GameObjects.Sprite
 
         this.depth = 2;
 
+        _scene.physics.add.overlap(this, _scene.explosion_down_end, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_up_end, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_left_end, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_right_end, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_vertical, this.hit, null, this);
+
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
     }
@@ -87,9 +94,9 @@ class Player extends Phaser.GameObjects.Sprite
         this.lives = 3;
     }
 
-    setLives(_value)
+    hit(_enemy)
     {
-        this.lives += _value;
+        _enemy.lives -= 1;
         if (this.lives <= 0)
             this.lives = 0;
     }
