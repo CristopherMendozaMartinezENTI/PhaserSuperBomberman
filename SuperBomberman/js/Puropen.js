@@ -18,8 +18,15 @@ class Puropen extends Enemies
             this.x = -10;
             this.active = false;
         }
+
+        
         
         super.preUpdate(time, delta);
+    }
+
+    postUpdate()
+    {
+        this.dirChanged = false;
     }
 
     updatePuropen()

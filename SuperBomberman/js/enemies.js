@@ -14,10 +14,13 @@ class Enemies extends Phaser.GameObjects.Sprite
         this.scoreEarned = _scoreEarned;
         this.speed = 2;
 
+        this.dirChanged = false;
         this.killed = false;
         
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
+
+        _scene.physics.add.collider(this, _scene.enemies, this.turnBack, null, this);
 
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
@@ -32,6 +35,40 @@ class Enemies extends Phaser.GameObjects.Sprite
     preUpdate(time,delta)
     {
         super.preUpdate(time, delta);
+    }
+
+    turnBack(_enemy, _collidedEnemy)
+    {
+        if(_enemy.health > 0 && !_enemy.dirChanged)
+        {
+            if(_enemy.dir == Directions.UP)
+            {
+                _collidedEnemy.dir = Directions.UP;
+                _enemy.dir = Directions.DOWN;
+                _enemy.anims.play(_enemy.type+Directions.DOWN);
+            }
+            else if(_enemy.dir == Directions.DOWN)
+            {
+                _collidedEnemy.dir = Directions.UP;
+                _enemy.dir = Directions.UP;
+                _enemy.anims.play(_enemy.type+Directions.UP);
+            }
+            else if(_enemy.dir == Directions.RIGHT)
+            {
+                _collidedEnemy.dir = Directions.UP;
+                _enemy.dir = Directions.LEFT;
+                _enemy.anims.play(_enemy.type+Directions.LEFT);
+            }
+            else if(_enemy.dir == Directions.LEFT)
+            {
+                _collidedEnemy.dir = Directions.UP;
+                _enemy.dir = Directions.RIGHT;
+                _enemy.anims.play(_enemy.type+Directions.RIGHT);
+            }
+
+            _collidedEnemy.dirChanged = true;
+            _enemy.dirChanged = true;
+        }
     }
 
     changeDirection(_enemy)

@@ -20,6 +20,7 @@ class Player extends Phaser.GameObjects.Sprite
 
         this.depth = 2;
 
+        _scene.physics.add.overlap(this, _scene.explosion_central, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_left_end, this.hit, null, this);
