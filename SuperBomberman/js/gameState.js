@@ -652,7 +652,9 @@ class gameState extends Phaser.Scene
     spawnDesObj1()
     {
         for (let i = 0; i < 32; i++) {
-            var desObj1 = new DesObj1(this, Phaser.Math.Between(3, 15)*16, Phaser.Math.Between(3, 15)*16, 'desObj1', 1, 100);
+            var pos = this.convertTilePositionToWorld(Phaser.Math.Between(1, 15), Phaser.Math.Between(3, 15));
+
+            var desObj1 = new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100);
         }
     }
 

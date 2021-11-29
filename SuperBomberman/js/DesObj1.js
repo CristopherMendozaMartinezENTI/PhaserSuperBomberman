@@ -31,13 +31,13 @@ class DesObj1 extends Phaser.GameObjects.Sprite
         super.preUpdate(time, delta);
     }
 
-    kill(_enemy)
+    kill(_obj)
     {
         console.log("Killed");
 
-        _enemy.killed = true;
-        _enemy.health = -1;
-        _enemy.x = -30;
-        _enemy.active = false;
+        _obj.killed = true;
+        _obj.health = -1;
+        _obj.x = -30;
+        _obj.active = false;
     }
 }
