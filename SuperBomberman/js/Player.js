@@ -12,13 +12,16 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setOffset(12/4, 12 / 1.1);
 
         this.fireDistance = 1;
-        this.lives = 3;
+        this.lives = 5;
 
         this.isInvulnerable = false;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
         this.bombNum = 1;
 
         this.depth = 2;
+
+        this.initPosX = _positionX;
+        this.initPosY = _positionY - 3;
 
         _scene.physics.add.overlap(this, _scene.explosion_central, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.hit, null, this);
@@ -27,6 +30,8 @@ class Player extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_right_end, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.hit, null, this);
+        _scene.physics.add.overlap(this, _scene.enemies, this.hit, null, this);
+
 
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
@@ -102,6 +107,11 @@ class Player extends Phaser.GameObjects.Sprite
         this.bombNum = _value;
     }   
 
+    resetPos(_hero)
+    {
+        _hero.x = _hero.initPosX;
+        _hero.y = _hero.initPosY;
+    }
    
     hit(_hero)
     {
@@ -112,7 +122,12 @@ class Player extends Phaser.GameObjects.Sprite
             if (_hero.lives <= 0)
                 _hero.lives = 0;
             _hero.isInvulnerable = true;
-            
+            _hero.resetPos(_hero);
         }
+    }
+
+    goToNextLevel()
+    {
+        console.log("Les goooo nuevo nivel pium pium");
     }
 }
