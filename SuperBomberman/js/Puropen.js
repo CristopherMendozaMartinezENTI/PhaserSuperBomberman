@@ -35,19 +35,19 @@ class Puropen extends Enemies
         {
             if(this.dir == Directions.UP)
             {
-                this.body.velocity.y = this.speed * -10;
+                this.body.velocity.y = this.speed * -15;
             }
             else if(this.dir == Directions.DOWN)
             {
-                this.body.velocity.y = this.speed * 10;
+                this.body.velocity.y = this.speed * 15;
             }
             else if(this.dir == Directions.LEFT)
             {
-                this.body.velocity.x = this.speed * -10;
+                this.body.velocity.x = this.speed * -15;
             }
             else if(this.dir == Directions.RIGHT)
             {
-                this.body.velocity.x = this.speed * 10;
+                this.body.velocity.x = this.speed * 15;
             }
             else
             {
