@@ -17,6 +17,7 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
+        this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('desObj1', 'DestructibleObj1.png', {frameWidth:16, frameHeight:16})
         
@@ -52,6 +53,7 @@ class gameState extends Phaser.Scene
         return returnPos;
     }
 
+
     create()
     { //carga los assets en pantalla desde memoria
         this.start = this.getTime();
@@ -68,7 +70,7 @@ class gameState extends Phaser.Scene
         this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
-
+        
         this.createPools();
         this.createAnimations();
         this.hudClock.anims.play("HudClockAnim");
@@ -77,11 +79,17 @@ class gameState extends Phaser.Scene
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
-
+        
         var tmpPos = this.convertTilePositionToWorld(2, 1);
-
+        
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
+        
+        //Creamos la puerta de salida
+        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 13), Phaser.Math.Between(2, 13));
+        console.log(tmpPosDoor);
+        this.exit = new exitDoorManager(this, tmpPosDoor[0], tmpPosDoor[1], 'exit');
+        this.exit.anims.play('exitDoorAnim');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
@@ -208,6 +216,18 @@ class gameState extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('bombermanWhite', {start:9, end:11}),
                 frameRate:5,
                 yoyo:true,
+                repeat:-1
+            }
+        );
+        //#endregion
+        
+        //#region ExitDoor
+        this.anims.create(
+            {
+                key:'exitDoorAnim',
+                frames:this.anims.generateFrameNumbers('exit', {start:0, end:1}),
+                frameRate:1,
+                yoyo:false,
                 repeat:-1
             }
         );
@@ -635,6 +655,7 @@ class gameState extends Phaser.Scene
             }
         }
     }
+
 
     bombExploded()
     {
