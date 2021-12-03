@@ -47,7 +47,7 @@ class gameState extends Phaser.Scene
     convertTilePositionToWorld(_posX, _posY)
     {
         var _x = _posX * gamePrefs.TILE_SIZE + gamePrefs.TILE_SIZE / 2;
-        var _y = _posY * gamePrefs.TILE_SIZE + gamePrefs.INITIAL_HEIGHT + gamePrefs.TILE_SIZE / 2;
+        var _y = _posY * gamePrefs.TILE_SIZE + this.hudClock.height + gamePrefs.TILE_SIZE / 2;
         
         var returnPos = [_x, _y]; 
         return returnPos;
@@ -86,7 +86,7 @@ class gameState extends Phaser.Scene
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
         //Creamos la puerta de salida
-        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 13), Phaser.Math.Between(2, 13));
+        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
         console.log(tmpPosDoor);
         this.exit = new exitDoorManager(this, tmpPosDoor[0], tmpPosDoor[1], 'exit');
         this.exit.anims.play('exitDoorAnim');
@@ -673,7 +673,7 @@ class gameState extends Phaser.Scene
     spawnDesObj1()
     {
         for (let i = 0; i < 32; i++) {
-            var pos = this.convertTilePositionToWorld(Phaser.Math.Between(1, 15), Phaser.Math.Between(3, 15));
+            var pos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
 
             var desObj1 = new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100);
         }
