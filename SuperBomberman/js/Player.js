@@ -42,7 +42,7 @@ class Player extends Phaser.GameObjects.Sprite
         if(this.isInvulnerable)
         {
             this.invulnerableTime -= _delta;
-            console.log("Invulnerable");
+            //console.log("Invulnerable");
             if (this.invulnerableTime <= 0)
             {
                 this.isInvulnerable = false;
@@ -118,7 +118,7 @@ class Player extends Phaser.GameObjects.Sprite
         if (!_hero.isInvulnerable)
         {
             _hero.lives -= 1;
-            console.log(_hero.lives);
+            //console.log(_hero.lives);
             if (_hero.lives <= 0)
                 _hero.lives = 0;
             _hero.isInvulnerable = true;

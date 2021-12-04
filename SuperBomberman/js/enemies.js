@@ -12,7 +12,6 @@ class Enemies extends Phaser.GameObjects.Sprite
 
         this.health = _health;
         this.scoreEarned = _scoreEarned;
-        this.speed = 2;
 
         this.dirChanged = false;
         this.killed = false;
@@ -43,27 +42,56 @@ class Enemies extends Phaser.GameObjects.Sprite
         {
             if(_enemy.dir == Directions.UP)
             {
-                _collidedEnemy.dir = Directions.UP;
+                //Current enemy
+                _enemy.body.velocity.y = _enemy.speed * 15;
                 _enemy.dir = Directions.DOWN;
-                _enemy.anims.play(_enemy.type+Directions.DOWN);
+
+                //Collided enemy
+                if(_collidedEnemy.dir == Directions.DOWN)
+                {
+                    _collidedEnemy.body.velocity.y = _collidedEnemy.speed * -15;
+                    _collidedEnemy.dir = Directions.UP;
+                }
             }
             else if(_enemy.dir == Directions.DOWN)
             {
-                _collidedEnemy.dir = Directions.UP;
+                //Current enemy
+                _enemy.body.velocity.y = _enemy.speed * -15;
                 _enemy.dir = Directions.UP;
-                _enemy.anims.play(_enemy.type+Directions.UP);
+                
+                //Collided enemy
+                if(_collidedEnemy.dir == Directions.UP)
+                {
+                    _collidedEnemy.body.velocity.y = _collidedEnemy.speed * 15;
+                    _collidedEnemy.dir = Directions.DOWN;
+                }
             }
             else if(_enemy.dir == Directions.RIGHT)
             {
-                _collidedEnemy.dir = Directions.UP;
+                //Current enemy
+                _enemy.body.velocity.x = _enemy.speed * -15;
                 _enemy.dir = Directions.LEFT;
-                _enemy.anims.play(_enemy.type+Directions.LEFT);
+                
+                //Collided enemy
+                
+                if(_collidedEnemy.dir == Directions.LEFT)
+                {
+                    _collidedEnemy.body.velocity.x = _collidedEnemy.speed * 15;
+                    _collidedEnemy.dir = Directions.RIGHT;
+                }
             }
             else if(_enemy.dir == Directions.LEFT)
             {
-                _collidedEnemy.dir = Directions.UP;
+                //Current enemy
+                _enemy.body.velocity.x = _enemy.speed * 15;
                 _enemy.dir = Directions.RIGHT;
-                _enemy.anims.play(_enemy.type+Directions.RIGHT);
+                
+                //Collided enemy
+                if(_collidedEnemy.dir == Directions.RIGHT)
+                {
+                    _collidedEnemy.body.velocity.x = _collidedEnemy.speed * -15;
+                    _collidedEnemy.dir = Directions.LEFT;
+                }
             }
 
             _collidedEnemy.dirChanged = true;
@@ -79,31 +107,31 @@ class Enemies extends Phaser.GameObjects.Sprite
             var changed = false;
             var changedDir = Math.random() * 4;
     
-            while(changed == false)
+            while(!changed)
             {
                 if(changedDir == 0 && _enemy.dir != Directions.UP)
                 {
                     changed = true;
+                    _enemy.body.velocity.y = _enemy.speed * -15;
                     _enemy.dir = Directions.UP;
-                    _enemy.anims.play(_enemy.type+Directions.UP);
                 }
                 else if(changedDir == 1 && _enemy.dir != Directions.DOWN)
                 {
                     changed = true;
+                    _enemy.body.velocity.y = _enemy.speed * 15;
                     _enemy.dir = Directions.DOWN;
-                    _enemy.anims.play(_enemy.type+Directions.DOWN);
                 }
                 else if(changedDir == 2 && _enemy.dir != Directions.LEFT)
                 {
                     changed = true;
+                    _enemy.body.velocity.x = _enemy.speed * -15;
                     _enemy.dir = Directions.LEFT;
-                    _enemy.anims.play(_enemy.type+Directions.LEFT);
                 }
                 else if(changedDir == 3 && _enemy.dir != Directions.RIGHT)
                 {
                     changed = true;
+                    _enemy.body.velocity.x = _enemy.speed * 15;
                     _enemy.dir = Directions.RIGHT;
-                    _enemy.anims.play(_enemy.type+Directions.RIGHT);
                 }
                 else
                 {

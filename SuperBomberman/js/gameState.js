@@ -12,7 +12,8 @@ class gameState extends Phaser.Scene
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
-        this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24})
+        this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
@@ -382,21 +383,33 @@ class gameState extends Phaser.Scene
             }
         );
         //#endregion
+
+        //#region Denkyun
+        this.anims.create(
+            {
+                key:EnemyTypes.DENKYUN,
+                frames:this.anims.generateFrameNumbers(EnemyTypes.DENKYUN, {start:0, end:5}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }
+        );
+        //#endregion
     }
 
     spawnEnemies()
     {
         //This is only for lvl 1 enemies
         var tmpPos = this.convertTilePositionToWorld(5, 7);
-        var puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        var puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
         this.enemies.add(puropen);
 
         tmpPos = this.convertTilePositionToWorld(8, 9);
-        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
         this.enemies.add(puropen);
 
         tmpPos = this.convertTilePositionToWorld(12, 10);
-        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen', EnemyTypes.PUROPEN, 1, 100);
+        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
         this.enemies.add(puropen);
     }
 
@@ -696,8 +709,6 @@ class gameState extends Phaser.Scene
                 this.scoreUp(_e.scoreEarned);
                 _e.killed = false;
             }
-            else
-                _e.updatePuropen();
         });
     }
 
