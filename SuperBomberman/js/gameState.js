@@ -696,7 +696,7 @@ class gameState extends Phaser.Scene
         for (let i = 0; i < 32; i++) {
             var pos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
 
-            var desObj1 = new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100);
+            this.desObj1s.add(new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100));
         }
     }
 
