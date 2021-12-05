@@ -706,7 +706,7 @@ class Stage1_1 extends Phaser.Scene
         return d.getTime();
     }
 
-    updateEnemies()
+    updateScore()
     {
         var enemies = this.enemies.getChildren();
 
@@ -716,7 +716,7 @@ class Stage1_1 extends Phaser.Scene
             if(_e.killed)
             {
                 this.scoreUp(_e.scoreEarned);
-                _e.killed = false;
+                _e.destroy();
             }
         });
 
@@ -791,7 +791,7 @@ class Stage1_1 extends Phaser.Scene
             this.shiftPressed = false;
         }
         this.bombExploded();
-        this.updateEnemies();
+        this.updateScore();
 
         //Update last time
         this.start = this.getTime();

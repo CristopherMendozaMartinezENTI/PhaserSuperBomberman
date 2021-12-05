@@ -145,10 +145,6 @@ class Enemies extends Phaser.GameObjects.Sprite
     kill(_enemy)
     {
         console.log("Killed");
-
         _enemy.killed = true;
-        _enemy.health = -1;
-        _enemy.x = -30;
-        _enemy.active = false;
     }
 }

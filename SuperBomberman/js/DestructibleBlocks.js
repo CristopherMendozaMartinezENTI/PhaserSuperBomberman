@@ -35,7 +35,7 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         super.preUpdate(time, delta);
     }
 
-    kill(_scene)
+    kill()
     {
         console.log("Destroyed");
         this.anims.play("desObjAnimEx");
