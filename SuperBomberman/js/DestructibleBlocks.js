@@ -15,13 +15,13 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
 
         this.isAnimated = _isAnimated;
 
-        _scene.physics.add.collider(this, _scene.player);
-        _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
-        _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
-        _scene.physics.add.overlap(this, _scene.explosion_left_end, this.kill, null, this);
-        _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
-        _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
-        _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
+        this.playerCol = _scene.physics.add.collider(this, _scene.player);
+        this.exCollDown = _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
+        this.exCollUp = _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
+        this.exCollLeft = _scene.physics.add.overlap(this, _scene.explosion_left_end, this.kill, null, this);
+        this.exCollRight = _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
+        this.exCollHorizontal = _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
+        this.exCollVertical = _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
         
         if(this.isAnimated) this.anims.play("desObjAnim");
 
@@ -32,14 +32,22 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
     {
         super.preUpdate(time, delta);
     }
-    
-    kill()
+
+    kill(_scene)
     {
         console.log("Destroyed");
         this.anims.play("desObjAnimEx");
         this.killed = true;
         this.health = -1;
-        this.x = -30;
-        this.active = false;
+        //Desactivo las colisiones
+        this.playerCol.active = false;
+        this.exCollDown.active = false;
+        this.exCollUp.active = false;
+        this.exCollLeft.active = false;
+        this.exCollRight.active = false;
+        this.exCollHorizontal.active = false;
+        this.exCollVertical.active = false;
+        //this.x = -30;
+        //this.active = false;
     }
 }

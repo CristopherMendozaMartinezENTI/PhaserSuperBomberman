@@ -77,7 +77,6 @@ class Stage1_1 extends Phaser.Scene
         
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
-        //this.des1.anims.play("desObjAnim");
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
@@ -95,15 +94,12 @@ class Stage1_1 extends Phaser.Scene
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
-
         
+        //Creamos los bloques destruibles 
         this.spawnDesObj();
+
         //Creamos Enemigos
-        
         this.spawnEnemies();
-
-
-        //this.enemies.add(this.puropen);
 
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
@@ -274,7 +270,7 @@ class Stage1_1 extends Phaser.Scene
         this.anims.create(
             {
                 key:'desObjAnimEx',
-                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
                 frameRate:10,
                 yoyo:false,
                 repeat:0
