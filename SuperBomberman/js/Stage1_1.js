@@ -20,8 +20,8 @@ class Stage1_1 extends Phaser.Scene
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
-        this.load.spritesheet('desObj1', 'DestructibleObj1.png', {frameWidth:16, frameHeight:16})
-        this.load.spritesheet('desObj1Explosion', 'DestructibleObj1_Anim.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlock', 'DestructibleBlock1.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16})
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -258,11 +258,11 @@ class Stage1_1 extends Phaser.Scene
         );
         //#endregion
 
-        //#region DesObj1
+        //#region DestructibleBlock
         this.anims.create(
             {
                 key:'desObjAnim',
-                frames:this.anims.generateFrameNumbers('desObj1', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
                 repeat:-1
@@ -270,14 +270,14 @@ class Stage1_1 extends Phaser.Scene
         );
         //#endregion
         
-        //#region DesObj1 Explosion
+        //#region DestructibleBlock Explosion
         this.anims.create(
             {
                 key:'desObjAnimEx',
-                frames:this.anims.generateFrameNumbers('desObj1Explosion', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
-                repeat:-1
+                repeat:0
             }   
         );
         //#endregion
@@ -427,10 +427,8 @@ class Stage1_1 extends Phaser.Scene
     createPools()
     {
         this.bombs = this.physics.add.group();
-
         this.enemies = this.add.group();
-
-        this.desObj1s = this.add.group();
+        this.desObjs = this.add.group();
 
         this.bombs.maxSize = 1;
 
@@ -702,14 +700,13 @@ class Stage1_1 extends Phaser.Scene
             {
                 tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
             }
-            this.desObj1s.add(new DesObj1(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100));
+            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
         }
     }
 
     getTime()
     { //Calculate Current Time
         let d = new Date();
-
         return d.getTime();
     }
 
@@ -717,7 +714,17 @@ class Stage1_1 extends Phaser.Scene
     {
         var enemies = this.enemies.getChildren();
 
+        var desObjs = this.desObjs.getChildren();
+
         enemies.forEach(_e => {
+            if(_e.killed)
+            {
+                this.scoreUp(_e.scoreEarned);
+                _e.killed = false;
+            }
+        });
+
+        desObjs.forEach(_e => {
             if(_e.killed)
             {
                 this.scoreUp(_e.scoreEarned);

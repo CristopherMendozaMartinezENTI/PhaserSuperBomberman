@@ -54,7 +54,7 @@ var playerPrefs =
 {
     LIVES: 5,
     SCORE: 0,
-    //Power ups, pondremos un 1 o un 2 para habilitarlos entre escenas
+    //Power ups, pondremos un 0 o un 1 para habilitarlos entre escenas
     BOMB_UP: 0,
     FIRE_UP: 0,
     SPEED_UP: 0,
