@@ -724,7 +724,7 @@ class Stage1_1 extends Phaser.Scene
             if(_e.killed)
             {
                 this.scoreUp(_e.scoreEarned);
-                _e.killed = false;
+                _e.destroy();
             }
         });
     }

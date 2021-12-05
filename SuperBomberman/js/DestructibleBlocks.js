@@ -40,16 +40,5 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         console.log("Destroyed");
         this.anims.play("desObjAnimEx");
         this.killed = true;
-        this.health = -1;
-        //Desactivo las colisiones
-        //this.playerCol.active = false;
-        //this.exCollDown.active = false;
-        //this.exCollUp.active = false;
-        //this.exCollLeft.active = false;
-        //this.exCollRight.active = false;
-        //this.exCollHorizontal.active = false;
-        //this.exCollVertical.active = false;
-        this.x = -30;
-        this.active = false;
     }
 }
