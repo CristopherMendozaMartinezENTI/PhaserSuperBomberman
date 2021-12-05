@@ -7,7 +7,9 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         _scene.add.existing(this);
 
         this.body.setSize(16,16,false);
-    
+
+        //this.setDepth(1);
+
         this.health = _health;
         this.scoreEarned = _scoreEarned;
 
@@ -40,14 +42,14 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         this.killed = true;
         this.health = -1;
         //Desactivo las colisiones
-        this.playerCol.active = false;
-        this.exCollDown.active = false;
-        this.exCollUp.active = false;
-        this.exCollLeft.active = false;
-        this.exCollRight.active = false;
-        this.exCollHorizontal.active = false;
-        this.exCollVertical.active = false;
-        //this.x = -30;
-        //this.active = false;
+        //this.playerCol.active = false;
+        //this.exCollDown.active = false;
+        //this.exCollUp.active = false;
+        //this.exCollLeft.active = false;
+        //this.exCollRight.active = false;
+        //this.exCollHorizontal.active = false;
+        //this.exCollVertical.active = false;
+        this.x = -30;
+        this.active = false;
     }
 }
