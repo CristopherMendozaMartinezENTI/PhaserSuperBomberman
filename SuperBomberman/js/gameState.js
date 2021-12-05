@@ -21,6 +21,7 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('desObj1', 'DestructibleObj1.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desObj1Explosion', 'DestructibleObj1_Anim.png', {frameWidth:16, frameHeight:16})
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -61,7 +62,6 @@ class gameState extends Phaser.Scene
 
         this.hudClock = this.add.sprite(0,0,'hudClock').setOrigin(0);
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
-        //this.des1 = this.add.sprite(0,0,'desObj1').setOrigin(0);
 
         //Cargo el JSON
         this.map = this.add.tilemap('Stage1_1');
@@ -105,9 +105,6 @@ class gameState extends Phaser.Scene
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
-
-        //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player,this.blocks);
         
         console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
@@ -258,8 +255,6 @@ class gameState extends Phaser.Scene
         );
         //#endregion
 
-             //#endregion
-
         //#region DesObj1
         this.anims.create(
             {
@@ -271,6 +266,19 @@ class gameState extends Phaser.Scene
             }   
         );
         //#endregion
+        
+        //#region DesObj1 Explosion
+        this.anims.create(
+            {
+                key:'desObjAnimEx',
+                frames:this.anims.generateFrameNumbers('desObj1Explosion', {start:0, end:7}),
+                frameRate:10,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+
 
         //#region Bomb
         this.anims.create(

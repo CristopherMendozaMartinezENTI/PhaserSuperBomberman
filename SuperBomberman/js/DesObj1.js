@@ -14,6 +14,7 @@ class DesObj1 extends Phaser.GameObjects.Sprite
 
         this.killed = false;
 
+        _scene.physics.add.collider(this, _scene.player);
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_left_end, this.kill, null, this);
@@ -33,7 +34,9 @@ class DesObj1 extends Phaser.GameObjects.Sprite
 
     kill(_obj)
     {
-        console.log("Killed");
+        console.log("Destroyed");
+
+        this.anims.play("desObjAnimEx");
 
         _obj.killed = true;
         _obj.health = -1;
