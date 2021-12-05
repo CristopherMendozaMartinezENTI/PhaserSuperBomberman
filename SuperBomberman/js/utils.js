@@ -14,6 +14,16 @@ const EnemyTypes={
     PAKUPA:"pakupa"
 };
 
+const PowerUpTypes={
+    BOMB_UP: "bomb_up",
+    FIRE_UP:"fire_up",
+    SPEED_UP:"speed_up",
+    KICK:"kick",
+    VEST:"vest",
+    TIME:"time",
+    REMOTE_CONTROL: "remote_control"
+};
+
 const Explosion_Tiles={
     CENTRAL: "central",
     HORIZONTAL: "horizontal",
@@ -30,10 +40,24 @@ var gamePrefs=
     INITIAL_HEIGHT: 32,             //HUD height
     speedPlayer:50,
     BOMB_EXPLOSION_TIME: 3000,
-    INVULNERABLE_TIME: 3
+    INVULNERABLE_TIME: 3,
 }
 
-var gameOptions = {
+var gameOptions = 
+{
     gameWidth:272,   
     gameHeight: 240, 
+}
+
+//Informacion que nos guardaremos entre escenas
+var playerPrefs =
+{
+    LIVES: 5,
+    SCORE: 0,
+    //Power ups, pondremos un 1 o un 2 para habilitarlos entre escenas
+    BOMB_UP: 0,
+    FIRE_UP: 0,
+    SPEED_UP: 0,
+    KICK: 0,
+    REMOTE_CONTROL: 0
 }
