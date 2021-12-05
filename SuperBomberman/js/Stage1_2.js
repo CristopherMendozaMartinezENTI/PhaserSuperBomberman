@@ -1,10 +1,10 @@
-class gameState extends Phaser.Scene
+class Stage1_2 extends Phaser.Scene
 {
     constructor()
     { //crea la escena
         super(
         {
-            key:"gameState"
+            key:"Stage1_2"
         });
     }
     preload()
@@ -27,7 +27,7 @@ class gameState extends Phaser.Scene
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
+        this.load.tilemapTiledJSON('Stage1_2','Stage1_2.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -64,7 +64,7 @@ class gameState extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_1');
+        this.map = this.add.tilemap('Stage1_2');
         //Cargo los Tilesets
         this.map.addTilesetImage('Lvl1_Tile');
         //Pintamos las capas/layers
@@ -74,6 +74,7 @@ class gameState extends Phaser.Scene
         
         this.createPools();
         this.createAnimations();
+        
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
         //this.des1.anims.play("desObjAnim");
@@ -95,10 +96,12 @@ class gameState extends Phaser.Scene
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
 
+        
+        this.spawnDesObj();
         //Creamos Enemigos
+        
         this.spawnEnemies();
 
-        this.spawnDesObj1();
 
         //this.enemies.add(this.puropen);
 
@@ -224,7 +227,7 @@ class gameState extends Phaser.Scene
             {
                 key:'exitDoorAnim',
                 frames:this.anims.generateFrameNumbers('exit', {start:0, end:1}),
-                frameRate:1,
+                frameRate:5,
                 yoyo:false,
                 repeat:-1
             }
@@ -691,12 +694,15 @@ class gameState extends Phaser.Scene
         });
     }
 
-    spawnDesObj1()
+    spawnDesObj()
     {
         for (let i = 0; i < 32; i++) {
-            var pos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-
-            this.desObj1s.add(new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100));
+            var tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+            while(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+            {
+                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+            }
+            this.desObj1s.add(new DesObj1(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100));
         }
     }
 
