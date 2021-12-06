@@ -11,5 +11,4 @@ class exitDoorManager extends Phaser.GameObjects.Sprite
     {
         super.preUpdate(time, delta);
     }
-
 }

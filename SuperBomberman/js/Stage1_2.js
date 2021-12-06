@@ -277,7 +277,7 @@ class Stage1_2 extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
-                repeat:-1
+                repeat:0
             }   
         );
         //#endregion
@@ -410,18 +410,131 @@ class Stage1_2 extends Phaser.Scene
 
     spawnEnemies()
     {
-        //This is only for lvl 1 enemies
-        var tmpPos = this.convertTilePositionToWorld(5, 7);
-        var puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
-        this.enemies.add(puropen);
+        var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
+        var desObjs = this.desObjs.getChildren();
+        var tmpPos;
 
-        tmpPos = this.convertTilePositionToWorld(8, 9);
-        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
-        this.enemies.add(puropen);
+        var changedPos = false;
 
-        tmpPos = this.convertTilePositionToWorld(12, 10);
-        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
-        this.enemies.add(puropen);
+        //Puropen
+        for (let i = 0; i < 3; i++) 
+        {
+            changedPos = false;
+
+            while(!changedPos)
+            {
+                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+
+                //Indestructible blocks
+                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+                {
+                    continue;
+                }
+
+                var samePos = false;
+                //Destructible blocks
+                desObjs.forEach(_e => {
+                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
+                    if(desPos == tmpPos)
+                    {
+                       samePos = true;
+                    }
+                });
+
+                if(samePos)
+                {
+                    continue;
+                }
+
+                //Player pos
+                if(playerPos == tmpPos)
+                {
+                    continue;
+                }
+
+                //Enemies
+                samePos = false;
+                if(this.enemies.getLength() != 0)
+                {
+                    var enemies = this.enemies.getChildren();
+                    enemies.forEach(_e => {
+                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                        if(ePos == tmpPos)
+                        {
+                           samePos = true;
+                        }
+                    });
+                }
+                
+                if(samePos)
+                {
+                    continue;
+                }
+
+                changedPos = true;
+            }
+            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'puropen'));
+        }
+
+        //Denkyun
+        for (let i = 0; i < 2; i++) 
+        {
+            changedPos = false;
+
+            while(!changedPos)
+            {
+                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+
+                //Indestructible blocks
+                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+                {
+                    continue;
+                }
+
+                var samePos = false;
+                //Destructible blocks
+                desObjs.forEach(_e => {
+                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
+                    if(desPos == tmpPos)
+                    {
+                       samePos = true;
+                    }
+                });
+
+                if(samePos)
+                {
+                    continue;
+                }
+
+                //Player pos
+                if(playerPos == tmpPos)
+                {
+                    continue;
+                }
+
+                //Enemies
+                samePos = false;
+                if(this.enemies.getLength() != 0)
+                {
+                    var enemies = this.enemies.getChildren();
+                    enemies.forEach(_e => {
+                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                        if(ePos == tmpPos)
+                        {
+                           samePos = true;
+                        }
+                    });
+                }
+                
+                if(samePos)
+                {
+                    continue;
+                }
+
+                changedPos = true;
+            }
+            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
+        }
     }
 
     createPools()
@@ -728,7 +841,7 @@ class Stage1_2 extends Phaser.Scene
             if(_e.killed)
             {
                 this.scoreUp(_e.scoreEarned);
-                _e.killed = false;
+                _e.destroy();
             }
         });
     }

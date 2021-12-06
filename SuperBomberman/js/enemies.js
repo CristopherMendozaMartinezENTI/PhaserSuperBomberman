@@ -148,6 +148,7 @@ class Enemies extends Phaser.GameObjects.Sprite
                 }
             }
         }
+        _enemy.dirChanged = true;
     }
 
     kill(_enemy)

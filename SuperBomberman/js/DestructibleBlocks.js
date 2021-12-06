@@ -36,10 +36,10 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         if(this.destroyed && !this.anims.isPlaying)
         {
             this.killed = true;
+            console.log("Obj destroyed");
         }
 
         super.preUpdate(time, delta);
-
     }
 
     kill()
