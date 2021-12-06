@@ -4,7 +4,7 @@ class Stage1_2 extends Phaser.Scene
     { //crea la escena
         super(
         {
-            key:"Stage1_1"
+            key:"Stage1_2"
         });
     }
     preload()
@@ -87,19 +87,15 @@ class Stage1_2 extends Phaser.Scene
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
-        //Creamos la puerta de salida
-        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-        console.log(tmpPosDoor);
-        this.exit = new exitDoorManager(this, tmpPosDoor[0], tmpPosDoor[1], 'exit');
-        this.exit.anims.play('exitDoorAnim');
-
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
 
         
         this.spawnDesObj();
+
+        this.spawnDoor();
+
         //Creamos Enemigos
-        
         this.spawnEnemies();
 
 
@@ -109,7 +105,6 @@ class Stage1_2 extends Phaser.Scene
         this.scoreValue = 0;
         this.createScore();
         
-        console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
 
         //Inputs
@@ -702,6 +697,17 @@ class Stage1_2 extends Phaser.Scene
             }
             this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
         }
+    }
+
+    spawnDoor()
+    {
+        var destrObj = this.desObjs.getChildren();
+        var rand = Phaser.Math.Between(0, destrObj.length);
+        var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
+        console.log("Door position:", conversion[0]-3, conversion[1]- 1);
+        this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
+        this.exit.anims.play('exitDoorAnim');
+        
     }
 
     getTime()

@@ -15,7 +15,7 @@ class Puropen extends Enemies
     {
         if(this.dirChanged)
         {
-            _enemy.anims.play(EnemyTypes.PUROPEN+this.dir);
+            this.anims.play(EnemyTypes.PUROPEN+this.dir);
             this.dirChanged = false;
         }
 
