@@ -1,10 +1,10 @@
-class gameState extends Phaser.Scene
+class Stage1_1 extends Phaser.Scene
 {
     constructor()
     { //crea la escena
         super(
         {
-            key:"gameState"
+            key:"Stage1_1"
         });
     }
     preload()
@@ -20,7 +20,8 @@ class gameState extends Phaser.Scene
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
-        this.load.spritesheet('desObj1', 'DestructibleObj1.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlock', 'DestructibleBlock1.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16})
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -61,7 +62,6 @@ class gameState extends Phaser.Scene
 
         this.hudClock = this.add.sprite(0,0,'hudClock').setOrigin(0);
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
-        //this.des1 = this.add.sprite(0,0,'desObj1').setOrigin(0);
 
         //Cargo el JSON
         this.map = this.add.tilemap('Stage1_1');
@@ -74,9 +74,9 @@ class gameState extends Phaser.Scene
         
         this.createPools();
         this.createAnimations();
+        
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
-        //this.des1.anims.play("desObjAnim");
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
@@ -94,20 +94,16 @@ class gameState extends Phaser.Scene
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
+        
+        //Creamos los bloques destruibles 
+        this.spawnDesObj();
 
         //Creamos Enemigos
         this.spawnEnemies();
 
-        this.spawnDesObj1();
-
-        //this.enemies.add(this.puropen);
-
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
-
-        //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player,this.blocks);
         
         console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
@@ -227,7 +223,7 @@ class gameState extends Phaser.Scene
             {
                 key:'exitDoorAnim',
                 frames:this.anims.generateFrameNumbers('exit', {start:0, end:1}),
-                frameRate:1,
+                frameRate:5,
                 yoyo:false,
                 repeat:-1
             }
@@ -258,19 +254,30 @@ class gameState extends Phaser.Scene
         );
         //#endregion
 
-             //#endregion
-
-        //#region DesObj1
+        //#region DestructibleBlock
         this.anims.create(
             {
                 key:'desObjAnim',
-                frames:this.anims.generateFrameNumbers('desObj1', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
                 repeat:-1
             }   
         );
         //#endregion
+        
+        //#region DestructibleBlock Explosion
+        this.anims.create(
+            {
+                key:'desObjAnimEx',
+                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
+                frameRate:10,
+                yoyo:false,
+                repeat:0
+            }   
+        );
+        //#endregion
+
 
         //#region Bomb
         this.anims.create(
@@ -416,10 +423,8 @@ class gameState extends Phaser.Scene
     createPools()
     {
         this.bombs = this.physics.add.group();
-
         this.enemies = this.add.group();
-
-        this.desObj1s = this.add.group();
+        this.desObjs = this.add.group();
 
         this.bombs.maxSize = 1;
 
@@ -683,31 +688,43 @@ class gameState extends Phaser.Scene
         });
     }
 
-    spawnDesObj1()
+    spawnDesObj()
     {
         for (let i = 0; i < 32; i++) {
-            var pos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-
-            var desObj1 = new DesObj1(this, pos[0], pos[1], 'desObj1', 1, 100);
+            var tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+            while(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+            {
+                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+            }
+            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
         }
     }
 
     getTime()
     { //Calculate Current Time
         let d = new Date();
-
         return d.getTime();
     }
 
-    updateEnemies()
+    updateScore()
     {
         var enemies = this.enemies.getChildren();
+
+        var desObjs = this.desObjs.getChildren();
 
         enemies.forEach(_e => {
             if(_e.killed)
             {
                 this.scoreUp(_e.scoreEarned);
-                _e.killed = false;
+                _e.destroy();
+            }
+        });
+
+        desObjs.forEach(_e => {
+            if(_e.killed)
+            {
+                this.scoreUp(_e.scoreEarned);
+                _e.destroy();
             }
         });
     }
@@ -774,7 +791,7 @@ class gameState extends Phaser.Scene
             this.shiftPressed = false;
         }
         this.bombExploded();
-        this.updateEnemies();
+        this.updateScore();
 
         //Update last time
         this.start = this.getTime();

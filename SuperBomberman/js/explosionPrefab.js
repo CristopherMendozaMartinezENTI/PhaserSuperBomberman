@@ -6,6 +6,8 @@ class ExplosionPrefab extends Phaser.GameObjects.Sprite
         _scene.add.existing(this);
         this.setOrigin(.5);
 
+        this.setDepth(0);
+
         this.anims.play(_explosionTile);
     }
 

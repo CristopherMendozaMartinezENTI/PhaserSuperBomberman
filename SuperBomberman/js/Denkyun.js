@@ -7,6 +7,10 @@ class Denkyun extends Enemies
         this.dir = Directions.LEFT;
         this.speed = 2;
         this.body.velocity.x = this.speed * -15;
+
+        //this.body.setOffset(0, -1);
+
+        //this.setDepth(1);
         
         this.anims.play(EnemyTypes.DENKYUN);
     }
