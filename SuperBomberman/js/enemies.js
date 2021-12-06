@@ -16,6 +16,8 @@ class Enemies extends Phaser.GameObjects.Sprite
         this.dirChanged = false;
         this.killed = false;
         
+        this.destroyed = false;
+
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.desObjs, this.changeDirection, null, this);
@@ -34,6 +36,10 @@ class Enemies extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
+        if(this.destroyed && !this.anims.isPlaying)
+        {
+            this.killed = true;
+        }
         super.preUpdate(time, delta);
     }
 
@@ -150,9 +156,10 @@ class Enemies extends Phaser.GameObjects.Sprite
         }
     }
 
-    kill(_enemy)
+    kill()
     {
         console.log("Killed");
-        _enemy.killed = true;
+        this.anims.play("enemymExAnim");
+        this.destroyed = true;
     }
 }

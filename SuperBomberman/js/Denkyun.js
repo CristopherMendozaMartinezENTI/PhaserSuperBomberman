@@ -46,9 +46,6 @@ class Denkyun extends Enemies
         if(this.health <= 0)
         {
             console.log(EnemyTypes.DENKYUN + " killed");
-
-            this.x = -10;
-            this.active = false;
         }
 
         super.preUpdate(time, delta);
