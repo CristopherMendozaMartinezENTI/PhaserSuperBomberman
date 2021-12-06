@@ -87,17 +87,13 @@ class Stage1_1 extends Phaser.Scene
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
-        //Creamos la puerta de salida
-        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-        console.log(tmpPosDoor);
-        this.exit = new exitDoorManager(this, tmpPosDoor[0], tmpPosDoor[1], 'exit');
-        this.exit.anims.play('exitDoorAnim');
-
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
         
         //Creamos los bloques destruibles 
         this.spawnDesObj();
+
+        this.spawnDoor();
 
         //Creamos Enemigos
         this.spawnEnemies();
@@ -420,15 +416,15 @@ class Stage1_1 extends Phaser.Scene
     {
         //This is only for lvl 1 enemies
         var tmpPos = this.convertTilePositionToWorld(5, 7);
-        var puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
+        var puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen');
         this.enemies.add(puropen);
 
         tmpPos = this.convertTilePositionToWorld(8, 9);
-        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
+        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen');
         this.enemies.add(puropen);
 
         tmpPos = this.convertTilePositionToWorld(12, 10);
-        puropen = new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun');
+        puropen = new Puropen(this, tmpPos[0], tmpPos[1], 'puropen');
         this.enemies.add(puropen);
     }
 
@@ -712,6 +708,17 @@ class Stage1_1 extends Phaser.Scene
         }
     }
 
+    spawnDoor()
+    {
+        var destrObj = this.desObjs.getChildren();
+        var rand = Phaser.Math.Between(0, destrObj.length);
+        var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
+        console.log("Door position:", conversion[0]-3, conversion[1]- 1);
+        this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
+        this.exit.anims.play('exitDoorAnim');
+        
+    }
+
     getTime()
     { //Calculate Current Time
         let d = new Date();
@@ -731,6 +738,11 @@ class Stage1_1 extends Phaser.Scene
                 _e.destroy();
             }
         });
+
+        if (desObjs[this.exit.randomEnemy].killed)
+        {
+            this.exit.resetSpawn();
+        }
 
         desObjs.forEach(_e => {
             if(_e.killed)

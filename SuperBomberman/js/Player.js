@@ -126,8 +126,5 @@ class Player extends Phaser.GameObjects.Sprite
         }
     }
 
-    goToNextLevel()
-    {
-        console.log("Les goooo nuevo nivel pium pium");
-    }
+    
 }
