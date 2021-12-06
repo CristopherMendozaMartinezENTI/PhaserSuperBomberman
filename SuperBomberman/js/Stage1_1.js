@@ -14,6 +14,7 @@ class Stage1_1 extends Phaser.Scene
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
@@ -86,17 +87,13 @@ class Stage1_1 extends Phaser.Scene
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
-        //Creamos la puerta de salida
-        var tmpPosDoor = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-        console.log(tmpPosDoor);
-        this.exit = new exitDoorManager(this, tmpPosDoor[0], tmpPosDoor[1], 'exit');
-        this.exit.anims.play('exitDoorAnim');
-
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
         
         //Creamos los bloques destruibles 
         this.spawnDesObj();
+
+        this.spawnDoor();
 
         //Creamos Enemigos
         this.spawnEnemies();
@@ -278,7 +275,6 @@ class Stage1_1 extends Phaser.Scene
         );
         //#endregion
 
-
         //#region Bomb
         this.anims.create(
             {
@@ -400,6 +396,18 @@ class Stage1_1 extends Phaser.Scene
                 yoyo:true,
                 repeat:-1
             }
+        );
+        //#endregion
+
+        //#region Enemy Explosion
+        this.anims.create(
+            {
+                key:'enemymExAnim',
+                frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
+                frameRate:15,
+                yoyo:false,
+                repeat:0
+            }   
         );
         //#endregion
     }
@@ -751,6 +759,17 @@ class Stage1_1 extends Phaser.Scene
         }
     }
 
+    spawnDoor()
+    {
+        var destrObj = this.desObjs.getChildren();
+        var rand = Phaser.Math.Between(0, destrObj.length);
+        var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
+        console.log("Door position:", conversion[0]-3, conversion[1]- 1);
+        this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
+        this.exit.anims.play('exitDoorAnim');
+        
+    }
+
     getTime()
     { //Calculate Current Time
         let d = new Date();
@@ -770,6 +789,11 @@ class Stage1_1 extends Phaser.Scene
                 _e.destroy();
             }
         });
+
+        if (desObjs[this.exit.randomEnemy].killed)
+        {
+            this.exit.resetSpawn();
+        }
 
         desObjs.forEach(_e => {
             if(_e.killed)
