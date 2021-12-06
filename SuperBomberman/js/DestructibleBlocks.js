@@ -14,6 +14,7 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         this.scoreEarned = _scoreEarned;
 
         this.killed = false;
+        this.destroyed = false;
 
         this.isAnimated = _isAnimated;
 
@@ -32,13 +33,19 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
+        if(this.destroyed && !this.anims.isPlaying)
+        {
+            this.killed = true;
+        }
+
         super.preUpdate(time, delta);
+
     }
 
     kill()
     {
         console.log("Destroyed");
         this.anims.play("desObjAnimEx");
-        this.killed = true;
+        this.destroyed = true;
     }
 }
