@@ -18,6 +18,27 @@ class Denkyun extends Enemies
             this.dirChanged = false;
         }
 
+        if(this.body.speed < this.speed * 15)
+        {
+            console.log("menos vel");
+            if(this.dir == Directions.UP)
+            {
+                this.body.velocity.y = this.speed * -15;
+            }
+            else if(this.dir == Directions.DOWN)
+            {
+                this.body.velocity.y = this.speed * 15;
+            }
+            else if(this.dir == Directions.RIGHT)
+            {
+                this.body.velocity.x = this.speed * 15;
+            }
+            else if(this.dir == Directions.LEFT)
+            {
+                this.body.velocity.x = this.speed * -15;
+            }
+        }
+
         if(this.health <= 0)
         {
             console.log(EnemyTypes.DENKYUN + " killed");

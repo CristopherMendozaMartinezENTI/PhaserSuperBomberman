@@ -42,9 +42,11 @@ class Enemies extends Phaser.GameObjects.Sprite
         {
             if(_enemy.dir == Directions.UP)
             {
-                //Current enemy
-                _enemy.body.velocity.y = _enemy.speed * 15;
-                _enemy.dir = Directions.DOWN;
+                if(_enemy.body.position.y > _collidedEnemy.body.position.y)//Current enemy
+                {
+                    _enemy.body.velocity.y = _enemy.speed * 15;
+                    _enemy.dir = Directions.DOWN;
+                }
 
                 //Collided enemy
                 if(_collidedEnemy.dir == Directions.DOWN)
@@ -55,10 +57,12 @@ class Enemies extends Phaser.GameObjects.Sprite
             }
             else if(_enemy.dir == Directions.DOWN)
             {
-                //Current enemy
-                _enemy.body.velocity.y = _enemy.speed * -15;
-                _enemy.dir = Directions.UP;
-                
+                if(_enemy.body.position.y < _collidedEnemy.body.position.y)//Current enemy
+                {
+                    _enemy.body.velocity.y = _enemy.speed * -15;
+                    _enemy.dir = Directions.UP;
+                }
+
                 //Collided enemy
                 if(_collidedEnemy.dir == Directions.UP)
                 {
@@ -68,10 +72,12 @@ class Enemies extends Phaser.GameObjects.Sprite
             }
             else if(_enemy.dir == Directions.RIGHT)
             {
-                //Current enemy
-                _enemy.body.velocity.x = _enemy.speed * -15;
-                _enemy.dir = Directions.LEFT;
-                
+                if(_enemy.body.position.x < _collidedEnemy.body.position.x)//Current enemy
+                {
+                    _enemy.body.velocity.x = _enemy.speed * -15;
+                    _enemy.dir = Directions.LEFT;
+                }
+
                 //Collided enemy
                 
                 if(_collidedEnemy.dir == Directions.LEFT)
@@ -82,10 +88,12 @@ class Enemies extends Phaser.GameObjects.Sprite
             }
             else if(_enemy.dir == Directions.LEFT)
             {
-                //Current enemy
-                _enemy.body.velocity.x = _enemy.speed * 15;
-                _enemy.dir = Directions.RIGHT;
-                
+                if(_enemy.body.position.x > _collidedEnemy.body.position.x)//Current enemy
+                {
+                    _enemy.body.velocity.x = _enemy.speed * 15;
+                    _enemy.dir = Directions.RIGHT;
+                }
+
                 //Collided enemy
                 if(_collidedEnemy.dir == Directions.RIGHT)
                 {
