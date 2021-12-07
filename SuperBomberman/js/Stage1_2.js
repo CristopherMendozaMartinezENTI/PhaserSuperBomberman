@@ -932,6 +932,9 @@ class Stage1_2 extends Phaser.Scene
         //Update last time
         this.start = this.getTime();
 
+        if (this.exit.changeScene == true)
+            this.scene.start('Stage1_1');
+
         this.gameOver();
     }
 }
