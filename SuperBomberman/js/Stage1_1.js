@@ -171,7 +171,10 @@ class Stage1_1 extends Phaser.Scene
     gameOver()
     {
         if (this.player.lives <= 0)
-            console.log("GAME OVER");
+            {
+                console.log("GAME OVER");
+                this.scene.start('Stage1_1');
+            }
     }
 
     createAnimations()
@@ -870,6 +873,9 @@ class Stage1_1 extends Phaser.Scene
 
         //Update last time
         this.start = this.getTime();
+
+        if (this.exit.changeScene == true)
+            this.scene.start('Stage1_2');
 
         this.gameOver();
     }

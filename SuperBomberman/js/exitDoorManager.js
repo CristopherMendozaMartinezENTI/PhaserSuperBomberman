@@ -7,6 +7,7 @@ class exitDoorManager extends Phaser.GameObjects.Sprite
         _scene.physics.add.existing(this);
         this.setOrigin(.5);
 
+        this.changeScene = false;
 
         this.posX = _positionX;
 
@@ -23,6 +24,7 @@ class exitDoorManager extends Phaser.GameObjects.Sprite
     goToNextLevel()
     {
         console.log("Les goooo nuevo nivel pium pium");
+        this.changeScene = true;
     }
 
     resetSpawn()
