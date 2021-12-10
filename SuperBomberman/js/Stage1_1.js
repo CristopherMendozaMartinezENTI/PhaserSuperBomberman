@@ -12,6 +12,7 @@ class Stage1_1 extends Phaser.Scene
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('playerDeath', 'Player_White_Dead_Anim.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
@@ -408,6 +409,18 @@ class Stage1_1 extends Phaser.Scene
                 key:'enemymExAnim',
                 frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
                 frameRate:15,
+                yoyo:false,
+                repeat:0
+            }   
+        );
+        //#endregion
+
+        //#region Player death
+        this.anims.create(
+            {
+                key:'playerDeathAnim',
+                frames:this.anims.generateFrameNumbers('playerDeath', {start:0, end:5}),
+                frameRate:1,
                 yoyo:false,
                 repeat:0
             }   

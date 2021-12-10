@@ -14,6 +14,8 @@ class Player extends Phaser.GameObjects.Sprite
         this.fireDistance = 1;
         this.lives = 5;
 
+        this.killed = false;
+        
         this.isInvulnerable = false;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
         this.bombNum = 1;
@@ -37,6 +39,19 @@ class Player extends Phaser.GameObjects.Sprite
         this.dir = Directions.DOWN;
     }
 
+    preUpdate(time,delta)
+    {
+        if(this.killed && !this.anims.isPlaying)
+        {
+            if (this.lives <= 0)
+                this.lives = 0;
+            this.isInvulnerable = true;
+            this.resetPos();
+            this.killed = false;
+        }
+        super.preUpdate(time, delta);
+    }
+
     update(_direction, _delta)
     {        
         if(this.isInvulnerable)
@@ -52,7 +67,7 @@ class Player extends Phaser.GameObjects.Sprite
         if(_direction == Directions.NONE)
         {
             //Parar animacion
-            this.stop();
+            this.anims.stop();
 
             //Set Frame de animacion con respecto a la ultima direccion
             if(this.dir == Directions.UP)
@@ -95,7 +110,7 @@ class Player extends Phaser.GameObjects.Sprite
             }
 
             //Activar animacion respecto la direccion
-            this.play(_direction, true);
+            this.anims.play(_direction, true);
         }
 
         //Set direccion
@@ -107,10 +122,12 @@ class Player extends Phaser.GameObjects.Sprite
         this.bombNum = _value;
     }   
 
-    resetPos(_hero)
+    resetPos()
     {
-        _hero.x = _hero.initPosX;
-        _hero.y = _hero.initPosY;
+        this.x = this.initPosX;
+        this.y = this.initPosY;
+        this.anims.play(Directions.DOWN, true);
+        this.setFrame(4);
     }
    
     hit(_hero)
@@ -118,11 +135,13 @@ class Player extends Phaser.GameObjects.Sprite
         if (!_hero.isInvulnerable)
         {
             _hero.lives -= 1;
-            //console.log(_hero.lives);
-            if (_hero.lives <= 0)
+            _hero.killed = true;
+            _hero.anims.play('playerDeathAnim');
+            console.log("animacion: ", _hero.anims.isPlaying);
+            /*if (_hero.lives <= 0)
                 _hero.lives = 0;
             _hero.isInvulnerable = true;
-            _hero.resetPos(_hero);
+            _hero.resetPos(_hero);*/
         }
     }
 
