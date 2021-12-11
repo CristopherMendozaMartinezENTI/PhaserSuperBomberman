@@ -262,7 +262,7 @@ class Stage1_1 extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
-                repeat:0
+                repeat:-1
             }   
         );
         //#endregion
