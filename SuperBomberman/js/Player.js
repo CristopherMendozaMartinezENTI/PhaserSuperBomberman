@@ -11,8 +11,10 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setSize(12, 12);
         this.body.setOffset(12/4, 12 / 1.1);
 
-        this.fireDistance = 1;
+        this.fireDistance = 3;
         this.lives = 5;
+        this.playerSpeed = gamePrefs.speedPlayer;
+        this.kickActive = true;
 
         this.isInvulnerable = false;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
@@ -35,6 +37,11 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
+    }
+
+    preUpdate(time,delta)
+    {
+        super.preUpdate(time, delta);
     }
 
     update(_direction, _delta)
@@ -74,23 +81,23 @@ class Player extends Phaser.GameObjects.Sprite
             //Set velocidad rigidbody
             if (_direction == Directions.UP)
             {
-                this.body.velocity.y = gamePrefs.speedPlayer * -1;
+                this.body.velocity.y = this.playerSpeed * -1;
                 this.body.velocity.x = 0;
                 
             }
             else if (_direction == Directions.DOWN)
             {
-                this.body.velocity.y = gamePrefs.speedPlayer;
+                this.body.velocity.y = this.playerSpeed;
                 this.body.velocity.x = 0;
             }
             else if (_direction == Directions.LEFT)
             {
-                this.body.velocity.x = gamePrefs.speedPlayer * -1;
+                this.body.velocity.x = this.playerSpeed * -1;
                 this.body.velocity.y = 0;
             }
             else if (_direction == Directions.RIGHT)
             {
-                this.body.velocity.x = gamePrefs.speedPlayer;
+                this.body.velocity.x = this.playerSpeed;
                 this.body.velocity.y = 0;
             }
 

@@ -1,13 +1,18 @@
 class bombPrefab extends Phaser.GameObjects.Sprite
 {
-    constructor(_scene, _positionX, _positionY, _sprite)
+    constructor(_scene, _positionX, _positionY, _sprite, _immovable)
     { //crea la escena
         super(_scene,_positionX, _positionY, _sprite);
         _scene.add.existing(this);
 
         this.setOrigin(0.5);
 
+        this.playerKick = _immovable;
         this.anims.play('bombAnim');
+        
+        _scene.physics.add.collider(this, _scene.blocks, this.collided);
+        _scene.physics.add.collider(this, _scene.desObjs, this.collided);
+        _scene.physics.add.collider(this, _scene.enemies, this.collided);
 
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.explode, null, this);
@@ -24,6 +29,12 @@ class bombPrefab extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
+        if(this.body.immovable && this.playerKick)
+        {
+            this.body.immovable = false;
+            _bomb.body.setVelocity(0,0);
+        }
+
         if(this.liveTime < 0 && !this.exploded)
         {
             console.log("Explota");
@@ -38,7 +49,13 @@ class bombPrefab extends Phaser.GameObjects.Sprite
     explode(_bomb)
     {
         _bomb.exploded = true;
+        _bomb.explosionX = _bomb.x;
         _bomb.x = -100;
         _bomb.active = false;
+    }
+
+    collided(_bomb)
+    {
+        _bomb.body.immovable = true;
     }
 }

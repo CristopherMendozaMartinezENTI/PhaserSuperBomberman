@@ -7,6 +7,7 @@ class Stage1_1 extends Phaser.Scene
             key:"Stage1_1"
         });
     }
+
     preload()
     { //carga los assets en memoria
         //var rutaImg = 'assets/Sprites/';
@@ -81,7 +82,7 @@ class Stage1_1 extends Phaser.Scene
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
-        
+
         var tmpPos = this.convertTilePositionToWorld(2, 1);
         
         //Creamos el player
@@ -89,8 +90,14 @@ class Stage1_1 extends Phaser.Scene
         
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
-        
+
         //Creamos los bloques destruibles 
+        this.desTileMap = new Array(15);
+
+        for (let index = 0; index < this.desTileMap.length; index++) {
+            this.desTileMap[index] = new Array(13);
+        }
+
         this.spawnDesObj();
 
         this.spawnDoor();
@@ -261,7 +268,7 @@ class Stage1_1 extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
                 frameRate:10,
                 yoyo:false,
-                repeat:0
+                repeat:-1
             }   
         );
         //#endregion
@@ -450,7 +457,7 @@ class Stage1_1 extends Phaser.Scene
 
             if(!bomb)
             {//Generate new bomb
-                bomb = new bombPrefab(this, posX, posY, 'bomb');
+                bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive);
     
                 this.bombs.add(bomb);
             }
@@ -465,14 +472,15 @@ class Stage1_1 extends Phaser.Scene
     
             bomb.body.setVelocity(0,0);
             
-                    bomb.body.immovable = true;
-                    bomb.body.setVelocity(0,0);
-                    this.physics.add.collider(this.player, bomb);
+            bomb.body.immovable = !this.player.kickActive;
+            
+            this.physics.add.collider(this.player, bomb);
         }
     }
 
     spawnExplosion(_posX, _posY)
     {
+        console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
         var right = false;
         var left = false;
@@ -498,13 +506,16 @@ class Stage1_1 extends Phaser.Scene
                     explosion.body.reset(_posX, _posY);
                     explosion.anims.play(Explosion_Tiles.CENTRAL);
                 }
+
+                explosion.body.setSize(17,17);
             }
-            else if(index == this.player.fireDistance)
+            else if(index == this.player.fireDistance)//Ends
             {
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left) 
+                var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_left_end.getFirst(false);
-    
+
                     if(!explosion)
                     {
                         explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
@@ -518,16 +529,18 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
                     }
+                    explosion.body.setSize(17,17);
                 }//Left end
 
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right) 
+                tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_right_end.getFirst(false);
-    
+
                     if(!explosion)
                     {
                         explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
-    
+
                         this.explosion_right_end.add(explosion);
                     }
                     else
@@ -537,9 +550,11 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
                     }
+                    explosion.body.setSize(17,17);
                 }//Right end
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
+                tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
 
                     explosion = this.explosion_up_end.getFirst(false);
@@ -557,9 +572,11 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
                     }
+                    explosion.body.setSize(17,17);
                 }//Up end
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
+                tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     
                     explosion = this.explosion_down_end.getFirst(false);
@@ -577,11 +594,13 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
                     }
+                    explosion.body.setSize(17,17);
                 }//Down end
             }
             else
             {
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
+                var tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -598,11 +617,13 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL);
                     }
+                    explosion.body.setSize(17,17);
                 }//Vertical Up
                 else
                     up = true;
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
+                tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
@@ -619,11 +640,13 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL);
                     }
+                    explosion.body.setSize(17,17);
                 }//Vertical Down
                 else
                     down = true;
                     
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left)
+                tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -640,11 +663,13 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL);
                     }
+                    explosion.setSize(17,17);
                 }//Horizontal Left
                 else
                     left = true;
                 
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right)
+                tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
@@ -661,6 +686,7 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL);
                     }
+                    explosion.setSize(17,17);
                 }//Horizontal Right
                 else
                     right = true;
@@ -753,13 +779,24 @@ class Stage1_1 extends Phaser.Scene
     spawnDesObj()
     {
         for (let i = 0; i < 32; i++) {
-            var tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+            var randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
+            var tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
             while(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
             {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+                randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
+                tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
             }
             this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
+
+            randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
+            console.log(randomPos);
+            if(randomPos[0] == 15)
+            {
+                randomPos[0]--;
+            }
+            this.desTileMap[randomPos[0]][randomPos[1]] = 1;
         }
+        console.log(this.desTileMap);
     }
 
     spawnDoor()
@@ -770,7 +807,6 @@ class Stage1_1 extends Phaser.Scene
         console.log("Door position:", conversion[0]-3, conversion[1]- 1);
         this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
         this.exit.anims.play('exitDoorAnim');
-        
     }
 
     getTime()
@@ -801,6 +837,10 @@ class Stage1_1 extends Phaser.Scene
         desObjs.forEach(_e => {
             if(_e.killed)
             {
+                console.log(this.desTileMap);
+                var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                console.log(tilePos);
+                this.desTileMap[tilePos[0]][tilePos[1]] = null;
                 this.scoreUp(_e.scoreEarned);
                 _e.destroy();
             }

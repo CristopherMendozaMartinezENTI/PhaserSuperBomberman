@@ -19,12 +19,13 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         this.isAnimated = _isAnimated;
 
         this.playerCol = _scene.physics.add.collider(this, _scene.player);
-        this.exCollDown = _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
-        this.exCollUp = _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
-        this.exCollLeft = _scene.physics.add.overlap(this, _scene.explosion_left_end, this.kill, null, this);
-        this.exCollRight = _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
-        this.exCollHorizontal = _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
-        this.exCollVertical = _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
+        this.exCollCentral = _scene.physics.add.collider(this, _scene.explosion_central, this.kill, null, this);
+        this.exCollDown = _scene.physics.add.collider(this, _scene.explosion_down_end, this.kill, null, this);
+        this.exCollUp = _scene.physics.add.collider(this, _scene.explosion_up_end, this.kill, null, this);
+        this.exCollLeft = _scene.physics.add.collider(this, _scene.explosion_left_end, this.kill, null, this);
+        this.exCollRight = _scene.physics.add.collider(this, _scene.explosion_right_end, this.kill, null, this);
+        this.exCollHorizontal = _scene.physics.add.collider(this, _scene.explosion_horizontal, this.kill, null, this);
+        this.exCollVertical = _scene.physics.add.collider(this, _scene.explosion_vertical, this.kill, null, this);
         
         if(this.isAnimated) this.anims.play("desObjAnim");
 
@@ -42,10 +43,16 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         super.preUpdate(time, delta);
     }
 
-    kill()
+    kill(_obj, _explosion)
     {
-        console.log("Destroyed");
-        this.anims.play("desObjAnimEx");
-        this.destroyed = true;
+        var distance = Math.sqrt( Math.pow(_obj.x - _explosion.x, 2) + Math.pow(_obj.y - _explosion.y, 2));
+        console.log(distance);
+
+        if(distance <= gamePrefs.TILE_SIZE)
+        {
+            console.log("Destroyed");
+            _obj.anims.play("desObjAnimEx");
+            _obj.destroyed = true;
+        }
     }
 }
