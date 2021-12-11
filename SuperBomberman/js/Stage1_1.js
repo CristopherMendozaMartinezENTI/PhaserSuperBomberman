@@ -542,7 +542,6 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
                     }
-                    explosion.body.setSize(17,17);
                 }//Left end
 
                 tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
@@ -563,7 +562,6 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
                         explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
                     }
-                    explosion.body.setSize(17,17);
                 }//Right end
 
                 tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
@@ -585,7 +583,6 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
                     }
-                    explosion.body.setSize(17,17);
                 }//Up end
 
                 tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
@@ -607,7 +604,6 @@ class Stage1_1 extends Phaser.Scene
                         explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
                         explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
                     }
-                    explosion.body.setSize(17,17);
                 }//Down end
             }
             else
