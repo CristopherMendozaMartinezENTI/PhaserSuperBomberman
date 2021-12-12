@@ -48,6 +48,6 @@ class PowerUps extends Phaser.GameObjects.Sprite
 
         _powerUp.active = false;
         _powerUp.x = gameOptions.gameWidth + 100;
-        this.used = true;
+        _powerUp.used = true;
     }
 }

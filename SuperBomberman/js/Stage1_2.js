@@ -87,12 +87,12 @@ class Stage1_2 extends Phaser.Scene
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
         
+        this.createPools();
+        this.createAnimations();
+        
         var tmpPos = this.convertTilePositionToWorld(2, 1);
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
-        
-        this.createPools();
-        this.createAnimations();
         
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
@@ -484,7 +484,7 @@ class Stage1_2 extends Phaser.Scene
 
         this.powerUps = this.physics.add.group();
 
-        this.bombs.maxSize = this.player.bombNum;
+        this.bombs.maxSize = 1;
 
         //#region Explosion Pool
         this.explosion_horizontal = this.physics.add.group();
@@ -928,6 +928,8 @@ class Stage1_2 extends Phaser.Scene
 
     spawnDesObj()
     {
+        var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
+
         var changed = false;
         for (let i = 0; i < 32; i++) 
         {
@@ -940,6 +942,7 @@ class Stage1_2 extends Phaser.Scene
                 var samePos = false;
                 randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
                 
+                //Destructible objects
                 if(this.desObjs.getLength() != 0)
                 {
                     var desObjs = this.desObjs.getChildren();
@@ -951,11 +954,19 @@ class Stage1_2 extends Phaser.Scene
                         }
                     });
                 }
+
                 if(samePos)
                 {
                     continue;
                 }
 
+                //Player pos
+                if(randomPos[0] - playerPos[0] < 2 && randomPos[1] - playerPos[1] < 2)
+                {
+                    continue;
+                }
+
+                //Indestructible objects
                 tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
 
                 if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) == null)
@@ -1043,6 +1054,8 @@ class Stage1_2 extends Phaser.Scene
                             {
                                 powerUp.active = true;
                                 powerUp.type = PowerUpTypes.FIRE_UP;
+
+                                powerUp.used = false;
                                 
                                 powerUp.body.reset(_e.x, _e.y);
                             }
@@ -1059,6 +1072,8 @@ class Stage1_2 extends Phaser.Scene
                             {
                                 powerUp.active = true;
                                 powerUp.type = PowerUpTypes.BOMB_UP;
+
+                                powerUp.used = false;
                                 
                                 powerUp.body.reset(_e.x, _e.y);
                             }
@@ -1080,13 +1095,17 @@ class Stage1_2 extends Phaser.Scene
             if(_e.used)
             {
                 this.itemGet.play();
-                _e.destroy();
+                _e.used = false;
             }
         });
     }
 
     update()
     { //actualiza assets
+        if(this.bombs.maxSize != this.player.bombNum)
+        {
+            this.bombs.maxSize = this.player.bombNum;
+        }
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
         this.playerLivesManager.setLives(this.player.lives);

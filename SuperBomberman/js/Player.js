@@ -20,7 +20,7 @@ class Player extends Phaser.GameObjects.Sprite
         
         this.isInvulnerable = true;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
-        this.bombNum = 2;
+        this.bombNum = 1;
 
         this.depth = 2;
 
@@ -34,6 +34,7 @@ class Player extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_right_end, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.hit, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.hit, null, this);
+
         _scene.physics.add.overlap(this, _scene.enemies, this.hit, null, this);
 
 
