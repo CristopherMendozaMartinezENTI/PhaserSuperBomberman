@@ -7,15 +7,17 @@ class Stage1_2 extends Phaser.Scene
             key:"Stage1_2"
         });
     }
+
     preload()
     { //carga los assets en memoria
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('playerDeath', 'Player_White_Dead_Anim.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
-        this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
@@ -25,13 +27,13 @@ class Stage1_2 extends Phaser.Scene
         this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16});
 
         this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
-        this.load.spritesheet('fireUp', 'PowerUp_FireUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_2','Stage1_2.json');
+        this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -59,7 +61,6 @@ class Stage1_2 extends Phaser.Scene
         return returnPos;
     }
 
-
     create()
     { //carga los assets en pantalla desde memoria
         this.start = this.getTime();
@@ -68,7 +69,7 @@ class Stage1_2 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_2');
+        this.map = this.add.tilemap('Stage1_1');
         //Cargo los Tilesets
         this.map.addTilesetImage('Lvl1_Tile');
         //Pintamos las capas/layers
@@ -77,7 +78,6 @@ class Stage1_2 extends Phaser.Scene
         this.blocks.debug = true;
         
         var tmpPos = this.convertTilePositionToWorld(2, 1);
-        
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
@@ -86,15 +86,21 @@ class Stage1_2 extends Phaser.Scene
         
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
-        //this.des1.anims.play("desObjAnim");
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
+
         
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
 
-        
+        //Creamos los bloques destruibles 
+        this.desTileMap = new Array(15);
+
+        for (let index = 0; index < this.desTileMap.length; index++) {
+            this.desTileMap[index] = new Array(13);
+        }
+
         this.spawnDesObj();
 
         this.spawnDoor();
@@ -102,13 +108,11 @@ class Stage1_2 extends Phaser.Scene
         //Creamos Enemigos
         this.spawnEnemies();
 
-
-        //this.enemies.add(this.puropen);
-
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
         
+        console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
 
         //Inputs
@@ -123,7 +127,7 @@ class Stage1_2 extends Phaser.Scene
 
         //Music
         this.loadSounds();
-        
+
         this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
@@ -179,7 +183,10 @@ class Stage1_2 extends Phaser.Scene
     gameOver()
     {
         if (this.player.lives <= 0)
-            console.log("GAME OVER");
+            {
+                console.log("GAME OVER");
+                this.scene.start('Stage1_1');
+            }
     }
 
     createAnimations()
@@ -259,7 +266,7 @@ class Stage1_2 extends Phaser.Scene
         );
         //#endregion
 
-        //#region DesObj1
+        //#region DestructibleBlock
         this.anims.create(
             {
                 key:'desObjAnim',
@@ -271,11 +278,11 @@ class Stage1_2 extends Phaser.Scene
         );
         //#endregion
         
-        //#region DesObj1 Explosion
+        //#region DestructibleBlock Explosion
         this.anims.create(
             {
                 key:'desObjAnimEx',
-                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:7}),
+                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
                 frameRate:10,
                 yoyo:false,
                 repeat:0
@@ -407,8 +414,8 @@ class Stage1_2 extends Phaser.Scene
         );
         //#endregion
 
-         //#region Enemy Explosion
-         this.anims.create(
+        //#region Enemy Explosion
+        this.anims.create(
             {
                 key:'enemymExAnim',
                 frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
@@ -418,6 +425,361 @@ class Stage1_2 extends Phaser.Scene
             }   
         );
         //#endregion
+
+        //#region Player death
+        this.anims.create(
+            {
+                key:'playerDeathAnim',
+                frames:this.anims.generateFrameNumbers('playerDeath', {start:0, end:5}),
+                frameRate:1,
+                yoyo:false,
+                repeat:0
+            }   
+        );
+        //#endregion
+    
+        //#region PowerUps
+        this.anims.create(
+            {
+                key:PowerUpTypes.BOMB_UP,
+                frames:this.anims.generateFrameNumbers('bombUp', {start:0, end:1}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+
+        this.anims.create(
+            {
+                key:PowerUpTypes.SPEED_UP,
+                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+    }
+
+    createPools()
+    {
+        this.bombs = this.physics.add.group();
+        this.enemies = this.add.group();
+        this.desObjs = this.add.group();
+
+        this.powerUps = this.physics.add.group();
+
+        this.bombs.maxSize = this.player.bombNum;
+
+        //#region Explosion Pool
+        this.explosion_horizontal = this.physics.add.group();
+        this.explosion_vertical = this.physics.add.group();
+        this.explosion_left_end = this.physics.add.group();
+        this.explosion_right_end = this.physics.add.group();
+        this.explosion_up_end = this.physics.add.group();
+        this.explosion_down_end = this.physics.add.group();
+        this.explosion_central = this.physics.add.group();
+        //#endregion
+    }
+
+    spawnBomb()
+    {
+        this.placeBomb.play();
+
+        if(this.bombs.getTotalFree())
+        {
+            var bomb = this.bombs.getFirst(false);
+    
+            var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
+            pos = this.convertTilePositionToWorld(pos[0] + 1, pos[1]);
+
+            var posX = pos[0];
+            var posY = pos[1];
+
+            if(!bomb)
+            {//Generate new bomb
+                bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive);
+
+                this.bombs.add(bomb);
+            }
+            else
+            {//Reset bomb
+                bomb.active = true;
+                bomb.explosionX = posX;
+                
+                bomb.body.reset(posX, posY);
+                bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+            }
+    
+            bomb.body.setVelocity(0,0);
+            
+            console.log(!this.player.kickActive);
+            bomb.body.immovable = true;
+            
+            this.physics.add.collider(this.player, bomb);
+        }
+    }
+
+    spawnExplosion(_posX, _posY)
+    {
+        console.log(this.convertWorldPositionToTile(_posX, _posY));
+        this.bombExplodes.play();
+        var right = false;
+        var left = false;
+        var up = false;
+        var down = false;
+        
+        for (let index = 0; index <= this.player.fireDistance; index++) {
+            var explosion;
+            if(index == 0)//Central
+            {
+                explosion = this.explosion_central.getFirst(false);
+
+                if(!explosion)
+                {
+                    explosion = new ExplosionPrefab(this, _posX, _posY, 'explosion', Explosion_Tiles.CENTRAL);
+
+                    this.explosion_central.add(explosion);
+                }
+                else
+                {
+                    explosion.active = true;
+
+                    explosion.body.reset(_posX, _posY);
+                    explosion.anims.play(Explosion_Tiles.CENTRAL);
+                }
+
+                explosion.body.setSize(17,17);
+            }
+            else if(index == this.player.fireDistance)//Ends
+            {
+                var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    explosion = this.explosion_left_end.getFirst(false);
+
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
+    
+                        this.explosion_left_end.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
+                    }
+                }//Left end
+
+                tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    explosion = this.explosion_right_end.getFirst(false);
+
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
+
+                        this.explosion_right_end.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
+                    }
+                }//Right end
+
+                tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    explosion = this.explosion_up_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
+    
+                        this.explosion_up_end.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
+                    }
+                }//Up end
+
+                tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    
+                    explosion = this.explosion_down_end.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
+    
+                        this.explosion_down_end.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
+                    }
+                }//Down end
+            }
+            else
+            {
+                var tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    explosion = this.explosion_vertical.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
+    
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL);
+                    }
+                    explosion.body.setSize(17,17);
+                }//Vertical Up
+                else
+                    up = true;
+
+                tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                {
+                    explosion = this.explosion_vertical.getFirst(false);
+
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
+
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+
+                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                        explosion.anims.play(Explosion_Tiles.VERTICAL);
+                    }
+                    explosion.body.setSize(17,17);
+                }//Vertical Down
+                else
+                    down = true;
+                    
+                tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                {
+                    explosion = this.explosion_vertical.getFirst(false);
+    
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+    
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+    
+                        explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                    }
+                    explosion.setSize(17,17);
+                }//Horizontal Left
+                else
+                    left = true;
+                
+                tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                {
+                    explosion = this.explosion_vertical.getFirst(false);
+
+                    if(!explosion)
+                    {
+                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
+
+                        this.explosion_vertical.add(explosion);
+                    }
+                    else
+                    {
+                        explosion.active = true;
+
+                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
+                    }
+                    explosion.setSize(17,17);
+                }//Horizontal Right
+                else
+                    right = true;
+                
+            }
+        }
+    }
+
+    bombExploded()
+    {
+        var bombs = this.bombs.getChildren();
+
+        bombs.forEach(bomb => {
+            if(bomb.exploded)
+            {
+                this.spawnExplosion(bomb.explosionX, bomb.y);
+                bomb.exploded = false;
+            }
+        });
     }
 
     spawnEnemies()
@@ -549,296 +911,70 @@ class Stage1_2 extends Phaser.Scene
         }
     }
 
-    createPools()
-    {
-        this.bombs = this.physics.add.group();
-        this.enemies = this.add.group();
-        this.desObjs = this.add.group();
-
-        this.powerUps = this.physics.add.group();
-
-        this.bombs.maxSize = 1;
-
-        //#region Explosion Pool
-        this.explosion_horizontal = this.physics.add.group();
-        this.explosion_vertical = this.physics.add.group();
-        this.explosion_left_end = this.physics.add.group();
-        this.explosion_right_end = this.physics.add.group();
-        this.explosion_up_end = this.physics.add.group();
-        this.explosion_down_end = this.physics.add.group();
-        this.explosion_central = this.physics.add.group();
-        //#endregion
-    }
-
-    spawnBomb()
-    {
-        this.placeBomb.play();
-
-        if(this.bombs.getTotalFree())
-        {
-            var bomb = this.bombs.getFirst(false);
-    
-            var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
-            pos = this.convertTilePositionToWorld(pos[0], pos[1]);
-
-            var posX = pos[0];
-            var posY = pos[1];
-
-            if(!bomb)
-            {//Generate new bomb
-                bomb = new bombPrefab(this, posX, posY, 'bomb');
-    
-                this.bombs.add(bomb);
-            }
-            else
-            {//Reset bomb
-                bomb.active = true;
-                bomb.explosionX = posX;
-                
-                bomb.body.reset(posX, posY);
-                bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
-            }
-    
-            bomb.body.setVelocity(0,0);
-            
-                    bomb.body.immovable = true;
-                    bomb.body.setVelocity(0,0);
-                    this.physics.add.collider(this.player, bomb);
-        }
-    }
-
-    spawnExplosion(_posX, _posY)
-    {
-        this.bombExplodes.play();
-        var right = false;
-        var left = false;
-        var up = false;
-        var down = false;
-        
-        for (let index = 0; index <= this.player.fireDistance; index++) {
-            var explosion;
-            if(index == 0)//Central
-            {
-                explosion = this.explosion_central.getFirst(false);
-
-                if(!explosion)
-                {
-                    explosion = new ExplosionPrefab(this, _posX, _posY, 'explosion', Explosion_Tiles.CENTRAL);
-
-                    this.explosion_central.add(explosion);
-                }
-                else
-                {
-                    explosion.active = true;
-
-                    explosion.body.reset(_posX, _posY);
-                    explosion.anims.play(Explosion_Tiles.CENTRAL);
-                }
-            }
-            else if(index == this.player.fireDistance)
-            {
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left) 
-                {
-                    explosion = this.explosion_left_end.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_LEFT);
-    
-                        this.explosion_left_end.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX- index * gamePrefs.TILE_SIZE, _posY);
-                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_LEFT);
-                    }
-                }//Left end
-
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right) 
-                {
-                    explosion = this.explosion_right_end.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL_END_RIGHT);
-    
-                        this.explosion_right_end.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
-                        explosion.anims.play(Explosion_Tiles.HORIZONTAL_END_RIGHT);
-                    }
-                }//Right end
-
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
-                {
-
-                    explosion = this.explosion_up_end.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_UP);
-    
-                        this.explosion_up_end.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX, _posY- index * gamePrefs.TILE_SIZE);
-                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_UP);
-                    }
-                }//Up end
-
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
-                {
-                    
-                    explosion = this.explosion_down_end.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL_END_DOWN);
-    
-                        this.explosion_down_end.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
-                        explosion.anims.play(Explosion_Tiles.VERTICAL_END_DOWN);
-                    }
-                }//Down end
-            }
-            else
-            {
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up) 
-                {
-                    explosion = this.explosion_vertical.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX, _posY - index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
-    
-                        this.explosion_vertical.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX, _posY - index * gamePrefs.TILE_SIZE);
-                        explosion.anims.play(Explosion_Tiles.VERTICAL);
-                    }
-                }//Vertical Up
-                else
-                    up = true;
-
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down) 
-                {
-                    explosion = this.explosion_vertical.getFirst(false);
-
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX, _posY + index * gamePrefs.TILE_SIZE, 'explosion', Explosion_Tiles.VERTICAL);
-
-                        this.explosion_vertical.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-
-                        explosion.body.reset(_posX, _posY + index * gamePrefs.TILE_SIZE);
-                        explosion.anims.play(Explosion_Tiles.VERTICAL);
-                    }
-                }//Vertical Down
-                else
-                    down = true;
-                    
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left)
-                {
-                    explosion = this.explosion_vertical.getFirst(false);
-    
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX - index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
-    
-                        this.explosion_vertical.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-    
-                        explosion.body.reset(_posX - index * gamePrefs.TILE_SIZE, _posY);
-                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
-                    }
-                }//Horizontal Left
-                else
-                    left = true;
-                
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right)
-                {
-                    explosion = this.explosion_vertical.getFirst(false);
-
-                    if(!explosion)
-                    {
-                        explosion = new ExplosionPrefab(this, _posX + index * gamePrefs.TILE_SIZE, _posY, 'explosion', Explosion_Tiles.HORIZONTAL);
-
-                        this.explosion_vertical.add(explosion);
-                    }
-                    else
-                    {
-                        explosion.active = true;
-
-                        explosion.body.reset(_posX + index * gamePrefs.TILE_SIZE, _posY);
-                        explosion.anims.play(Explosion_Tiles.HORIZONTAL);
-                    }
-                }//Horizontal Right
-                else
-                    right = true;
-                
-            }
-        }
-    }
-
-    bombExploded()
-    {
-        var bombs = this.bombs.getChildren();
-
-        bombs.forEach(bomb => {
-            if(bomb.exploded)
-            {
-                this.spawnExplosion(bomb.explosionX, bomb.y);
-                bomb.exploded = false;
-            }
-        });
-    }
-
     spawnDesObj()
     {
-        for (let i = 0; i < 32; i++) {
-            var tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-            while(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+        var changed = false;
+        for (let i = 0; i < 32; i++) 
+        {
+            changed = false;
+
+            var randomPos;
+            var tmpPos;
+            while(!changed)
             {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+                var samePos = false;
+                randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
+                
+                if(this.desObjs.getLength() != 0)
+                {
+                    var desObjs = this.desObjs.getChildren();
+                    desObjs.forEach(obj => {
+                        var dPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if(dPos == randomPos)
+                        {
+                            samePos = true;
+                        }
+                    });
+                }
+                if(samePos)
+                {
+                    continue;
+                }
+
+                tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
+
+                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) == null)
+                {
+                    changed = true;
+                }
             }
+
             this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
+
+            randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
+            console.log(randomPos);
+            if(randomPos[0] == 15)
+            {
+                randomPos[0]--;
+            }
+            this.desTileMap[randomPos[0]][randomPos[1]] = 1;
         }
+        console.log(this.desTileMap);
     }
 
     spawnDoor()
     {
         var destrObj = this.desObjs.getChildren();
-        var rand = Phaser.Math.Between(0, destrObj.length);
+        var rand = Phaser.Math.Between(0, destrObj.length - 1);
         var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
+
+        console.log(destrObj[rand]);
+        destrObj[rand].anims.stop();
+        destrObj[rand].exitDoor = true;
+
         console.log("Door position:", conversion[0]-3, conversion[1]- 1);
         this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
         this.exit.anims.play('exitDoorAnim');
-        
     }
 
     getTime()
@@ -847,7 +983,7 @@ class Stage1_2 extends Phaser.Scene
         return d.getTime();
     }
 
-    updateEnemies()
+    updateScore()
     {
         var enemies = this.enemies.getChildren();
 
@@ -861,34 +997,30 @@ class Stage1_2 extends Phaser.Scene
             }
         });
 
+
         desObjs.forEach(_e => {
             if(_e.killed)
             {
-                console.log(this.desTileMap);
-                var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                console.log(tilePos);
-                if(tilePos[0] == 15)
+                if(_e.exitDoor)
                 {
-                    tilePos[0]--;
+                    console.log("Exit spawned");
+                    this.exit.resetSpawn();
                 }
-                this.desTileMap[tilePos[0]][tilePos[1]] = null;
-                this.scoreUp(_e.scoreEarned);
-
-                if(_e.x != this.exit.x || _e.y != this.exit.y) // Not same wall than the exit door
+                else
                 {
                     var random = Phaser.Math.Between(0, 100);
-                    if(random >= 0 && random <= 100) // 20%
+                    if(random >= 0 && random <= gamePrefs.POWER_UP_SPAWN_RATE) // 20%
                     {
                         var powerUp = this.powerUps.getFirst(false);
     
                         random = Phaser.Math.Between(0,1);
                         random = Math.round(random);
-                        if(random == 0) // Fire Up
+                        if(random == 0) // Speed Up
                         {
                             console.log(powerUp);
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'speedUp', PowerUpTypes.SPEED_UP);
     
                                 this.powerUps.add(powerUp);
                             }
@@ -904,22 +1036,26 @@ class Stage1_2 extends Phaser.Scene
                         {
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);
-                                //powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
                                 
                                 this.powerUps.add(powerUp);
                             }
                             else
                             {
                                 powerUp.active = true;
-                                powerUp.type = PowerUpTypes.FIRE_UP;
-                                //powerUp.type = PowerUpTypes.BOMB_UP;
+                                powerUp.type = PowerUpTypes.BOMB_UP;
                                 
                                 powerUp.body.reset(_e.x, _e.y);
                             }
                         }
                     }
                 }
+
+               // console.log(this.desTileMap);
+                var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                //console.log(tilePos);
+                this.desTileMap[tilePos[0]][tilePos[1]] = null;
+                this.scoreUp(_e.scoreEarned);
 
                 _e.destroy();
             }
@@ -988,13 +1124,20 @@ class Stage1_2 extends Phaser.Scene
             this.shiftPressed = false;
         }
         this.bombExploded();
-        this.updateEnemies();
+        this.updateScore();
 
         //Update last time
         this.start = this.getTime();
 
         if (this.exit.changeScene == true)
-            this.scene.start('Stage1_1');
+        {
+            this.scene.start('Stage1_2');
+        }
+
+        if(this.bombs.maxSize != this.player.bombNum)
+        {
+            this.bombs.maxSize = this.player.bombNum;
+        }   
 
         this.gameOver();
     }

@@ -43,6 +43,11 @@ class Player extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
+        if(this.playerSpeed > gamePrefs.maxSpeedPlayer)
+        {
+            this.playerSpeed = gamePrefs.maxSpeedPlayer;
+        }
+
         if(this.killed && !this.anims.isPlaying)
         {
             if (this.lives <= 0)
@@ -55,7 +60,7 @@ class Player extends Phaser.GameObjects.Sprite
     }
 
     update(_direction, _delta)
-    {        
+    {
         if(this.isInvulnerable)
         {
             this.invulnerableTime -= _delta;

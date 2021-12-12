@@ -24,7 +24,7 @@ class PowerUps extends Phaser.GameObjects.Sprite
         }
         else if(_powerUp.type == PowerUpTypes.SPEED_UP)
         {
-            _player.playerSpeed += 1;
+            _player.playerSpeed *= 1.5;
         }
         else if(_powerUp.type == PowerUpTypes.KICK)
         {
