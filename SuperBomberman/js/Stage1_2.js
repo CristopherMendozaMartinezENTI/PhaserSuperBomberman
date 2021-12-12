@@ -123,6 +123,8 @@ class Stage1_2 extends Phaser.Scene
 
         //Music
         this.loadSounds();
+        
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
     loadSounds()
