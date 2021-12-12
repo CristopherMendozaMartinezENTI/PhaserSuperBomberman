@@ -41,6 +41,7 @@ var gamePrefs=
     speedPlayer:50,
     BOMB_EXPLOSION_TIME: 3000,
     INVULNERABLE_TIME: 3,
+    POWER_UP_SPAWN_RATE: 20
 }
 
 var gameOptions = 

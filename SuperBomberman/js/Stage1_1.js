@@ -881,7 +881,7 @@ class Stage1_1 extends Phaser.Scene
                 if(_e.x != this.exit.x || _e.y != this.exit.y) // Not same wall than the exit door
                 {
                     var random = Phaser.Math.Between(0, 100);
-                    if(random >= 0 && random <= 20) // 20%
+                    if(random >= 0 && random <= gamePrefs.POWER_UP_SPAWN_RATE) // 20%
                     {
                         var powerUp = this.powerUps.getFirst(false);
     
