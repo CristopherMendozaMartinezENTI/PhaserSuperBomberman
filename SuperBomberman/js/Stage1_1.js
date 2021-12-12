@@ -785,19 +785,26 @@ class Stage1_1 extends Phaser.Scene
 
     spawnEnemies()
     {
+        console.log("Spawn enemy");
         var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
-        var desObjs = this.desObjs.getChildren();
         var tmpPos;
 
         var changedPos = false;
+
+        console.log("Spawn enemy 1");
 
         for (let i = 0; i < 3; i++) 
         {
             changedPos = false;
 
+            console.log("Spawn enemy 2");
+
             while(!changedPos)
             {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+                console.log("Spawn enemy changed");
+
+                var random = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
+                tmpPos = this.convertTilePositionToWorld(random[0], random[1]);
 
                 //Indestructible blocks
                 if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
@@ -806,22 +813,15 @@ class Stage1_1 extends Phaser.Scene
                 }
 
                 var samePos = false;
-                //Destructible blocks
-                desObjs.forEach(_e => {
-                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
-                    if(desPos == tmpPos)
-                    {
-                       samePos = true;
-                    }
-                });
 
-                if(samePos)
+                //Destructible blocks
+                if(this.desTileMap[random[0]][random[1]] != null)
                 {
                     continue;
                 }
 
                 //Player pos
-                if(playerPos == tmpPos)
+                if(playerPos[0] - random[0] < 2 && playerPos[1] - random[1] < 2)
                 {
                     continue;
                 }
@@ -832,8 +832,7 @@ class Stage1_1 extends Phaser.Scene
                 {
                     var enemies = this.enemies.getChildren();
                     enemies.forEach(_e => {
-                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                        if(ePos == tmpPos)
+                        if(tmpPos[0] == _e.x && tmpPos[1] == _e.y)
                         {
                            samePos = true;
                         }
