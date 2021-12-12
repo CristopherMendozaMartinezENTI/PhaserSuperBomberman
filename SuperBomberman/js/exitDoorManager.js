@@ -14,6 +14,7 @@ class exitDoorManager extends Phaser.GameObjects.Sprite
         this.randomEnemy = _randEnemy;
         
         this.playerColl = _scene.physics.add.overlap(this, _scene.player, this.goToNextLevel, null, this);
+        if(this.changeScene) _scene.cameras.main.fadeOut(1000, 0, 0, 0)
     }
 
     preUpdate(time,delta)
