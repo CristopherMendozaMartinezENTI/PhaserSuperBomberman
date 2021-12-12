@@ -18,7 +18,7 @@ class Player extends Phaser.GameObjects.Sprite
 
         this.killed = false;
         
-        this.isInvulnerable = false;
+        this.isInvulnerable = true;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
         this.bombNum = 2;
 
@@ -143,14 +143,13 @@ class Player extends Phaser.GameObjects.Sprite
         {
             _hero.lives -= 1;
             _hero.killed = true;
-            _hero.anims.play('playerDeathAnim');
-            console.log("animacion: ", _hero.anims.isPlaying);
-            /*if (_hero.lives <= 0)
+           // _hero.anims.play('playerDeathAnim');
+            //console.log("animacion: ", _hero.anims.isPlaying);
+            if (_hero.lives <= 0)
                 _hero.lives = 0;
+
             _hero.isInvulnerable = true;
-            _hero.resetPos(_hero);*/
+            _hero.resetPos(_hero);
         }
     }
-
-    
 }

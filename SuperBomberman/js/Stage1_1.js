@@ -186,7 +186,7 @@ class Stage1_1 extends Phaser.Scene
         if (this.player.lives <= 0)
             {
                 console.log("GAME OVER");
-                this.scene.start('Stage1_1');
+                this.scene.restart();
             }
     }
 
@@ -1072,9 +1072,10 @@ class Stage1_1 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
+            this.music.stop();
             this.scene.start('Stage1_2', 
                             {Lives: this.player.lives, 
-                            Score: 200,
+                            Score: this.scoreValue,
                             BombNum: this.player.bombNum,
                             FireDistance: this.player.fireDistance,
                             Speed: this.player.playerSpeed});

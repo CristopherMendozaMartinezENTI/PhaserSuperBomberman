@@ -33,7 +33,7 @@ class Stage1_2 extends Phaser.Scene
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_1','Stage1_1.json');
+        this.load.tilemapTiledJSON('Stage1_2','Stage1_2.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -78,7 +78,7 @@ class Stage1_2 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_1');
+        this.map = this.add.tilemap('Stage1_2');
         //Cargo los Tilesets
         this.map.addTilesetImage('Lvl1_Tile');
         //Pintamos las capas/layers
@@ -121,13 +121,14 @@ class Stage1_2 extends Phaser.Scene
         this.createScore();
         
         //Actualizamos informacion respecto al nivel anterior
-        this.player.live = this.currentLives;
-        this.scoreUp(this.scoreValue);
+        this.player.lives = this.currentLives;
+        this.setAllScore();
         this.player.bombNum = this.currentbombNum;
         this.player.fireDistance = this.currentFireDistance;
         this.player.playerSpeed = this.currentSpeed;
 
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
+        this.playerLivesManager.setLives(this.player.lives);
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -1145,7 +1146,8 @@ class Stage1_2 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
-            this.scene.start('Stage1_2');
+            //this.music.stop();
+            //this.scene.start('Stage1_1');
         }
 
         if(this.bombs.maxSize != this.player.bombNum)
