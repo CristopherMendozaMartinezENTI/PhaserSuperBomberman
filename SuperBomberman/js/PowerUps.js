@@ -6,13 +6,14 @@ class PowerUps extends Phaser.GameObjects.Sprite
         _scene.add.existing(this);
 
         this.type = _type;
+        this.used = false;
 
         this.anims.play(this.type);
 
         _scene.physics.add.overlap(this, _scene.player, this.activate, null, this);
     }
 
-    activate(_powerUp, _player)
+    activate(_powerUp, _player, _scene)
     {
         if(_powerUp.type == PowerUpTypes.BOMB_UP)
         {
@@ -47,5 +48,6 @@ class PowerUps extends Phaser.GameObjects.Sprite
 
         _powerUp.active = false;
         _powerUp.x = gameOptions.gameWidth + 100;
+        this.used = true;
     }
 }

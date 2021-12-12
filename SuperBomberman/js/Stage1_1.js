@@ -40,6 +40,7 @@ class Stage1_1 extends Phaser.Scene
         this.load.audio('Walking2','Walking2.wav');
         this.load.audio('PlaceBomb','PlaceBomb.wav');
         this.load.audio('BombExplodes','BombExplodes.wav');
+        this.load.audio('ItemGet','ItemGet.wav');
         this.load.audio('Area1Music','Area1Music.mp3');
     }
 
@@ -90,7 +91,6 @@ class Stage1_1 extends Phaser.Scene
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
 
-        
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
 
@@ -102,7 +102,6 @@ class Stage1_1 extends Phaser.Scene
         }
 
         this.spawnDesObj();
-
         this.spawnDoor();
 
         //Creamos Enemigos
@@ -113,7 +112,6 @@ class Stage1_1 extends Phaser.Scene
         this.createScore();
         this.scoreUp(this.scoreValue);
         
-        console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
 
         //Inputs
@@ -138,6 +136,7 @@ class Stage1_1 extends Phaser.Scene
         this.walking2 = this.sound.add('Walking2');
         this.placeBomb = this.sound.add('PlaceBomb');
         this.bombExplodes = this.sound.add('BombExplodes');
+        this.itemGet = this.sound.add("ItemGet");
         this.music = this.sound.add('Area1Music' , {volume: 0.5});
         this.music.loop = true;
         this.music.play();
@@ -926,8 +925,8 @@ class Stage1_1 extends Phaser.Scene
     updateScore()
     {
         var enemies = this.enemies.getChildren();
-
         var desObjs = this.desObjs.getChildren();
+        var powerUps = this.powerUps.getChildren();
 
         enemies.forEach(_e => {
             if(_e.killed)
@@ -998,6 +997,14 @@ class Stage1_1 extends Phaser.Scene
                     }
                 }
 
+                _e.destroy();
+            }
+        });
+
+        powerUps.forEach(_e => {
+            if(_e.used)
+            {
+                this.itemGet.play();
                 _e.destroy();
             }
         });
