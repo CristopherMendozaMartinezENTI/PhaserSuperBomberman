@@ -821,7 +821,7 @@ class Stage1_1 extends Phaser.Scene
                 }
 
                 //Player pos
-                if(playerPos[0] - random[0] < 2 && playerPos[1] - random[1] < 2)
+                if(Math.abs(playerPos[0] - random[0]) < 2 && Math.abs(playerPos[1] - random[1] < 2))
                 {
                     continue;
                 }
