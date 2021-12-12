@@ -63,8 +63,11 @@ class Stage1_2 extends Phaser.Scene
 
     init(data)
     {
-        //this.player.lives = data.Lives;
+        this.currentLives = data.Lives;
         this.scoreValue = data.Score;
+        this.currentbombNum = data.BombNum;
+        this.currentFireDistance = data.FireDistance;
+        this.currentSpeed = data.Speed;
     }
 
     create()
@@ -116,9 +119,14 @@ class Stage1_2 extends Phaser.Scene
 
         this.scoreTotal = this.add.group();
         this.createScore();
-        this.scoreUp(this.scoreValue);
         
-        console.log(this.player.lives);
+        //Actualizamos informacion respecto al nivel anterior
+        this.player.live = this.currentLives;
+        this.scoreUp(this.scoreValue);
+        this.player.bombNum = this.currentbombNum;
+        this.player.fireDistance = this.currentFireDistance;
+        this.player.playerSpeed = this.currentSpeed;
+
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
 
         //Inputs

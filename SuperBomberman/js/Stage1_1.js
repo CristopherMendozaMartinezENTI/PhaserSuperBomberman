@@ -1072,7 +1072,13 @@ class Stage1_1 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
-            this.scene.start('Stage1_2', {Lives: this.player.lives, Score: 200});
+            this.scene.start('Stage1_2', 
+                            {Lives: this.player.lives, 
+                            Score: 200,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+
         }
 
         if(this.bombs.maxSize != this.player.bombNum)
