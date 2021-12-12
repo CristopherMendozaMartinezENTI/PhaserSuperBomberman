@@ -7,7 +7,7 @@ class bombPrefab extends Phaser.GameObjects.Sprite
 
         this.setOrigin(0.5);
 
-        this.playerKick = _immovable;
+        this.playerKick = false;
         this.anims.play('bombAnim');
         
         _scene.physics.add.collider(this, _scene.blocks, this.collided);
@@ -31,10 +31,10 @@ class bombPrefab extends Phaser.GameObjects.Sprite
     {
         if(this.body.immovable && this.playerKick)
         {
+            console.log("Entra");
             this.body.immovable = false;
             this.body.setVelocity(0,0);
         }
-
 
         if(this.liveTime < 0 && !this.exploded)
         {
@@ -53,6 +53,12 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         _bomb.explosionX = _bomb.x;
         _bomb.x = -100;
         _bomb.active = false;
+    }
+
+    kickedAvailable()
+    {
+        this.body.immovable = false;
+        this.playerKick = true;
     }
 
     collided(_bomb)

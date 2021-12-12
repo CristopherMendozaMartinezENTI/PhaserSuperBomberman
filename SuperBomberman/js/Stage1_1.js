@@ -45,7 +45,7 @@ class Stage1_1 extends Phaser.Scene
 
     convertWorldPositionToTile(_posX, _posY)
     {
-        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE) + 1;
+        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE);
         var _y = Math.trunc((_posY - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE);
         
         var returnPos = [_x, _y];
@@ -489,7 +489,7 @@ class Stage1_1 extends Phaser.Scene
             var bomb = this.bombs.getFirst(false);
     
             var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
-            pos = this.convertTilePositionToWorld(pos[0], pos[1]);
+            pos = this.convertTilePositionToWorld(pos[0] + 1, pos[1]);
 
             var posX = pos[0];
             var posY = pos[1];
@@ -497,7 +497,7 @@ class Stage1_1 extends Phaser.Scene
             if(!bomb)
             {//Generate new bomb
                 bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive);
-    
+
                 this.bombs.add(bomb);
             }
             else
@@ -511,7 +511,8 @@ class Stage1_1 extends Phaser.Scene
     
             bomb.body.setVelocity(0,0);
             
-            bomb.body.immovable = !this.player.kickActive;
+            console.log(!this.player.kickActive);
+            bomb.body.immovable = true;
             
             this.physics.add.collider(this.player, bomb);
         }
@@ -551,6 +552,11 @@ class Stage1_1 extends Phaser.Scene
             else if(index == this.player.fireDistance)//Ends
             {
                 var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
                 if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_left_end.getFirst(false);
@@ -571,6 +577,10 @@ class Stage1_1 extends Phaser.Scene
                 }//Left end
 
                 tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
                 if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_right_end.getFirst(false);
@@ -591,9 +601,12 @@ class Stage1_1 extends Phaser.Scene
                 }//Right end
 
                 tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
                 if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
-
                     explosion = this.explosion_up_end.getFirst(false);
     
                     if(!explosion)
@@ -612,6 +625,10 @@ class Stage1_1 extends Phaser.Scene
                 }//Up end
 
                 tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
                 if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     
@@ -635,6 +652,11 @@ class Stage1_1 extends Phaser.Scene
             else
             {
                 var tilePos = this.convertWorldPositionToTile(_posX, _posY - index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
                 if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
@@ -658,6 +680,11 @@ class Stage1_1 extends Phaser.Scene
                     up = true;
 
                 tilePos = this.convertWorldPositionToTile(_posX, _posY + index * gamePrefs.TILE_SIZE);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
                 if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
@@ -681,6 +708,11 @@ class Stage1_1 extends Phaser.Scene
                     down = true;
                     
                 tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
                 if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
@@ -704,6 +736,11 @@ class Stage1_1 extends Phaser.Scene
                     left = true;
                 
                 tilePos = this.convertWorldPositionToTile(_posX + index * gamePrefs.TILE_SIZE, _posY);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
+
                 if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
@@ -813,14 +850,42 @@ class Stage1_1 extends Phaser.Scene
 
     spawnDesObj()
     {
-        for (let i = 0; i < 32; i++) {
-            var randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
-            var tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
-            while(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+        var changed = false;
+        for (let i = 0; i < 32; i++) 
+        {
+            changed = false;
+
+            var randomPos;
+            var tmpPos;
+            while(!changed)
             {
+                var samePos = false;
                 randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
+                
+                if(this.desObjs.getLength() != 0)
+                {
+                    var desObjs = this.desObjs.getChildren();
+                    desObjs.forEach(obj => {
+                        var dPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if(dPos == randomPos)
+                        {
+                            samePos = true;
+                        }
+                    });
+                }
+                if(samePos)
+                {
+                    continue;
+                }
+
                 tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
+
+                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) == null)
+                {
+                    changed = true;
+                }
             }
+
             this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
 
             randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
@@ -837,8 +902,13 @@ class Stage1_1 extends Phaser.Scene
     spawnDoor()
     {
         var destrObj = this.desObjs.getChildren();
-        var rand = Phaser.Math.Between(0, destrObj.length);
+        var rand = Phaser.Math.Between(0, destrObj.length - 1);
         var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
+
+        console.log(destrObj[rand]);
+        destrObj[rand].anims.stop();
+        destrObj[rand].exitDoor = true;
+
         console.log("Door position:", conversion[0]-3, conversion[1]- 1);
         this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
         this.exit.anims.play('exitDoorAnim');
@@ -864,17 +934,19 @@ class Stage1_1 extends Phaser.Scene
             }
         });
 
-        if (desObjs[this.exit.randomEnemy].killed)
-        {
-            this.exit.resetSpawn();
-        }
 
         desObjs.forEach(_e => {
             if(_e.killed)
             {
-                console.log(this.desTileMap);
+                if(_e.exitDoor)
+                {
+                    console.log("Exit spawned");
+                    this.exit.resetSpawn();
+                }
+                
+               // console.log(this.desTileMap);
                 var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                console.log(tilePos);
+                //console.log(tilePos);
                 this.desTileMap[tilePos[0]][tilePos[1]] = null;
                 this.scoreUp(_e.scoreEarned);
 

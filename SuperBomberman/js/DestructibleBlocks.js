@@ -10,6 +10,8 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
 
         //this.setDepth(1);
 
+        this.exitDoor = false;
+
         this.health = _health;
         this.scoreEarned = _scoreEarned;
 

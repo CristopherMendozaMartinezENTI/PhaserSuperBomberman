@@ -43,7 +43,7 @@ class Stage1_2 extends Phaser.Scene
 
     convertWorldPositionToTile(_posX, _posY)
     {
-        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE) + 1;
+        var _x = Math.trunc((_posX - gamePrefs.TILE_SIZE / 2) / gamePrefs.TILE_SIZE);
         var _y = Math.trunc((_posY - gamePrefs.INITIAL_HEIGHT) / gamePrefs.TILE_SIZE);
         
         var returnPos = [_x, _y];
@@ -865,6 +865,10 @@ class Stage1_2 extends Phaser.Scene
                 console.log(this.desTileMap);
                 var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
                 console.log(tilePos);
+                if(tilePos[0] == 15)
+                {
+                    tilePos[0]--;
+                }
                 this.desTileMap[tilePos[0]][tilePos[1]] = null;
                 this.scoreUp(_e.scoreEarned);
 
