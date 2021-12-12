@@ -32,8 +32,9 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         if(this.body.immovable && this.playerKick)
         {
             this.body.immovable = false;
-            _bomb.body.setVelocity(0,0);
+            this.body.setVelocity(0,0);
         }
+
 
         if(this.liveTime < 0 && !this.exploded)
         {

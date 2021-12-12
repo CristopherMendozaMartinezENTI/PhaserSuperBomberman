@@ -11,16 +11,16 @@ class Player extends Phaser.GameObjects.Sprite
         this.body.setSize(12, 12);
         this.body.setOffset(12/4, 12 / 1.1);
 
-        this.fireDistance = 3;
+        this.fireDistance = 1;
         this.lives = 5;
         this.playerSpeed = gamePrefs.speedPlayer;
-        this.kickActive = true;
+        this.kickActive = false;
 
         this.killed = false;
         
         this.isInvulnerable = false;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
-        this.bombNum = 1;
+        this.bombNum = 2;
 
         this.depth = 2;
 

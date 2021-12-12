@@ -22,7 +22,10 @@ class Stage1_2 extends Phaser.Scene
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('desBlock', 'DestructibleBlock1.png', {frameWidth:16, frameHeight:16})
-        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16});
+
+        this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('fireUp', 'PowerUp_FireUp.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -73,6 +76,11 @@ class Stage1_2 extends Phaser.Scene
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
         
+        var tmpPos = this.convertTilePositionToWorld(2, 1);
+        
+        //Creamos el player
+        this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
+        
         this.createPools();
         this.createAnimations();
         
@@ -82,11 +90,6 @@ class Stage1_2 extends Phaser.Scene
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
-        
-        var tmpPos = this.convertTilePositionToWorld(2, 1);
-        
-        //Creamos el player
-        this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
@@ -277,7 +280,6 @@ class Stage1_2 extends Phaser.Scene
             }   
         );
         //#endregion
-
 
         //#region Bomb
         this.anims.create(
@@ -551,6 +553,8 @@ class Stage1_2 extends Phaser.Scene
         this.enemies = this.add.group();
         this.desObjs = this.add.group();
 
+        this.powerUps = this.physics.add.group();
+
         this.bombs.maxSize = 1;
 
         //#region Explosion Pool
@@ -799,7 +803,6 @@ class Stage1_2 extends Phaser.Scene
         }
     }
 
-
     bombExploded()
     {
         var bombs = this.bombs.getChildren();
@@ -859,7 +862,59 @@ class Stage1_2 extends Phaser.Scene
         desObjs.forEach(_e => {
             if(_e.killed)
             {
+                console.log(this.desTileMap);
+                var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                console.log(tilePos);
+                this.desTileMap[tilePos[0]][tilePos[1]] = null;
                 this.scoreUp(_e.scoreEarned);
+
+                if(_e.x != this.exit.x || _e.y != this.exit.y) // Not same wall than the exit door
+                {
+                    var random = Phaser.Math.Between(0, 100);
+                    if(random >= 0 && random <= 100) // 20%
+                    {
+                        var powerUp = this.powerUps.getFirst(false);
+    
+                        random = Phaser.Math.Between(0,1);
+                        random = Math.round(random);
+                        if(random == 0) // Fire Up
+                        {
+                            console.log(powerUp);
+                            if(!powerUp)
+                            {
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);
+    
+                                this.powerUps.add(powerUp);
+                            }
+                            else
+                            {
+                                powerUp.active = true;
+                                powerUp.type = PowerUpTypes.FIRE_UP;
+                                
+                                powerUp.body.reset(_e.x, _e.y);
+                            }
+                        }
+                        else // Bomb Up
+                        {
+                            if(!powerUp)
+                            {
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);
+                                //powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
+                                
+                                this.powerUps.add(powerUp);
+                            }
+                            else
+                            {
+                                powerUp.active = true;
+                                powerUp.type = PowerUpTypes.FIRE_UP;
+                                //powerUp.type = PowerUpTypes.BOMB_UP;
+                                
+                                powerUp.body.reset(_e.x, _e.y);
+                            }
+                        }
+                    }
+                }
+
                 _e.destroy();
             }
         });

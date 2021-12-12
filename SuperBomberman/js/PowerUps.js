@@ -1,9 +1,8 @@
-class PowerUp extends Sprite
+class PowerUps extends Phaser.GameObjects.Sprite
 {
     constructor(_scene, _positionX, _positionY, _sprite, _type)
     {
         super(_scene,_positionX, _positionY, _sprite);
-        _scene.physics.add.existing(this);
         _scene.add.existing(this);
 
         this.type = _type;
@@ -17,15 +16,15 @@ class PowerUp extends Sprite
     {
         if(_powerUp.type == PowerUpTypes.BOMB_UP)
         {
-            _player.bombNum++;
+            _player.bombNum += 1;
         }
         else if(_powerUp.type == PowerUpTypes.FIRE_UP)
         {
-            _player.fireDistance++;
+            _player.fireDistance += 1;
         }
         else if(_powerUp.type == PowerUpTypes.SPEED_UP)
         {
-            _player.playerSpeed++;
+            _player.playerSpeed += 1;
         }
         else if(_powerUp.type == PowerUpTypes.KICK)
         {
@@ -43,5 +42,10 @@ class PowerUp extends Sprite
         {
 
         }
+
+        console.log(_player.fireDistance);
+
+        _powerUp.active = false;
+        _powerUp.x = gameOptions.gameWidth + 100;
     }
 }
