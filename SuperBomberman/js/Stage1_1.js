@@ -111,6 +111,7 @@ class Stage1_1 extends Phaser.Scene
         this.scoreTotal = this.add.group();
         this.scoreValue = 0;
         this.createScore();
+        this.scoreUp(this.scoreValue);
         
         console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
@@ -1071,7 +1072,7 @@ class Stage1_1 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
-            this.scene.start('Stage1_2');
+            this.scene.start('Stage1_2', {Lives: this.player.lives, Score: 200});
         }
 
         if(this.bombs.maxSize != this.player.bombNum)

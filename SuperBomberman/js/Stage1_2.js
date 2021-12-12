@@ -61,6 +61,12 @@ class Stage1_2 extends Phaser.Scene
         return returnPos;
     }
 
+    init(data)
+    {
+        //this.player.lives = data.Lives;
+        this.scoreValue = data.Score;
+    }
+
     create()
     { //carga los assets en pantalla desde memoria
         this.start = this.getTime();
@@ -109,8 +115,8 @@ class Stage1_2 extends Phaser.Scene
         this.spawnEnemies();
 
         this.scoreTotal = this.add.group();
-        this.scoreValue = 0;
         this.createScore();
+        this.scoreUp(this.scoreValue);
         
         console.log(this.player.lives);
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
