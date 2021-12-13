@@ -183,10 +183,10 @@ class Stage1_1 extends Phaser.Scene
     gameOver()
     {
         if (this.player.lives <= 0)
-            {
-                console.log("GAME OVER");
-                this.scene.restart();
-            }
+        {
+            console.log("GAME OVER");
+            this.scene.restart();
+        }
     }
 
     createAnimations()
@@ -431,7 +431,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:'playerDeathAnim',
                 frames:this.anims.generateFrameNumbers('playerDeath', {start:0, end:5}),
-                frameRate:1,
+                frameRate:5,
                 yoyo:false,
                 repeat:0
             }   

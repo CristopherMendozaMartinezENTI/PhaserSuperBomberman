@@ -40,6 +40,8 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
+
+        this.playerHit = false;
     }
 
     preUpdate(time,delta)
@@ -51,6 +53,7 @@ class Player extends Phaser.GameObjects.Sprite
 
         if(this.killed && !this.anims.isPlaying)
         {
+            this.playerHit = false;
             if (this.lives <= 0)
                 this.lives = 0;
             this.isInvulnerable = true;
@@ -72,57 +75,61 @@ class Player extends Phaser.GameObjects.Sprite
                 this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
             }
         }
-        if(_direction == Directions.NONE)
+
+        if(!this.killed)
         {
-            //Parar animacion
-            this.anims.stop();
-
-            //Set Frame de animacion con respecto a la ultima direccion
-            if(this.dir == Directions.UP)
-                this.setFrame(1);
-            else if(this.dir == Directions.DOWN)
-                this.setFrame(4);
-            else if(this.dir == Directions.LEFT)
-                this.setFrame(7);
-            else if(this.dir == Directions.RIGHT)
-                this.setFrame(10);
-
-            //Anular velocidad del rigidbody
-            this.body.velocity.x = 0;
-            this.body.velocity.y = 0;
-        
-        }
-        else
-        {
-            //Set velocidad rigidbody
-            if (_direction == Directions.UP)
+            if(_direction == Directions.NONE)
             {
-                this.body.velocity.y = this.playerSpeed * -1;
+                //Parar animacion
+                this.anims.stop();
+    
+                //Set Frame de animacion con respecto a la ultima direccion
+                if(this.dir == Directions.UP)
+                    this.setFrame(1);
+                else if(this.dir == Directions.DOWN)
+                    this.setFrame(4);
+                else if(this.dir == Directions.LEFT)
+                    this.setFrame(7);
+                else if(this.dir == Directions.RIGHT)
+                    this.setFrame(10);
+    
+                //Anular velocidad del rigidbody
                 this.body.velocity.x = 0;
-                
-            }
-            else if (_direction == Directions.DOWN)
-            {
-                this.body.velocity.y = this.playerSpeed;
-                this.body.velocity.x = 0;
-            }
-            else if (_direction == Directions.LEFT)
-            {
-                this.body.velocity.x = this.playerSpeed * -1;
                 this.body.velocity.y = 0;
+            
             }
-            else if (_direction == Directions.RIGHT)
+            else
             {
-                this.body.velocity.x = this.playerSpeed;
-                this.body.velocity.y = 0;
+                //Set velocidad rigidbody
+                if (_direction == Directions.UP)
+                {
+                    this.body.velocity.y = this.playerSpeed * -1;
+                    this.body.velocity.x = 0;
+                    
+                }
+                else if (_direction == Directions.DOWN)
+                {
+                    this.body.velocity.y = this.playerSpeed;
+                    this.body.velocity.x = 0;
+                }
+                else if (_direction == Directions.LEFT)
+                {
+                    this.body.velocity.x = this.playerSpeed * -1;
+                    this.body.velocity.y = 0;
+                }
+                else if (_direction == Directions.RIGHT)
+                {
+                    this.body.velocity.x = this.playerSpeed;
+                    this.body.velocity.y = 0;
+                }
+    
+                //Activar animacion respecto la direccion
+                this.anims.play(_direction, true);
             }
-
-            //Activar animacion respecto la direccion
-            this.anims.play(_direction, true);
+    
+            //Set direccion
+            this.dir = _direction;
         }
-
-        //Set direccion
-        this.dir = _direction;
     }
 
     changeBombNum(_value)
@@ -140,17 +147,15 @@ class Player extends Phaser.GameObjects.Sprite
    
     hit(_hero)
     {
-        if (!_hero.isInvulnerable)
+        if (!_hero.isInvulnerable && !this.playerHit)
         {
             _hero.lives -= 1;
             _hero.killed = true;
-           // _hero.anims.play('playerDeathAnim');
+            _hero.anims.play('playerDeathAnim');
+            _hero.body.velocity.x = 0;
+            _hero.body.velocity.y = 0;
+            _hero.playerHit = true;
             //console.log("animacion: ", _hero.anims.isPlaying);
-            if (_hero.lives <= 0)
-                _hero.lives = 0;
-
-            _hero.isInvulnerable = true;
-            _hero.resetPos(_hero);
         }
     }
 }
