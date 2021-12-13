@@ -235,7 +235,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:'exitDoorAnim',
                 frames:this.anims.generateFrameNumbers('exit', {start:0, end:1}),
-                frameRate:5,
+                frameRate:25,
                 yoyo:false,
                 repeat:-1
             }
@@ -283,7 +283,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:'desObjAnimEx',
                 frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
-                frameRate:10,
+                frameRate:15,
                 yoyo:false,
                 repeat:0
             }   
@@ -307,7 +307,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.CENTRAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:0, end:3}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -316,7 +316,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_LEFT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:4, end:7}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -324,7 +324,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL_END_RIGHT,
                 frames:this.anims.generateFrameNumbers('explosion', {start:8, end:11}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -332,7 +332,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_UP,
                 frames:this.anims.generateFrameNumbers('explosion', {start:12, end:15}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -340,7 +340,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL_END_DOWN,
                 frames:this.anims.generateFrameNumbers('explosion', {start:16, end:19}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -348,7 +348,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.HORIZONTAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:20, end:23}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -356,7 +356,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:Explosion_Tiles.VERTICAL,
                 frames:this.anims.generateFrameNumbers('explosion', {start:24, end:27}),
-                frameRate:9,
+                frameRate:15,
                 yoyo:true,
                 repeat:0
             }
@@ -431,7 +431,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:'playerDeathAnim',
                 frames:this.anims.generateFrameNumbers('playerDeath', {start:0, end:5}),
-                frameRate:5,
+                frameRate:10,
                 yoyo:false,
                 repeat:0
             }   
@@ -443,7 +443,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:PowerUpTypes.BOMB_UP,
                 frames:this.anims.generateFrameNumbers('bombUp', {start:0, end:1}),
-                frameRate:5,
+                frameRate:25,
                 yoyo:false,
                 repeat:-1
             }   
@@ -453,7 +453,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:PowerUpTypes.FIRE_UP,
                 frames:this.anims.generateFrameNumbers('fireUp', {start:0, end:1}),
-                frameRate:5,
+                frameRate:25,
                 yoyo:false,
                 repeat:-1
             }   
