@@ -23,6 +23,7 @@ class Player extends Phaser.GameObjects.Sprite
         this.bombNum = 1;
 
         this.depth = 2;
+        this.tintFill = false;
 
         this.initPosX = _positionX;
         this.initPosY = _positionY - 3;
@@ -67,12 +68,21 @@ class Player extends Phaser.GameObjects.Sprite
     {
         if(this.isInvulnerable)
         {
+            console.log("Is Vulnerable");
+            if(this.tintFill)
+            {
+                this.tint = 0xffffff;
+            }
+            else{
+                this.tintFill = !this.tintFill;
+            }
             this.invulnerableTime -= _delta;
             //console.log("Invulnerable");
             if (this.invulnerableTime <= 0)
             {
                 this.isInvulnerable = false;
                 this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
+                this.tintFill = false;
             }
         }
 
