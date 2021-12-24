@@ -1016,6 +1016,42 @@ class Stage1_2 extends Phaser.Scene
                 this.scoreUp(_e.scoreEarned);
                 _e.destroy();
             }
+            else if(_e.invulnerability)
+            {
+                var explosions;
+                switch (_e.explosionCollided_Type) {
+                    case Explosion_Tiles.CENTRAL:
+                        explosions = this.explosion_central.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL:
+                        explosions = this.explosion_horizontal.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL_END_LEFT:
+                        explosions = this.explosion_left_end.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL_END_RIGHT:
+                        explosions = this.explosion_right_end.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL:
+                        explosions = this.explosion_vertical.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL_END_DOWN:
+                        explosions = this.explosion_down_end.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL_END_UP:
+                        explosions = this.explosion_up_end.getChildren();
+                        break;
+                }
+
+                explosions.forEach(_explosion => {
+                    if(_explosion.exploded_X == _e.explosionCollided_X && _explosion.y == _e.explosionCollided_Y && !_explosion.active)
+                    {
+                        _e.invulnerability = false;
+                        console.log("Soy vulnerable");
+                        return;
+                    }
+                });
+            }
         });
 
 

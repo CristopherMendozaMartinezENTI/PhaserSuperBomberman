@@ -7,10 +7,6 @@ class Denkyun extends Enemies
         this.dir = Directions.LEFT;
         this.speed = 2;
         this.body.velocity.x = this.speed * -15;
-
-        //this.body.setOffset(0, -1);
-
-        //this.setDepth(1);
         
         this.anims.play(EnemyTypes.DENKYUN);
     }
@@ -24,11 +20,11 @@ class Denkyun extends Enemies
 
         if(this.health <= 0)
         {
-            console.log(EnemyTypes.DENKYUN + " killed");
+            //console.log(EnemyTypes.DENKYUN + " killed");
         }
         else if(this.body.speed < this.speed * 15)
         {
-            console.log("menos vel");
+            //console.log("menos vel");
             if(this.dir == Directions.UP)
             {
                 this.body.velocity.y = this.speed * -15;

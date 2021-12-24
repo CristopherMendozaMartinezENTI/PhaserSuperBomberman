@@ -184,7 +184,7 @@ class Stage1_1 extends Phaser.Scene
     {
         if (this.player.lives <= 0)
         {
-            console.log("GAME OVER");
+            //console.log("GAME OVER");
             this.scene.restart();
         }
     }
@@ -514,7 +514,7 @@ class Stage1_1 extends Phaser.Scene
     
             bomb.body.setVelocity(0,0);
             
-            console.log(!this.player.kickActive);
+           // console.log(!this.player.kickActive);
             bomb.body.immovable = true;
             
             this.physics.add.collider(this.player, bomb);
@@ -523,7 +523,7 @@ class Stage1_1 extends Phaser.Scene
 
     spawnExplosion(_posX, _posY)
     {
-        console.log(this.convertWorldPositionToTile(_posX, _posY));
+        //console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
         var right = false;
         var left = false;
@@ -785,23 +785,23 @@ class Stage1_1 extends Phaser.Scene
 
     spawnEnemies()
     {
-        console.log("Spawn enemy");
+        //console.log("Spawn enemy");
         var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
         var tmpPos;
 
         var changedPos = false;
 
-        console.log("Spawn enemy 1");
+        //console.log("Spawn enemy 1");
 
         for (let i = 0; i < 3; i++) 
         {
             changedPos = false;
 
-            console.log("Spawn enemy 2");
+            //console.log("Spawn enemy 2");
 
             while(!changedPos)
             {
-                console.log("Spawn enemy changed");
+                //console.log("Spawn enemy changed");
 
                 var random = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
                 tmpPos = this.convertTilePositionToWorld(random[0], random[1]);
@@ -902,14 +902,14 @@ class Stage1_1 extends Phaser.Scene
             this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
 
             randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
-            console.log(randomPos);
+            //console.log(randomPos);
             if(randomPos[0] == 15)
             {
                 randomPos[0]--;
             }
             this.desTileMap[randomPos[0]][randomPos[1]] = 1;
         }
-        console.log(this.desTileMap);
+        //console.log(this.desTileMap);
     }
 
     spawnDoor()
@@ -918,11 +918,11 @@ class Stage1_1 extends Phaser.Scene
         var rand = Phaser.Math.Between(0, destrObj.length - 1);
         var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
 
-        console.log(destrObj[rand]);
+        //console.log(destrObj[rand]);
         destrObj[rand].anims.stop();
         destrObj[rand].exitDoor = true;
 
-        console.log("Door position:", conversion[0]-3, conversion[1]- 1);
+        //console.log("Door position:", conversion[0]-3, conversion[1]- 1);
         this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
         this.exit.anims.play('exitDoorAnim');
     }
@@ -945,6 +945,42 @@ class Stage1_1 extends Phaser.Scene
                 this.scoreUp(_e.scoreEarned);
                 _e.destroy();
             }
+            else if(_e.invulnerability)
+            {
+                var explosions;
+                switch (_e.explosionCollided_Type) {
+                    case Explosion_Tiles.CENTRAL:
+                        explosions = this.explosion_central.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL:
+                        explosions = this.explosion_horizontal.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL_END_LEFT:
+                        explosions = this.explosion_left_end.getChildren();
+                        break;
+                    case Explosion_Tiles.HORIZONTAL_END_RIGHT:
+                        explosions = this.explosion_right_end.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL:
+                        explosions = this.explosion_vertical.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL_END_DOWN:
+                        explosions = this.explosion_down_end.getChildren();
+                        break;
+                    case Explosion_Tiles.VERTICAL_END_UP:
+                        explosions = this.explosion_up_end.getChildren();
+                        break;
+                }
+
+                explosions.forEach(_explosion => {
+                    if(_explosion.exploded_X == _e.explosionCollided_X && _explosion.y == _e.explosionCollided_Y && !_explosion.active)
+                    {
+                        _e.invulnerability = false;
+                        console.log("Soy vulnerable");
+                        return;
+                    }
+                });
+            }
         });
 
 
@@ -953,7 +989,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 if(_e.exitDoor)
                 {
-                    console.log("Exit spawned");
+                    //console.log("Exit spawned");
                     this.exit.resetSpawn();
                 }
                 
@@ -974,7 +1010,7 @@ class Stage1_1 extends Phaser.Scene
                         random = Math.round(random);
                         if(random == 0) // Fire Up
                         {
-                            console.log(powerUp);
+                            //console.log(powerUp);
                             if(!powerUp)
                             {
                                 powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);

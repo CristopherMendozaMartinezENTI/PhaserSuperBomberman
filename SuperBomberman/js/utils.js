@@ -10,7 +10,7 @@ const EnemyTypes={
     PUROPEN: "puropen",
     BAKUDA:"bakuda",
     DENKYUN:"denkyun",
-    NUTSSTAR:"nutsStar",
+    NUTS_STAR:"nuts_Star",
     PAKUPA:"pakupa"
 };
 

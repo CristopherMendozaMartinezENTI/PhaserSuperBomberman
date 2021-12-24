@@ -15,8 +15,12 @@ class Enemies extends Phaser.GameObjects.Sprite
 
         this.dirChanged = false;
         this.killed = false;
+
+        this.explosionCollided_X = -10;
+        this.explosionCollided_Y = -10;
+        this.explosionCollided_Type = 0;
         
-        this.destroyed = false;
+        this.invulnerability = false;
 
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
@@ -36,9 +40,10 @@ class Enemies extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
-        if(this.destroyed && !this.anims.isPlaying)
+        if(this.health <= 0 && !this.anims.isPlaying)
         {
             this.killed = true;
+            this.anims.play("enemymExAnim");
         }
         super.preUpdate(time, delta);
     }
@@ -157,12 +162,15 @@ class Enemies extends Phaser.GameObjects.Sprite
         _enemy.dirChanged = true;
     }
 
-    kill()
+    kill(_enemy, _explosion)
     {
-        console.log("Killed");
-        this.anims.play("enemymExAnim");
-        this.body.velocity.x = 0;
-        this.body.velocity.y = 0;
-        this.destroyed = true;
+        if(!_enemy.invulnerability)
+        {
+            _enemy.explosionCollided_Type = _explosion.explosionTile;
+            _enemy.explosionCollided_X = _explosion.x;
+            _enemy.explosionCollided_Y = _explosion.y;
+            _enemy.health--;
+            _enemy.invulnerability = true;
+        }
     }
 }

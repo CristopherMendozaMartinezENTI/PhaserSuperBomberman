@@ -6,6 +6,10 @@ class ExplosionPrefab extends Phaser.GameObjects.Sprite
         _scene.add.existing(this);
         this.setOrigin(.5);
 
+        this.explosionFinished = false;
+        this.explosionTile = _explosionTile;
+        this.exploded_X = 0;
+
         this.setDepth(0);
 
         this.anims.play(_explosionTile);
@@ -17,6 +21,8 @@ class ExplosionPrefab extends Phaser.GameObjects.Sprite
         {
             console.log("Explota");
 
+            this.explosionFinished = true;
+            this.exploded_X = this.x;
             this.x = -10;
             this.active = false;
         }
