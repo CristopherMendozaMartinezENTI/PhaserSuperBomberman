@@ -41,6 +41,9 @@ class Player extends Phaser.GameObjects.Sprite
 
         //Set de la posicion inicial
         this.dir = Directions.DOWN;
+        this.lastDir = Directions.NONE;
+        if (this.lastDir != this.dir)
+            this.lastDir = this.dir;
 
         this.playerHit = false;
     }

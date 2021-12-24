@@ -29,7 +29,10 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         this.exCollHorizontal = _scene.physics.add.collider(this, _scene.explosion_horizontal, this.kill, null, this);
         this.exCollVertical = _scene.physics.add.collider(this, _scene.explosion_vertical, this.kill, null, this);
         
+        
         if(this.isAnimated) this.anims.play("desObjAnim");
+
+        
 
         this.body.immovable = true;
     }
@@ -41,6 +44,9 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
             this.killed = true;
             //console.log("Obj destroyed");
         }
+        
+        if (this.playerColLeftUp)
+        console.log("ola k ase");
 
         super.preUpdate(time, delta);
     }

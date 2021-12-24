@@ -33,7 +33,7 @@ class PowerUps extends Phaser.GameObjects.Sprite
         }
         else if(_powerUp.type == PowerUpTypes.VEST)
         {
-
+            _player.isInvulnerable = true;
         }
         else if(_powerUp.type == PowerUpTypes.TIME)
         {
