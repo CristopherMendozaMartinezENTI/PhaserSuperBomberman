@@ -27,7 +27,8 @@ class Stage1_3 extends Phaser.Scene
         this.load.spritesheet('desBlockExplosion2', 'DestructibleBlock2_Anim.png', {frameWidth:16, frameHeight:16});
 
         this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
-        this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('fireUp', 'PowerUp_FireUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('kick', 'PowerUp_Kick.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl3_Tile','Lvl3_Tile.png');
@@ -454,8 +455,18 @@ class Stage1_3 extends Phaser.Scene
 
         this.anims.create(
             {
-                key:PowerUpTypes.SPEED_UP,
-                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
+                key:PowerUpTypes.FIRE_UP,
+                frames:this.anims.generateFrameNumbers('fireUp', {start:0, end:1}),
+                frameRate:25,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+
+        this.anims.create(
+            {
+                key:PowerUpTypes.KICK,
+                frames:this.anims.generateFrameNumbers('kick', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -1006,7 +1017,7 @@ class Stage1_3 extends Phaser.Scene
                             console.log(powerUp);
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'speedUp', PowerUpTypes.SPEED_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
     
                                 this.powerUps.add(powerUp);
                             }
@@ -1024,7 +1035,7 @@ class Stage1_3 extends Phaser.Scene
                         {
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'fireUp', PowerUpTypes.FIRE_UP);
                                 
                                 this.powerUps.add(powerUp);
                             }

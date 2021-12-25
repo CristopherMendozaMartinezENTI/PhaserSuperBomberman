@@ -26,8 +26,9 @@ class Stage1_4 extends Phaser.Scene
         this.load.spritesheet('desBlock2', 'DestructibleBlock2.png', {frameWidth:16, frameHeight:16})
         this.load.spritesheet('desBlockExplosion2', 'DestructibleBlock2_Anim.png', {frameWidth:16, frameHeight:16});
 
-        this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
+        
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl3_Tile','Lvl3_Tile.png');
@@ -444,8 +445,8 @@ class Stage1_4 extends Phaser.Scene
         //#region PowerUps
         this.anims.create(
             {
-                key:PowerUpTypes.BOMB_UP,
-                frames:this.anims.generateFrameNumbers('bombUp', {start:0, end:1}),
+                key:PowerUpTypes.SPEED_UP,
+                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -454,8 +455,8 @@ class Stage1_4 extends Phaser.Scene
 
         this.anims.create(
             {
-                key:PowerUpTypes.SPEED_UP,
-                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
+                key:PowerUpTypes.VEST,
+                frames:this.anims.generateFrameNumbers('vest', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -1140,18 +1141,18 @@ class Stage1_4 extends Phaser.Scene
                                 powerUp.body.reset(_e.x, _e.y);
                             }
                         }
-                        else // Bomb Up
+                        else //Vest 
                         {
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'vest', PowerUpTypes.VEST);
                                 
                                 this.powerUps.add(powerUp);
                             }
                             else
                             {
                                 powerUp.active = true;
-                                powerUp.type = PowerUpTypes.BOMB_UP;
+                                powerUp.type = PowerUpTypes.VEST;
 
                                 powerUp.used = false;
                                 

@@ -28,7 +28,6 @@ class Stage1_1 extends Phaser.Scene
 
         this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('fireUp', 'PowerUp_FireUp.png', {frameWidth:16, frameHeight:16});
-        this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl1_Tile','Lvl1_Tile.png');
@@ -459,16 +458,6 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:PowerUpTypes.FIRE_UP,
                 frames:this.anims.generateFrameNumbers('fireUp', {start:0, end:1}),
-                frameRate:25,
-                yoyo:false,
-                repeat:-1
-            }   
-        );
-
-        this.anims.create(
-            {
-                key:PowerUpTypes.VEST,
-                frames:this.anims.generateFrameNumbers('vest', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -1055,24 +1044,6 @@ class Stage1_1 extends Phaser.Scene
                             {
                                 powerUp.active = true;
                                 powerUp.type = PowerUpTypes.BOMB_UP;
-
-                                powerUp.used = false;
-                                
-                                powerUp.body.reset(_e.x, _e.y);
-                            }
-                        }
-                        else //Vest (prueba esto va en el stage 4)
-                        {
-                            if(!powerUp)
-                            {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'vest', PowerUpTypes.VEST);
-                                
-                                this.powerUps.add(powerUp);
-                            }
-                            else
-                            {
-                                powerUp.active = true;
-                                powerUp.type = PowerUpTypes.VEST;
 
                                 powerUp.used = false;
                                 
