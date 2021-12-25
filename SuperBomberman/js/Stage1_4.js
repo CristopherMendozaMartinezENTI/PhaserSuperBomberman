@@ -1,10 +1,10 @@
-class Stage1_2 extends Phaser.Scene
+class Stage1_4 extends Phaser.Scene
 {
     constructor()
     { //crea la escena
         super(
         {
-            key:"Stage1_2"
+            key:"Stage1_4"
         });
     }
 
@@ -23,17 +23,17 @@ class Stage1_2 extends Phaser.Scene
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
-        this.load.spritesheet('desBlock', 'DestructibleBlock1.png', {frameWidth:16, frameHeight:16})
-        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('desBlock2', 'DestructibleBlock2.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlockExplosion2', 'DestructibleBlock2_Anim.png', {frameWidth:16, frameHeight:16});
 
         this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
-        this.load.image('Lvl1_Tile','Lvl1_Tile.png');
+        this.load.image('Lvl3_Tile','Lvl3_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_2','Stage1_2.json');
+        this.load.tilemapTiledJSON('Stage1_3','Stage1_3.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -79,12 +79,12 @@ class Stage1_2 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_2');
+        this.map = this.add.tilemap('Stage1_3');
         //Cargo los Tilesets
-        this.map.addTilesetImage('Lvl1_Tile');
+        this.map.addTilesetImage('Lvl3_Tile');
         //Pintamos las capas/layers
-        this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
-        this.map.createLayer('ground','Lvl1_Tile');
+        this.blocks = this.map.createLayer('blocks','Lvl3_Tile');
+        this.map.createLayer('ground','Lvl3_Tile');
         this.blocks.debug = true;
         
         this.createPools();
@@ -280,24 +280,12 @@ class Stage1_2 extends Phaser.Scene
             }   
         );
         //#endregion
-
-        //#region DestructibleBlock
-        this.anims.create(
-            {
-                key:'desObjAnim',
-                frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
-                frameRate:10,
-                yoyo:false,
-                repeat:-1
-            }   
-        );
-        //#endregion
         
         //#region DestructibleBlock Explosion
         this.anims.create(
             {
                 key:'desObjAnimEx',
-                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
+                frames:this.anims.generateFrameNumbers('desBlockExplosion2', {start:0, end:8}),
                 frameRate:15,
                 yoyo:false,
                 repeat:0
@@ -970,7 +958,7 @@ class Stage1_2 extends Phaser.Scene
                 }
             }
 
-            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock', 1, 100, true));
+            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock2', 1, 100, false));
 
             randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
             console.log(randomPos);
@@ -1204,14 +1192,7 @@ class Stage1_2 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
-            this.music.stop();
-            this.scene.start('Stage1_3', 
-                            {Lives: this.player.lives, 
-                            Score: this.scoreValue,
-                            BombNum: this.player.bombNum,
-                            FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed});
-
+            //Cargar siguiente nivel
         }
 
         if(this.bombs.maxSize != this.player.bombNum)

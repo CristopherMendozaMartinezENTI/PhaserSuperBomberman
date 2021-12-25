@@ -915,7 +915,7 @@ class Stage1_1 extends Phaser.Scene
                 }
             }
 
-            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desObj1', 1, 100, true));
+            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock', 1, 100, true));
 
             randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
             //console.log(randomPos);
