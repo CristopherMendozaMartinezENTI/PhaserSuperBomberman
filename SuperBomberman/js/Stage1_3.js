@@ -98,7 +98,7 @@ class Stage1_3 extends Phaser.Scene
         this.hudTime.anims.play("HudTimeAnim");
 
         //Indicamos las colisiones con bloques
-        this.map.setCollisionBetween(1,16,true,true,'blocks');
+        this.map.setCollisionBetween(1,19,true,true,'blocks');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
@@ -284,7 +284,7 @@ class Stage1_3 extends Phaser.Scene
         //#region DestructibleBlock Explosion
         this.anims.create(
             {
-                key:'desObjAnimEx',
+                key:'desObj2AnimEx',
                 frames:this.anims.generateFrameNumbers('desBlockExplosion2', {start:0, end:8}),
                 frameRate:15,
                 yoyo:false,
@@ -793,8 +793,8 @@ class Stage1_3 extends Phaser.Scene
 
         var changedPos = false;
 
-        //Puropen
-        for (let i = 0; i < 3; i++) 
+        //Nuts Star
+        for (let i = 0; i < 9; i++) 
         {
             changedPos = false;
 
@@ -845,68 +845,9 @@ class Stage1_3 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'puropen'));
+            //this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'nuts_Star'));
         }
 
-        //Denkyun
-        for (let i = 0; i < 2; i++) 
-        {
-            changedPos = false;
-
-            while(!changedPos)
-            {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-
-                //Indestructible blocks
-                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
-                {
-                    continue;
-                }
-
-                var samePos = false;
-                //Destructible blocks
-                desObjs.forEach(_e => {
-                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
-                    if(desPos == tmpPos)
-                    {
-                       samePos = true;
-                    }
-                });
-
-                if(samePos)
-                {
-                    continue;
-                }
-
-                //Player pos
-                if(playerPos == tmpPos)
-                {
-                    continue;
-                }
-
-                //Enemies
-                samePos = false;
-                if(this.enemies.getLength() != 0)
-                {
-                    var enemies = this.enemies.getChildren();
-                    enemies.forEach(_e => {
-                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                        if(ePos == tmpPos)
-                        {
-                           samePos = true;
-                        }
-                    });
-                }
-                
-                if(samePos)
-                {
-                    continue;
-                }
-
-                changedPos = true;
-            }
-            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
-        }
     }
 
     spawnDesObj()

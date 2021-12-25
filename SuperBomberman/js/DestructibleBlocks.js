@@ -54,12 +54,12 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
     kill(_obj, _explosion)
     {
         var distance = Math.sqrt( Math.pow(_obj.x - _explosion.x, 2) + Math.pow(_obj.y - _explosion.y, 2));
-        //console.log(distance);
-
         if(distance <= gamePrefs.TILE_SIZE)
         {
-            //console.log("Destroyed");
-            _obj.anims.play("desObjAnimEx");
+            if(this.isAnimated)
+                _obj.anims.play("desObjAnimEx");
+            else
+                _obj.anims.play("desObj2AnimEx");
             _obj.destroyed = true;
         }
     }
