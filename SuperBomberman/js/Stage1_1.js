@@ -120,6 +120,12 @@ class Stage1_1 extends Phaser.Scene
         this.cursor.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.cursor.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.cursor.F1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F1);
+        this.cursor.F2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
+        this.cursor.F3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F3);
+        this.cursor.F4 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F4);
+        this.cursor.F5 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F5);
+        this.cursor.F6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F6);
 
         this.spacePressed = false;
         this.shiftPressed = false;
@@ -1233,6 +1239,51 @@ class Stage1_1 extends Phaser.Scene
 
         }
 
+        //ShortCuts a Niveles
+        if (this.cursor.F1.isDown)
+        {
+            this.scene.restart();
+        }
+        else if(this.cursor.F2.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_2', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F2.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_2', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F3.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_3', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F4.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_4', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
 
         this.gameOver();
     }
