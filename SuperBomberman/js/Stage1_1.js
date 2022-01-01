@@ -92,8 +92,7 @@ class Stage1_1 extends Phaser.Scene
         this.map.setCollisionBetween(1,16,true,true,'blocks');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
-        this.physics.add.collider(this.player,this.blocks);
-        this.playerColision = this.blocks.scene.physics.collide(this.player, this.hehe());
+        this.physics.add.collider(this.player,this.blocks, this.checkSmoothTransitionBetweenPlayerAndBlocks, null, this);
 
         //Creamos los bloques destruibles 
         this.desTileMap = new Array(15);
@@ -131,10 +130,6 @@ class Stage1_1 extends Phaser.Scene
         this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
-    hehe()
-    {
-        console.log("olakase");
-    }
     loadSounds()
     {
         this.walking1 = this.sound.add('Walking1');
@@ -855,13 +850,13 @@ class Stage1_1 extends Phaser.Scene
         }
     }
 
-    checkSmoothTransitionBetweenPlayerAndBlocks()
+    checkSmoothTransitionBetweenPlayerAndBlocks(player, block)
     {
-        if (this.blocks.getTileAtWorldXY(this.player.x + gamePrefs.TILE_SIZE, this.player.y) != null)    //DERECHA
+        if (this.blocks.getTileAtWorldXY(player.x + gamePrefs.TILE_SIZE, player.y) != null)    //DERECHA
         {
-            if (this.player.dir == Directions.RIGHT)        //si su direccion es derecha y la anterior es arriba o abajo hace lerp desde esa pos a su direccion anterior
+            if (player.dir == Directions.RIGHT)        //si su direccion es derecha y la anterior es arriba o abajo hace lerp desde esa pos a su direccion anterior
             {
-                if (this.player.lastDir == Directions.UP)
+                if (player.lastDir == Directions.UP)
                 {
                     //lerp
                     var nextPos = new Phaser.Math.Vector2(this.player.x + gamePrefs.TILE_SIZE, this.player.y + gamePrefs.TILE_SIZE);
@@ -1216,7 +1211,7 @@ class Stage1_1 extends Phaser.Scene
         {
             this.shiftPressed = false;
         }
-        this.checkSmoothTransitionBetweenPlayerAndBlocks();
+        //this.checkSmoothTransitionBetweenPlayerAndBlocks();
         this.bombExploded();
         this.updateScore();
 
