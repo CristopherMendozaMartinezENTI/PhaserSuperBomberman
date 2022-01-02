@@ -29,12 +29,11 @@ class Stage1_4 extends Phaser.Scene
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
         
-        
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl3_Tile','Lvl3_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_3','Stage1_3.json');
+        this.load.tilemapTiledJSON('Stage1_4','Stage1_4.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -80,7 +79,7 @@ class Stage1_4 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_3');
+        this.map = this.add.tilemap('Stage1_4');
         //Cargo los Tilesets
         this.map.addTilesetImage('Lvl3_Tile');
         //Pintamos las capas/layers
@@ -1264,6 +1263,13 @@ class Stage1_4 extends Phaser.Scene
         if (this.exit.changeScene == true)
         {
             //Cargar siguiente nivel
+            this.music.stop();
+            this.scene.start('Stage1_5', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
         }
 
         if(this.bombs.maxSize != this.player.bombNum)
@@ -1311,6 +1317,16 @@ class Stage1_4 extends Phaser.Scene
         {
             this.music.stop();
             this.scene.start('Stage1_4', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F5.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_5', 
                             {Lives: this.player.lives, 
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,
