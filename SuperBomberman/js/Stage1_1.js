@@ -1455,6 +1455,16 @@ class Stage1_1 extends Phaser.Scene
                             FireDistance: this.player.fireDistance,
                             Speed: this.player.playerSpeed});
         }
+        else if(this.cursor.F6.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage_BossArena', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
 
         this.gameOver();
     }
