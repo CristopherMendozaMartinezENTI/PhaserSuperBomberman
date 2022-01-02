@@ -84,6 +84,7 @@ class Stage1_2 extends Phaser.Scene
         this.map.addTilesetImage('Lvl1_Tile');
         //Pintamos las capas/layers
         this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
+        this.edges = this.map.createLayer('edges', 'Lvl1_Tile');
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
         
@@ -99,9 +100,11 @@ class Stage1_2 extends Phaser.Scene
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,16,true,true,'blocks');
+        this.map.setCollisionBetween(1,16,true,true,'edges');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
+        this.physics.add.collider(this.player,this.edges);
 
         //Creamos los bloques destruibles 
         this.desTileMap = new Array(15);
