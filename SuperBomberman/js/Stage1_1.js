@@ -858,84 +858,72 @@ class Stage1_1 extends Phaser.Scene
 
     checkSmoothTransitionBetweenPlayerAndBlocks(player, block)
     {
-        if (this.blocks.getTileAtWorldXY(player.x + gamePrefs.TILE_SIZE, player.y) != null)    //DERECHA
+        if (player.dir == Directions.RIGHT)
         {
-            if (player.dir == Directions.RIGHT)        //si su direccion es derecha y la anterior es arriba o abajo hace lerp desde esa pos a su direccion anterior
+            var result = (block.y + gamePrefs.TILE_SIZE/2) - this.player.body.position.y;
+            if (result < -56 && this.blocks.getTileAtWorldXY(block.x, block.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
             {
-                if (player.lastDir == Directions.UP)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x + gamePrefs.TILE_SIZE, this.player.y + gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
-                if (this.player.lastDir == Directions.DOWN)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x + gamePrefs.TILE_SIZE, this.player.y - gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x + gamePrefs.TILE_SIZE, this.player.body.position.y + gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
+                
+            }
+            else if (result > -50 && this.blocks.getTileAtWorldXY(block.x, block.y - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
+            {
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x + gamePrefs.TILE_SIZE, this.player.body.position.y - gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
             }
         }
-        if (this.blocks.getTileAtWorldXY(this.player.x - gamePrefs.TILE_SIZE, this.player.y) != null)    //IZQUIERDA
+        if (player.dir == Directions.LEFT)
         {
-            if (this.player.dir == Directions.LEFT)    
+            var result = (block.y + gamePrefs.TILE_SIZE/2) - this.player.body.position.y;
+            if (result < -56 && this.blocks.getTileAtWorldXY(block.x, block.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
             {
-                if (this.player.lastDir == Directions.UP)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x - gamePrefs.TILE_SIZE, this.player.y + gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
-                if (this.player.lastDir == Directions.DOWN)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x - gamePrefs.TILE_SIZE, this.player.y - gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x - gamePrefs.TILE_SIZE, this.player.body.position.y + gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
+                
+            }
+            else if (result > -50 && this.blocks.getTileAtWorldXY(block.x, block.y - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
+            {
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x - gamePrefs.TILE_SIZE, this.player.body.position.y - gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
             }
         }
-        if (this.blocks.getTileAtWorldXY(this.player.x, this.player.y + gamePrefs.TILE_SIZE) != null)    //ARRIBA
+        if (player.dir == Directions.UP)
         {
-            if (this.player.dir == Directions.UP)    
+            var result = (block.x + gamePrefs.TILE_SIZE/2) - this.player.body.position.x;
+            if (result < -44 && this.blocks.getTileAtWorldXY(block.x + gamePrefs.TILE_SIZE, block.y) == null)	//Esta por derecha y no hay bloque
             {
-                if (this.player.lastDir == Directions.RIGHT)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x + gamePrefs.TILE_SIZE, this.player.y + gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
-                if (this.player.lastDir == Directions.LEFT)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x - gamePrefs.TILE_SIZE, this.player.y + gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x + gamePrefs.TILE_SIZE, this.player.body.position.y - gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
+                
+            }
+            else if (result > -33 && this.blocks.getTileAtWorldXY(block.x - gamePrefs.TILE_SIZE, block.y) == null)	//Esta por izquierda y no hay bloque
+            {
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x - gamePrefs.TILE_SIZE, this.player.body.position.y - gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
             }
         }
-        if (this.blocks.getTileAtWorldXY(this.player.x, this.player.y - gamePrefs.TILE_SIZE) != null)    //ABAJO
+        if (player.dir == Directions.DOWN)
         {
-            if (this.player.dir == Directions.DOWN)    
+            var result = (block.x + gamePrefs.TILE_SIZE/2) - this.player.body.position.x;
+            if (result < -44 && this.blocks.getTileAtWorldXY(block.x + gamePrefs.TILE_SIZE, block.y) == null)	//Esta por derecha y no hay bloque
             {
-                if (this.player.lastDir == Directions.RIGHT)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x + gamePrefs.TILE_SIZE, this.player.y - gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
-                if (this.player.lastDir == Directions.LEFT)
-                {
-                    //lerp
-                    var nextPos = new Phaser.Math.Vector2(this.player.x - gamePrefs.TILE_SIZE, this.player.y - gamePrefs.TILE_SIZE);
-                    this.player.x = Phaser.Math.Linear(this.player.x, nextPos.x, 0.1);
-                    this.player.y = Phaser.Math.Linear(this.player.y, nextPos.y, 0.1);
-                }
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x + gamePrefs.TILE_SIZE, this.player.body.position.y + gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
+                
+            }
+            else if (result > -33 && this.blocks.getTileAtWorldXY(block.x - gamePrefs.TILE_SIZE, block.y) == null)	//Esta por izquierda y no hay bloque
+            {
+                var nextPos = new Phaser.Math.Vector2(this.player.body.position.x - gamePrefs.TILE_SIZE, this.player.body.position.y + gamePrefs.TILE_SIZE);
+                this.player.body.position.x = Phaser.Math.Linear(this.player.body.position.x, nextPos.x,0.1);
+                this.player.body.position.y = Phaser.Math.Linear(this.player.body.position.y, nextPos.y, 0.1);
             }
         }
     }
