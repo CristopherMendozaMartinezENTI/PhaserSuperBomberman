@@ -23,6 +23,7 @@ class Enemies extends Phaser.GameObjects.Sprite
         this.invulnerability = false;
 
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
+        _scene.physics.add.collider(this, _scene.edges, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.desObjs, this.changeDirection, null, this);
 

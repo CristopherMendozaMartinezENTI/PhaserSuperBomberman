@@ -75,6 +75,7 @@ class Stage1_1 extends Phaser.Scene
         this.map.addTilesetImage('Lvl1_Tile');
         //Pintamos las capas/layers
         this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
+        this.edges = this.map.createLayer('edges', 'Lvl1_Tile');
         this.map.createLayer('ground','Lvl1_Tile');
         this.blocks.debug = true;
         
@@ -88,11 +89,13 @@ class Stage1_1 extends Phaser.Scene
         this.hudClock.anims.play("HudClockAnim");
         this.hudTime.anims.play("HudTimeAnim");
         
-        //Indicamos las colisiones con bloques
+        //Indicamos las colisiones con bloques y bordes
         this.map.setCollisionBetween(1,16,true,true,'blocks');
+        this.map.setCollisionBetween(1,16,true,true,'edges');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks, this.checkSmoothTransitionBetweenPlayerAndBlocks, null, this);
+        this.physics.add.collider(this.player,this.edges);
 
         //Creamos los bloques destruibles 
         this.desTileMap = new Array(15);
@@ -1266,6 +1269,16 @@ class Stage1_1 extends Phaser.Scene
         {
             this.music.stop();
             this.scene.start('Stage1_4', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F5.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_5', 
                             {Lives: this.player.lives, 
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,

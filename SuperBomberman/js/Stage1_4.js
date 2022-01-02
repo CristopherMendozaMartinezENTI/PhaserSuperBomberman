@@ -29,12 +29,11 @@ class Stage1_4 extends Phaser.Scene
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
         
-        
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl3_Tile','Lvl3_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_3','Stage1_3.json');
+        this.load.tilemapTiledJSON('Stage1_4','Stage1_4.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -80,11 +79,12 @@ class Stage1_4 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_3');
+        this.map = this.add.tilemap('Stage1_4');
         //Cargo los Tilesets
         this.map.addTilesetImage('Lvl3_Tile');
         //Pintamos las capas/layers
         this.blocks = this.map.createLayer('blocks','Lvl3_Tile');
+        this.edges = this.map.createLayer('edges', 'Lvl3_Tile');
         this.map.createLayer('ground','Lvl3_Tile');
         this.blocks.debug = true;
         
@@ -100,9 +100,11 @@ class Stage1_4 extends Phaser.Scene
 
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,19,true,true,'blocks');
+        this.map.setCollisionBetween(1,19,true,true,'edges');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
+        this.physics.add.collider(this.player,this.edges);
 
         //Creamos los bloques destruibles 
         this.desTileMap = new Array(15);
@@ -1261,6 +1263,13 @@ class Stage1_4 extends Phaser.Scene
         if (this.exit.changeScene == true)
         {
             //Cargar siguiente nivel
+            this.music.stop();
+            this.scene.start('Stage1_5', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
         }
 
         if(this.bombs.maxSize != this.player.bombNum)
@@ -1308,6 +1317,16 @@ class Stage1_4 extends Phaser.Scene
         {
             this.music.stop();
             this.scene.start('Stage1_4', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
+        }
+        else if(this.cursor.F5.isDown)
+        {
+            this.music.stop();
+            this.scene.start('Stage1_5', 
                             {Lives: this.player.lives, 
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,

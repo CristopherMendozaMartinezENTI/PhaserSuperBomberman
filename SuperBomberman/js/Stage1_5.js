@@ -1,10 +1,10 @@
-class Stage1_2 extends Phaser.Scene
+class Stage1_5 extends Phaser.Scene
 {
     constructor()
     { //crea la escena
         super(
         {
-            key:"Stage1_2"
+            key:"Stage1_5"
         });
     }
 
@@ -23,17 +23,17 @@ class Stage1_2 extends Phaser.Scene
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
-        this.load.spritesheet('desBlock', 'DestructibleBlock1.png', {frameWidth:16, frameHeight:16})
-        this.load.spritesheet('desBlockExplosion', 'DestructibleBlock1_Anim.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('desBlock2', 'DestructibleBlock2.png', {frameWidth:16, frameHeight:16})
+        this.load.spritesheet('desBlockExplosion2', 'DestructibleBlock2_Anim.png', {frameWidth:16, frameHeight:16});
 
-        this.load.spritesheet('bombUp', 'PowerUp_BombUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
-        this.load.image('Lvl1_Tile','Lvl1_Tile.png');
+        this.load.image('Lvl3_Tile','Lvl3_Tile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_2','Stage1_2.json');
+        this.load.tilemapTiledJSON('Stage1_5','Stage1_5.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -79,13 +79,13 @@ class Stage1_2 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_2');
+        this.map = this.add.tilemap('Stage1_5');
         //Cargo los Tilesets
-        this.map.addTilesetImage('Lvl1_Tile');
+        this.map.addTilesetImage('Lvl3_Tile');
         //Pintamos las capas/layers
-        this.blocks = this.map.createLayer('blocks','Lvl1_Tile');
-        this.edges = this.map.createLayer('edges', 'Lvl1_Tile');
-        this.map.createLayer('ground','Lvl1_Tile');
+        this.blocks = this.map.createLayer('blocks','Lvl3_Tile');
+        this.edges = this.map.createLayer('edges', 'Lvl3_Tile');
+        this.map.createLayer('ground','Lvl3_Tile');
         this.blocks.debug = true;
         
         this.createPools();
@@ -99,8 +99,8 @@ class Stage1_2 extends Phaser.Scene
         this.hudTime.anims.play("HudTimeAnim");
 
         //Indicamos las colisiones con bloques
-        this.map.setCollisionBetween(1,16,true,true,'blocks');
-        this.map.setCollisionBetween(1,16,true,true,'edges');
+        this.map.setCollisionBetween(1,19,true,true,'blocks');
+        this.map.setCollisionBetween(1,19,true,true,'edges');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks);
@@ -289,24 +289,12 @@ class Stage1_2 extends Phaser.Scene
             }   
         );
         //#endregion
-
-        //#region DestructibleBlock
-        this.anims.create(
-            {
-                key:'desObjAnim',
-                frames:this.anims.generateFrameNumbers('desBlock', {start:0, end:7}),
-                frameRate:10,
-                yoyo:false,
-                repeat:-1
-            }   
-        );
-        //#endregion
         
         //#region DestructibleBlock Explosion
         this.anims.create(
             {
-                key:'desObjAnimEx',
-                frames:this.anims.generateFrameNumbers('desBlockExplosion', {start:0, end:8}),
+                key:'desObj2AnimEx',
+                frames:this.anims.generateFrameNumbers('desBlockExplosion2', {start:0, end:8}),
                 frameRate:15,
                 yoyo:false,
                 repeat:0
@@ -465,8 +453,8 @@ class Stage1_2 extends Phaser.Scene
         //#region PowerUps
         this.anims.create(
             {
-                key:PowerUpTypes.BOMB_UP,
-                frames:this.anims.generateFrameNumbers('bombUp', {start:0, end:1}),
+                key:PowerUpTypes.SPEED_UP,
+                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -475,8 +463,8 @@ class Stage1_2 extends Phaser.Scene
 
         this.anims.create(
             {
-                key:PowerUpTypes.SPEED_UP,
-                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
+                key:PowerUpTypes.VEST,
+                frames:this.anims.generateFrameNumbers('vest', {start:0, end:1}),
                 frameRate:25,
                 yoyo:false,
                 repeat:-1
@@ -815,7 +803,7 @@ class Stage1_2 extends Phaser.Scene
         var changedPos = false;
 
         //Puropen
-        for (let i = 0; i < 3; i++) 
+        for (let i = 0; i < 2; i++) 
         {
             changedPos = false;
 
@@ -928,6 +916,67 @@ class Stage1_2 extends Phaser.Scene
             }
             this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
         }
+
+        
+        //Bokuda
+        for (let i = 0; i < 2; i++) 
+        {
+            changedPos = false;
+
+            while(!changedPos)
+            {
+                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
+
+                //Indestructible blocks
+                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
+                {
+                    continue;
+                }
+
+                var samePos = false;
+                //Destructible blocks
+                desObjs.forEach(_e => {
+                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
+                    if(desPos == tmpPos)
+                    {
+                       samePos = true;
+                    }
+                });
+
+                if(samePos)
+                {
+                    continue;
+                }
+
+                //Player pos
+                if(playerPos == tmpPos)
+                {
+                    continue;
+                }
+
+                //Enemies
+                samePos = false;
+                if(this.enemies.getLength() != 0)
+                {
+                    var enemies = this.enemies.getChildren();
+                    enemies.forEach(_e => {
+                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
+                        if(ePos == tmpPos)
+                        {
+                           samePos = true;
+                        }
+                    });
+                }
+                
+                if(samePos)
+                {
+                    continue;
+                }
+
+                changedPos = true;
+            }
+            //this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'bokuda'));
+        }
     }
 
     spawnDesObj()
@@ -979,7 +1028,7 @@ class Stage1_2 extends Phaser.Scene
                 }
             }
 
-            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock', 1, 100, true));
+            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock2', 1, 100, false));
 
             randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
             console.log(randomPos);
@@ -1100,18 +1149,18 @@ class Stage1_2 extends Phaser.Scene
                                 powerUp.body.reset(_e.x, _e.y);
                             }
                         }
-                        else // Bomb Up
+                        else //Vest 
                         {
                             if(!powerUp)
                             {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'bombUp', PowerUpTypes.BOMB_UP);
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'vest', PowerUpTypes.VEST);
                                 
                                 this.powerUps.add(powerUp);
                             }
                             else
                             {
                                 powerUp.active = true;
-                                powerUp.type = PowerUpTypes.BOMB_UP;
+                                powerUp.type = PowerUpTypes.VEST;
 
                                 powerUp.used = false;
                                 
@@ -1213,21 +1262,14 @@ class Stage1_2 extends Phaser.Scene
 
         if (this.exit.changeScene == true)
         {
-            this.music.stop();
-            this.scene.start('Stage1_3', 
-                            {Lives: this.player.lives, 
-                            Score: this.scoreValue,
-                            BombNum: this.player.bombNum,
-                            FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed});
-
+            //Cargar siguiente nivel
         }
 
         if(this.bombs.maxSize != this.player.bombNum)
         {
             this.bombs.maxSize = this.player.bombNum;
-        }   
-
+        }  
+        
         
         //ShortCuts a Niveles
         if (this.cursor.F1.isDown)
@@ -1284,6 +1326,7 @@ class Stage1_2 extends Phaser.Scene
                             FireDistance: this.player.fireDistance,
                             Speed: this.player.playerSpeed});
         }
+        
 
         this.gameOver();
     }
