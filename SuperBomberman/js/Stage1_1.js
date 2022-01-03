@@ -955,7 +955,7 @@ class Stage1_1 extends Phaser.Scene
                     return;
                 var destrPos = this.convertWorldPositionToTile(obj.x, obj.y);
                 var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                if (destrPos[0] == block.x && destrPos[1] == block.y + 1 && destrPos[1] == block.y - 1)
+                if (destrPos[0] == block.x && (destrPos[1] == block.y + 1 || destrPos[1] == block.y - 1))
                 {
                     canMove = false;
                 }
