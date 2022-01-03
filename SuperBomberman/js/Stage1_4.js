@@ -1281,6 +1281,7 @@ class Stage1_4 extends Phaser.Scene
         //ShortCuts a Niveles
         if (this.cursor.F1.isDown)
         {
+            this.music.stop();
             this.scene.start('Stage1_1');
         }
         else if(this.cursor.F2.isDown)
