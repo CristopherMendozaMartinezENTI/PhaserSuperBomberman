@@ -12,16 +12,18 @@ class TitleScreen extends Phaser.Scene
     { //carga los assets en memoria
         //var rutaImg = 'assets/Sprites/';
         this.load.setPath('assets/Sprites/');
-        this.load.image('TittleScreen_Background', 'TittleScreen_Background.png');
+        this.load.image('TitleScreen_Background', 'TitleScreen_Background.png');
+        this.load.image('Title', 'Title.png');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('ItemGet','ItemGet.wav');
-        this.load.audio('Area1Music','Area1Music.mp3');
+        this.load.audio('TitleMusic','TitleMusic.mp3');
     }
 
     create()
     { //carga los assets en pantalla desde memoria
-        this.background = this.add.tileSprite(0,0,config.width,config.height,'TittleScreen_Background').setOrigin(0);
+        this.background = this.add.tileSprite(0,0,config.width,config.height,'TitleScreen_Background').setOrigin(0);
+        this.title = this.add.tileSprite(0,-150,config.width,config.height,'Title').setOrigin(0);
 
         //Inputs
         this.cursor = this.input.keyboard.createCursorKeys();
@@ -35,7 +37,7 @@ class TitleScreen extends Phaser.Scene
     loadSounds()
     {
         this.itemGet = this.sound.add("ItemGet");
-        this.music = this.sound.add('Area1Music' , {volume: 0.5});
+        this.music = this.sound.add('TitleMusic' , {volume: 0.5});
         this.music.loop = true;
         this.music.play();
     }
@@ -323,6 +325,9 @@ class TitleScreen extends Phaser.Scene
     { //actualiza assets
         //Calculate delta time
         this._delta = (this.getTime() - this.start) / 1000;
+
+        if(this.title.y < 0)
+            this.title.y += 2;;
         
         if(this.cursor.space.isDown)
         {

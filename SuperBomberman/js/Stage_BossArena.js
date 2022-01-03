@@ -36,7 +36,7 @@ class Stage_BossArena extends Phaser.Scene
         this.load.audio('PlaceBomb','PlaceBomb.wav');
         this.load.audio('BombExplodes','BombExplodes.wav');
         this.load.audio('ItemGet','ItemGet.wav');
-        this.load.audio('Area1Music','Area1Music.mp3');
+        this.load.audio('BossMusic','BossMusic.mp3');
     }
 
     convertWorldPositionToTile(_posX, _posY)
@@ -153,7 +153,7 @@ class Stage_BossArena extends Phaser.Scene
         this.placeBomb = this.sound.add('PlaceBomb');
         this.bombExplodes = this.sound.add('BombExplodes');
         this.itemGet = this.sound.add("ItemGet");
-        this.music = this.sound.add('Area1Music' , {volume: 0.5});
+        this.music = this.sound.add('BossMusic' , {volume: 0.5});
         this.music.loop = true;
         this.music.play();
     }
@@ -818,6 +818,7 @@ class Stage_BossArena extends Phaser.Scene
         //ShortCuts a Niveles
         if (this.cursor.F1.isDown)
         {
+            this.music.stop();
             this.scene.start('Stage1_1');
         }
         else if(this.cursor.F2.isDown)
