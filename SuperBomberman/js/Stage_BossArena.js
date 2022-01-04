@@ -691,12 +691,12 @@ class Stage_BossArena extends Phaser.Scene
                 if (bomb.active)
                 {
                     var bombPos = this.convertWorldPositionToTile(bomb.x, bomb.y);
-                    var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                    if (bombPos[0] == block.x && (bombPos[1] == block.y + 1 || bombPos[1] == block.y - 1))
+                    //var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
+                    if (result < -2 && (bombPos[0] == block.x && bombPos[1] == block.y + 1 - 2))
                     {
                         canMove = false;
                     }
-                    if (bombPos[0] == pPos[0] && (bombPos[1] == pPos[1] + 1 || bombPos[1] == pPos[1] - 1))
+                    else if (result > 2 && (bombPos[0] == block.x && bombPos[1] == block.y - 1 - 2))
                     {
                         canMove = false;
                     }
@@ -706,24 +706,55 @@ class Stage_BossArena extends Phaser.Scene
             });
             //#endregion
 
-            
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1] + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[0] == block.x - 1 && bombPos[1] == block.y + 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+                
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
                 
             }
             else if (result > 2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] - gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] - gamePrefs.TILE_SIZE) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1] - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[0] == block.x - 1 && bombPos[1] == block.y - 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+                
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
         }
-        if (player.dir == Directions.LEFT)
+        else if (player.dir == Directions.LEFT)
         {
             var result = tmp[1] - player.body.position.y;
             //#region Comprobacion Bombas
@@ -732,12 +763,12 @@ class Stage_BossArena extends Phaser.Scene
                 if (bomb.active)
                 {
                     var bombPos = this.convertWorldPositionToTile(bomb.x, bomb.y);
-                    var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                    if (bombPos[0] == block.x && (bombPos[1] == block.y + 1 || bombPos[1] == block.y - 1))
+                    //var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
+                    if (result < - 2 && (bombPos[0] == block.x && bombPos[1] == block.y + 1 - 2))
                     {
                         canMove = false;
                     }
-                    if (bombPos[0] == pPos[0] && (bombPos[1] == pPos[1] + 1 || bombPos[1] == pPos[1] - 1))
+                    if (result > 2 && (bombPos[0] == block.x && bombPos[1] == block.y - 1 - 2))
                     {
                         canMove = false;
                     }
@@ -747,25 +778,54 @@ class Stage_BossArena extends Phaser.Scene
             });
             //#endregion
 
-           
-            
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null
-                && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
+                && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1] + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[0] == block.x - 1 && bombPos[1] == block.y + 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
                 
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
             else if (result > 2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] - gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] - gamePrefs.TILE_SIZE) == null
-                && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
+                && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1] - gamePrefs.TILE_SIZE) == null)	//Esta por arriba y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[0] == block.x - 1 && bombPos[1] == block.y - 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+                
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
         }
-        if (player.dir == Directions.UP)
+        else if (player.dir == Directions.UP)
         {
             var result = tmp[0] - player.body.position.x;
             
@@ -775,12 +835,12 @@ class Stage_BossArena extends Phaser.Scene
                 if (bomb.active)
                 {
                     var bombPos = this.convertWorldPositionToTile(bomb.x, bomb.y);
-                    var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                    if (bombPos[1] == block.y && (bombPos[0] == block.x + 1 || bombPos[0] == block.x - 1))
+                    //var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
+                    if (result < -2 && (bombPos[1] == block.y && bombPos[0] == block.x + 1 - 2))
                     {
                         canMove = false;
                     }
-                    if (bombPos[1] == pPos[1] && (bombPos[0] == pPos[0] + 1 || bombPos[0] == pPos[0] - 1))
+                    if (result > 2 && (bombPos[1] == block.y && bombPos[0] == block.x - 1 - 2))
                     {
                         canMove = false;
                     }
@@ -793,22 +853,54 @@ class Stage_BossArena extends Phaser.Scene
             
             console.log(canMove);
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por derecha y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1] - gamePrefs.TILE_SIZE) == null)	//Esta por derecha y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[1] == block.y - 1 && bombPos[0] == block.x + 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+                
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
                 
             }
             else if (result > 2 && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1]) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por izquierda y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1] + gamePrefs.TILE_SIZE) == null)	//Esta por izquierda y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[1] == block.y - 1 && bombPos[0] == block.x - 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+               
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y - gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
         }
-        if (player.dir == Directions.DOWN)
+        else if (player.dir == Directions.DOWN)
         {
             var result = tmp[0] - player.body.position.x;
              //#region Comprobacion Bombas
@@ -817,12 +909,12 @@ class Stage_BossArena extends Phaser.Scene
                 if (bomb.active)
                 {
                     var bombPos = this.convertWorldPositionToTile(bomb.x, bomb.y);
-                    var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                    if (bombPos[1] == block.y && (bombPos[0] == block.x + 1 || bombPos[0] == block.x - 1))
+                    //var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
+                    if (result < -2 && (bombPos[1] == block.y && bombPos[0] == block.x + 1 - 2))
                     {
                         canMove = false;
                     }
-                    if (bombPos[1] == pPos[1] && (bombPos[0] == pPos[0] + 1 || bombPos[0] == pPos[0] - 1))
+                    if (result > 2 && (bombPos[1] == block.y && bombPos[0] == block.x - 1 - 2))
                     {
                         canMove = false;
                     }
@@ -832,22 +924,53 @@ class Stage_BossArena extends Phaser.Scene
             });
             //#endregion
 
-           
+            
             console.log(canMove);
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por derecha y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1] + gamePrefs.TILE_SIZE) == null)	//Esta por derecha y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[1] == block.y - 1 && bombPos[0] == block.x + 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
                 
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
             else if (result > 2 && this.blocks.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] - gamePrefs.TILE_SIZE, tmp[1]) == null
-            && this.blocks.getTileAtWorldXY(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por izquierda y no hay bloque
+            && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1] + gamePrefs.TILE_SIZE) == null)	//Esta por izquierda y no hay bloque
             {
-                var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
-                player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
-                player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                bombs.forEach(obj => {
+                    if (obj.active)
+                    {
+                        var bombPos = this.convertWorldPositionToTile(obj.x, obj.y);
+                        if (bombPos[1] == block.y - 1 && bombPos[0] == block.x - 1 - 2)
+                        {
+                            canMove = false;
+                        }
+                    }
+                    if (!canMove)
+                    return;
+                });
+                
+                if (canMove)
+                {
+                    var nextPos = new Phaser.Math.Vector2(player.body.position.x - gamePrefs.TILE_SIZE, player.body.position.y + gamePrefs.TILE_SIZE);
+                    player.body.position.x = Phaser.Math.Linear(player.body.position.x, nextPos.x,0.1);
+                    player.body.position.y = Phaser.Math.Linear(player.body.position.y, nextPos.y, 0.1);
+                }
             }
         }
     }
