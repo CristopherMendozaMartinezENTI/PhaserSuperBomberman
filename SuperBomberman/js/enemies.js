@@ -10,6 +10,8 @@ class Enemies extends Phaser.GameObjects.Sprite
         this.body.setOffset(0, 16/ 2);
         this.setOrigin(.5);
 
+        this.depth = 1;
+
         this.health = _health;
         this.scoreEarned = _scoreEarned;
 
@@ -147,6 +149,10 @@ class Enemies extends Phaser.GameObjects.Sprite
     changeDirection(_enemy)
     {
         //console.log(_enemy.health);
+        if(_enemy.type == EnemyTypes.BAKUDA && _enemy.attackMode)
+        {
+            return;
+        }
         if(_enemy.health > 0)
         {
             var changed = false;
@@ -189,6 +195,11 @@ class Enemies extends Phaser.GameObjects.Sprite
 
     kill(_enemy, _explosion)
     {
+        if(_enemy.type == EnemyTypes.BAKUDA)
+        {
+            console.log("Invulnerability Explosion Hit: " + this.invulnerability);
+        }
+
         if(!_enemy.invulnerability)
         {
             _enemy.explosionCollided_Type = _explosion.explosionTile;

@@ -12,7 +12,7 @@ class Bakuda extends Enemies
 
         this.spawnBomb = false;
         this.attackMode = false;
-        this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME;
+        this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME + 1000;
 
         this.tmpX = _positionX;
         this.spawnBombPositionX = _positionX;
@@ -31,7 +31,7 @@ class Bakuda extends Enemies
         }
         else if(this.attackMode && !this.anims.isPlaying)
         {
-            if(!this.spawnBomb)
+            if(!this.spawnBomb && this.x < 500)
             {
                 this.spawnBombPositionX = this.body.position.x;
                 this.tmpX = this.x;
@@ -64,28 +64,34 @@ class Bakuda extends Enemies
 
             this.anims.play("bakudaAttack");
         }
+
+        console.log(this.spawnBombPositionX);
     }
 
     timeDown(delta)
     {
         this.currentTimeDown -= delta;
-        if(this.currentTimeDown <= -250)
+        if(this.currentTimeDown <= 0)
         {
             this.invulnerability = false;
-            this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME;
+            this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME + 1000;
 
             this.attackTimeDown = 10000;
 
             this.dir = this.lastDir;
 
             this.x = this.tmpX;
+            this.spawnBombPositionX = this.x;
 
+            this.anims.play(EnemyTypes.BAKUDA + this.dir);
             this.attackMode = false;
+            console.log(this.tmpX);
             console.log("deja de explotar");
         }
-        else if(this.currentTimeDown <= 250)
+        else if(this.currentTimeDown <= 500)
         {
             this.invulnerability = true;
         }
+        console.log("Invulnerability: " + this.invulnerability);
     }
 }
