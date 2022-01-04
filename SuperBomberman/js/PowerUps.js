@@ -8,9 +8,28 @@ class PowerUps extends Phaser.GameObjects.Sprite
         this.type = _type;
         this.used = false;
 
+        this.destroyed = false;
+
         this.anims.play(this.type);
 
         _scene.physics.add.overlap(this, _scene.player, this.activate, null, this);
+        
+        _scene.physics.add.overlap(this, _scene.explosion_down_end, this.destroyPowerUp, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_up_end, this.destroyPowerUp, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_left_end, this.destroyPowerUp, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_right_end, this.destroyPowerUp, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.destroyPowerUp, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_vertical, this.destroyPowerUp, null, this);
+    }
+
+    preUpdate(time,delta)
+    {
+        super.preUpdate(time, delta);
+
+        if(this.destroyed && !this.anims.isPlaying)
+        {
+            this.destroy();
+        }
     }
 
     activate(_powerUp, _player, _scene)
@@ -49,5 +68,11 @@ class PowerUps extends Phaser.GameObjects.Sprite
         _powerUp.active = false;
         _powerUp.x = gameOptions.gameWidth + 100;
         _powerUp.used = true;
+    }
+
+    destroyPowerUp()
+    {
+        this.anims.play("enemymExAnim");
+        this.destroyed = true;
     }
 }

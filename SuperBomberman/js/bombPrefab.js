@@ -1,6 +1,6 @@
 class bombPrefab extends Phaser.GameObjects.Sprite
 {
-    constructor(_scene, _positionX, _positionY, _sprite, _immovable)
+    constructor(_scene, _positionX, _positionY, _sprite, _immovable, _playerBomb = true)
     { //crea la escena
         super(_scene,_positionX, _positionY, _sprite);
         _scene.add.existing(this);
@@ -9,6 +9,8 @@ class bombPrefab extends Phaser.GameObjects.Sprite
 
         this.playerKick = false;
         this.anims.play('bombAnim');
+
+        this.playerBomb = _playerBomb;
         
         _scene.physics.add.collider(this, _scene.blocks, this.collided);
         _scene.physics.add.collider(this, _scene.desObjs, this.collided);

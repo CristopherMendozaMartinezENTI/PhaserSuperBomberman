@@ -16,6 +16,7 @@ class Stage1_3 extends Phaser.Scene
         this.load.spritesheet('playerDeath', 'Player_White_Dead_Anim.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('nuts_star', 'Enemy_NutsStar.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
@@ -427,6 +428,46 @@ class Stage1_3 extends Phaser.Scene
         );
         //#endregion
 
+        //#region Nuts Star
+        this.anims.create(
+            {
+                key:EnemyTypes.NUTS_STAR + Directions.UP,
+                frames:this.anims.generateFrameNumbers('nuts_star', {start:0, end:8}),
+                frameRate:15,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.NUTS_STAR + Directions.DOWN,
+                frames:this.anims.generateFrameNumbers('nuts_star', {start:9, end:17}),
+                frameRate:15,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.NUTS_STAR + Directions.LEFT,
+                frames:this.anims.generateFrameNumbers('nuts_star', {start:18, end:24}),
+                frameRate:15,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.NUTS_STAR + Directions.RIGHT,
+                frames:this.anims.generateFrameNumbers('nuts_star', {start:27, end:33}),
+                frameRate:15,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+
+        //#endregion
+
         //#region Enemy Explosion
         this.anims.create(
             {
@@ -808,7 +849,6 @@ class Stage1_3 extends Phaser.Scene
     spawnEnemies()
     {
         var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
-        var desObjs = this.desObjs.getChildren();
         var tmpPos;
 
         var changedPos = false;
@@ -865,7 +905,7 @@ class Stage1_3 extends Phaser.Scene
 
                 changedPos = true;
             }
-            //this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'nuts_Star'));
+            this.enemies.add(new Nuts_Star(this, tmpPos[0], tmpPos[1], "nuts_star"));
         }
 
     }

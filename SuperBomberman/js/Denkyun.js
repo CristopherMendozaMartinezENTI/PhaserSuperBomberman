@@ -20,11 +20,11 @@ class Denkyun extends Enemies
 
         if(this.health <= 0)
         {
-            //console.log(EnemyTypes.DENKYUN + " killed");
+            this.x = -10;
+            this.active = false;
         }
         else if(this.body.speed < this.speed * 15)
         {
-            //console.log("menos vel");
             if(this.dir == Directions.UP)
             {
                 this.body.velocity.y = this.speed * -15;

@@ -5,8 +5,17 @@ class Bakuda extends Enemies
         super(_scene, _positionX, _positionY - 3, _sprite, EnemyTypes.BAKUDA, 1, 800);
 
         this.dir = Directions.LEFT;
+        this.lastDir = Directions.LEFT;
         this.speed = 2;
-        this.body.velocity.x = this.speed * -15;
+
+        this.attackTimeDown = 1500;
+
+        this.spawnBomb = false;
+        this.attackMode = false;
+        this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME;
+
+        this.tmpX = _positionX;
+        this.spawnBombPositionX = _positionX;
         
         this.anims.play(EnemyTypes.BAKUDA + this.dir);
     }
@@ -20,6 +29,18 @@ class Bakuda extends Enemies
             this.x = -10;
             this.active = false;
         }
+        else if(this.attackMode && !this.anims.isPlaying)
+        {
+            if(!this.spawnBomb)
+            {
+                this.spawnBombPositionX = this.body.position.x;
+                this.tmpX = this.x;
+                this.x = 100000;
+                
+                this.spawnBomb = true;
+            }
+            this.timeDown(delta);
+        }
         else if(this.dirChanged)
         {
             this.anims.play(EnemyTypes.BAKUDA + this.dir);
@@ -27,5 +48,44 @@ class Bakuda extends Enemies
         }
 
         super.preUpdate(time, delta);
+
+        //Activate attack mode
+        this.attackTimeDown -= delta;
+        if(this.attackTimeDown < 0 && !this.attackMode)
+        {
+            console.log("Explota");
+            this.attackMode = true;
+
+            this.lastDir = this.dir;
+            this.dir = Directions.NONE;
+
+            this.body.velocity.x = 0;
+            this.body.velocity.y = 0;
+
+            this.anims.play("bakudaAttack");
+        }
+    }
+
+    timeDown(delta)
+    {
+        this.currentTimeDown -= delta;
+        if(this.currentTimeDown <= -250)
+        {
+            this.invulnerability = false;
+            this.currentTimeDown = gamePrefs.BOMB_EXPLOSION_TIME;
+
+            this.attackTimeDown = 10000;
+
+            this.dir = this.lastDir;
+
+            this.x = this.tmpX;
+
+            this.attackMode = false;
+            console.log("deja de explotar");
+        }
+        else if(this.currentTimeDown <= 250)
+        {
+            this.invulnerability = true;
+        }
     }
 }

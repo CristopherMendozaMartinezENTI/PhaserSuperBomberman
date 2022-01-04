@@ -15,14 +15,12 @@ class Nuts_Star extends Enemies
     {
         if(this.health <= 0)
         {
-            console.log(EnemyTypes.NUTS_STAR + " killed");
-
             this.x = -10;
             this.active = false;
         }
         else if(this.dirChanged)
         {
-            this.anims.play(EnemyTypes.NUTS_STAR+this.dir);
+            this.anims.play(EnemyTypes.NUTS_STAR + this.dir);
             this.dirChanged = false;
         }
 

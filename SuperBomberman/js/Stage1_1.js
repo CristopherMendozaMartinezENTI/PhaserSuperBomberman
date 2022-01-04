@@ -468,6 +468,18 @@ class Stage1_1 extends Phaser.Scene
             }   
         );
         //#endregion
+
+        //#region Destroy PowerUps
+        this.anims.create(
+            {
+                key:"destroyPowerUp",
+                frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
+                frameRate:25,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
     }
 
     createPools()
