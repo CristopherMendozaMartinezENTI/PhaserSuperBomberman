@@ -1,10 +1,10 @@
-class Stage1_5 extends Phaser.Scene
+class Stage_BossArena extends Phaser.Scene
 {
     constructor()
     { //crea la escena
         super(
         {
-            key:"Stage1_5"
+            key:"Stage_BossArena"
         });
     }
 
@@ -23,17 +23,12 @@ class Stage1_5 extends Phaser.Scene
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
         this.load.spritesheet('exit', 'Obj_Exit.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('hudTime', 'TimeAnim.png', {frameWidth:272, frameHeight:32});
-        this.load.spritesheet('desBlock2', 'DestructibleBlock2.png', {frameWidth:16, frameHeight:16})
-        this.load.spritesheet('desBlockExplosion2', 'DestructibleBlock2_Anim.png', {frameWidth:16, frameHeight:16});
 
-        this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
-        this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
-        
         this.load.setPath("assets/Tiles/");
-        this.load.image('Lvl3_Tile','Lvl3_Tile.png');
+        this.load.image('BossArenaTile','BossArenaTile.png');
 
         this.load.setPath('assets/Maps/');
-        this.load.tilemapTiledJSON('Stage1_5','Stage1_5.json');
+        this.load.tilemapTiledJSON('BossArena','BossArena.json');
 
         this.load.setPath('assets/Sounds/')
         this.load.audio('Walking1','Walking1.wav');
@@ -41,7 +36,7 @@ class Stage1_5 extends Phaser.Scene
         this.load.audio('PlaceBomb','PlaceBomb.wav');
         this.load.audio('BombExplodes','BombExplodes.wav');
         this.load.audio('ItemGet','ItemGet.wav');
-        this.load.audio('Area1Music','Area1Music.mp3');
+        this.load.audio('BossMusic','BossMusic.mp3');
     }
 
     convertWorldPositionToTile(_posX, _posY)
@@ -79,19 +74,19 @@ class Stage1_5 extends Phaser.Scene
         this.hudTime = this.add.sprite(0,0,'hudTime').setOrigin(0);
 
         //Cargo el JSON
-        this.map = this.add.tilemap('Stage1_5');
+        this.map = this.add.tilemap('BossArena');
         //Cargo los Tilesets
-        this.map.addTilesetImage('Lvl3_Tile');
+        this.map.addTilesetImage('BossArenaTile');
         //Pintamos las capas/layers
-        this.blocks = this.map.createLayer('blocks','Lvl3_Tile');
-        this.edges = this.map.createLayer('edges', 'Lvl3_Tile');
-        this.map.createLayer('ground','Lvl3_Tile');
+        this.blocks = this.map.createLayer('blocks','BossArenaTile');
+        this.edges = this.map.createLayer('edges', 'BossArenaTile');
+        this.map.createLayer('ground','BossArenaTile');
         this.blocks.debug = true;
         
         this.createPools();
         this.createAnimations();
         
-        var tmpPos = this.convertTilePositionToWorld(2, 1);
+        var tmpPos = this.convertTilePositionToWorld(8, 11);
         //Creamos el player
         this.player = new Player(this, tmpPos[0], tmpPos[1], 'bombermanWhite');
         
@@ -112,9 +107,6 @@ class Stage1_5 extends Phaser.Scene
         for (let index = 0; index < this.desTileMap.length; index++) {
             this.desTileMap[index] = new Array(13);
         }
-
-        this.spawnDesObj();
-        this.spawnDoor();
 
         //Creamos Enemigos
         this.spawnEnemies();
@@ -161,7 +153,7 @@ class Stage1_5 extends Phaser.Scene
         this.placeBomb = this.sound.add('PlaceBomb');
         this.bombExplodes = this.sound.add('BombExplodes');
         this.itemGet = this.sound.add("ItemGet");
-        this.music = this.sound.add('Area1Music' , {volume: 0.5});
+        this.music = this.sound.add('BossMusic' , {volume: 0.5});
         this.music.loop = true;
         this.music.play();
     }
@@ -253,18 +245,7 @@ class Stage1_5 extends Phaser.Scene
             }
         );
         //#endregion
-        
-        //#region ExitDoor
-        this.anims.create(
-            {
-                key:'exitDoorAnim',
-                frames:this.anims.generateFrameNumbers('exit', {start:0, end:1}),
-                frameRate:25,
-                yoyo:false,
-                repeat:-1
-            }
-        );
-        //#endregion
+    
 
         //#region HudClock
         this.anims.create(
@@ -286,18 +267,6 @@ class Stage1_5 extends Phaser.Scene
                 duration:112000,
                 yoyo:false,
                 repeat:-1
-            }   
-        );
-        //#endregion
-        
-        //#region DestructibleBlock Explosion
-        this.anims.create(
-            {
-                key:'desObj2AnimEx',
-                frames:this.anims.generateFrameNumbers('desBlockExplosion2', {start:0, end:8}),
-                frameRate:15,
-                yoyo:false,
-                repeat:0
             }   
         );
         //#endregion
@@ -374,69 +343,6 @@ class Stage1_5 extends Phaser.Scene
             }
         );
         //#endregion
-    
-        //#region Puropen
-        this.anims.create(
-            {
-                key:EnemyTypes.PUROPEN + Directions.UP,
-                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:0, end:3}),
-                frameRate:30,
-                yoyo:true,
-                repeat:-1
-            }
-        );
-        this.anims.create(
-            {
-                key:EnemyTypes.PUROPEN + Directions.LEFT,
-                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:4, end:7}),
-                frameRate:30,
-                yoyo:true,
-                repeat:-1
-            }
-        );
-        this.anims.create(
-            {
-                key:EnemyTypes.PUROPEN + Directions.DOWN,
-                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:8, end:11}),
-                frameRate:30,
-                yoyo:true,
-                repeat:-1
-            }
-        );
-        this.anims.create(
-            {
-                key:EnemyTypes.PUROPEN + Directions.RIGHT,
-                frames:this.anims.generateFrameNumbers(EnemyTypes.PUROPEN, {start:12, end:15}),
-                frameRate:30,
-                yoyo:true,
-                repeat:-1
-            }
-        );
-        //#endregion
-
-        //#region Denkyun
-        this.anims.create(
-            {
-                key:EnemyTypes.DENKYUN,
-                frames:this.anims.generateFrameNumbers(EnemyTypes.DENKYUN, {start:0, end:5}),
-                frameRate:15,
-                yoyo:true,
-                repeat:-1
-            }
-        );
-        //#endregion
-
-        //#region Enemy Explosion
-        this.anims.create(
-            {
-                key:'enemymExAnim',
-                frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
-                frameRate:15,
-                yoyo:false,
-                repeat:0
-            }   
-        );
-        //#endregion
 
         //#region Player death
         this.anims.create(
@@ -450,37 +356,12 @@ class Stage1_5 extends Phaser.Scene
         );
         //#endregion
     
-        //#region PowerUps
-        this.anims.create(
-            {
-                key:PowerUpTypes.SPEED_UP,
-                frames:this.anims.generateFrameNumbers('speedUp', {start:0, end:1}),
-                frameRate:25,
-                yoyo:false,
-                repeat:-1
-            }   
-        );
-
-        this.anims.create(
-            {
-                key:PowerUpTypes.VEST,
-                frames:this.anims.generateFrameNumbers('vest', {start:0, end:1}),
-                frameRate:25,
-                yoyo:false,
-                repeat:-1
-            }   
-        );
-        //#endregion
     }
 
     createPools()
     {
         this.bombs = this.physics.add.group();
         this.enemies = this.add.group();
-        this.desObjs = this.add.group();
-
-        this.powerUps = this.physics.add.group();
-
         this.bombs.maxSize = 1;
 
         //#region Explosion Pool
@@ -794,191 +675,6 @@ class Stage1_5 extends Phaser.Scene
         });
     }
 
-    spawnEnemies()
-    {
-        var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
-        var desObjs = this.desObjs.getChildren();
-        var tmpPos;
-
-        var changedPos = false;
-
-        //Puropen
-        for (let i = 0; i < 2; i++) 
-        {
-            changedPos = false;
-
-            while(!changedPos)
-            {
-                console.log("Spawn enemy changed");
-
-                var random = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
-                tmpPos = this.convertTilePositionToWorld(random[0], random[1]);
-
-                //Indestructible blocks
-                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
-                {
-                    continue;
-                }
-
-                var samePos = false;
-
-                //Destructible blocks
-                if(this.desTileMap[random[0]][random[1]] != null)
-                {
-                    continue;
-                }
-
-                //Player pos
-                if(Math.abs(playerPos[0] - random[0]) < 2 && Math.abs(playerPos[1] - random[1] < 2))
-                {
-                    continue;
-                }
-
-                //Enemies
-                samePos = false;
-                if(this.enemies.getLength() != 0)
-                {
-                    var enemies = this.enemies.getChildren();
-                    enemies.forEach(_e => {
-                        if(tmpPos[0] == _e.x && tmpPos[1] == _e.y)
-                        {
-                           samePos = true;
-                        }
-                    });
-                }
-                
-                if(samePos)
-                {
-                    continue;
-                }
-
-                changedPos = true;
-            }
-            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'puropen'));
-        }
-
-        //Denkyun
-        for (let i = 0; i < 2; i++) 
-        {
-            changedPos = false;
-
-            while(!changedPos)
-            {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-
-                //Indestructible blocks
-                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
-                {
-                    continue;
-                }
-
-                var samePos = false;
-                //Destructible blocks
-                desObjs.forEach(_e => {
-                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
-                    if(desPos == tmpPos)
-                    {
-                       samePos = true;
-                    }
-                });
-
-                if(samePos)
-                {
-                    continue;
-                }
-
-                //Player pos
-                if(playerPos == tmpPos)
-                {
-                    continue;
-                }
-
-                //Enemies
-                samePos = false;
-                if(this.enemies.getLength() != 0)
-                {
-                    var enemies = this.enemies.getChildren();
-                    enemies.forEach(_e => {
-                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                        if(ePos == tmpPos)
-                        {
-                           samePos = true;
-                        }
-                    });
-                }
-                
-                if(samePos)
-                {
-                    continue;
-                }
-
-                changedPos = true;
-            }
-            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
-        }
-
-        
-        //Bokuda
-        for (let i = 0; i < 2; i++) 
-        {
-            changedPos = false;
-
-            while(!changedPos)
-            {
-                tmpPos = this.convertTilePositionToWorld(Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11));
-
-                //Indestructible blocks
-                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) != null)
-                {
-                    continue;
-                }
-
-                var samePos = false;
-                //Destructible blocks
-                desObjs.forEach(_e => {
-                    var desPos = this.convertWorldPositionToTile(_e.x, _e.y);
-                    if(desPos == tmpPos)
-                    {
-                       samePos = true;
-                    }
-                });
-
-                if(samePos)
-                {
-                    continue;
-                }
-
-                //Player pos
-                if(playerPos == tmpPos)
-                {
-                    continue;
-                }
-
-                //Enemies
-                samePos = false;
-                if(this.enemies.getLength() != 0)
-                {
-                    var enemies = this.enemies.getChildren();
-                    enemies.forEach(_e => {
-                        var ePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                        if(ePos == tmpPos)
-                        {
-                           samePos = true;
-                        }
-                    });
-                }
-                
-                if(samePos)
-                {
-                    continue;
-                }
-
-                changedPos = true;
-            }
-            //this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'bokuda'));
-        }
-    }
-
     checkSmoothTransitionBetweenPlayerAndBlocks(player, block)
     {
         var tmp = this.convertTilePositionToWorld(block.x, block.y - 2);
@@ -1010,23 +706,6 @@ class Stage1_5 extends Phaser.Scene
             });
             //#endregion
 
-            //#region Comprobacion destruct
-            var destr = this.desObjs.getChildren();
-            destr.forEach(obj => {
-                if (!canMove)
-                    return;
-                var destrPos = this.convertWorldPositionToTile(obj.x, obj.y);
-                var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                if (destrPos[0] == block.x && (destrPos[1] == block.y + 1 || destrPos[1] == block.y - 1))
-                {
-                    canMove = false;
-                }
-                if (destrPos[0] == pPos[0] && (destrPos[1] == pPos[1] + 1 || destrPos[1] == pPos[1] - 1))
-                {
-                    canMove = false;
-                }
-            });
-            //#endregion
             
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null
             && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
@@ -1068,23 +747,7 @@ class Stage1_5 extends Phaser.Scene
             });
             //#endregion
 
-            //#region Comprobacion destruct
-            var destr = this.desObjs.getChildren();
-            destr.forEach(obj => {
-                if (!canMove)
-                    return;
-                var destrPos = this.convertWorldPositionToTile(obj.x, obj.y);
-                var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                if (destrPos[0] == block.x && (destrPos[1] == block.y + 1 || destrPos[1] == block.y - 1))
-                {
-                    canMove = false;
-                }
-                if (destrPos[0] == pPos[0] && (destrPos[1] == pPos[1] + 1 || destrPos[1] == pPos[1] - 1))
-                {
-                    canMove = false;
-                }
-            });
-            //#endregion
+           
             
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null && canMove && this.edges.getTileAtWorldXY(tmp[0], tmp[1] + gamePrefs.TILE_SIZE) == null
                 && this.blocks.getTileAtWorldXY(player.body.position.x, player.body.position.y + gamePrefs.TILE_SIZE) == null)	//Esta por abajo y no hay bloque
@@ -1127,23 +790,7 @@ class Stage1_5 extends Phaser.Scene
             });
             //#endregion
 
-            //#region Comprobacion destruct
-            var destr = this.desObjs.getChildren();
-            destr.forEach(obj => {
-                if (!canMove)
-                    return;
-                var destrPos = this.convertWorldPositionToTile(obj.x, obj.y);
-                var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                if (destrPos[1] == block.y && (destrPos[0] == block.x + 1 || destrPos[0] == block.x - 1))
-                {
-                    canMove = false;
-                }
-                if (destrPos[1] == pPos[1] && (destrPos[0] == pPos[0] + 1 || destrPos[0] == pPos[0] - 1))
-                {
-                    canMove = false;
-                }
-            });
-            //#endregion
+            
             console.log(canMove);
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null
             && this.blocks.getTileAtWorldXY(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por derecha y no hay bloque
@@ -1185,23 +832,7 @@ class Stage1_5 extends Phaser.Scene
             });
             //#endregion
 
-            //#region Comprobacion destruct
-            var destr = this.desObjs.getChildren();
-            destr.forEach(obj => {
-                if (!canMove)
-                    return;
-                var destrPos = this.convertWorldPositionToTile(obj.x, obj.y);
-                var pPos = this.convertWorldPositionToTile(player.body.position.x, player.body.position.y);
-                if (destrPos[1] == block.y && (destrPos[0] == block.x + 1|| destrPos[0] == block.x - 1))
-                {
-                    canMove = false;
-                }
-                if (destrPos[1] == pPos[1] && (destrPos[0] == pPos[0] + 1 || destrPos[0] == pPos[0] - 1))
-                {
-                    canMove = false;
-                }
-            });
-            //#endregion
+           
             console.log(canMove);
             if (result < -2 && this.blocks.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null && canMove && this.edges.getTileAtWorldXY(tmp[0] + gamePrefs.TILE_SIZE, tmp[1]) == null
             && this.blocks.getTileAtWorldXY(player.body.position.x + gamePrefs.TILE_SIZE, player.body.position.y) == null)	//Esta por derecha y no hay bloque
@@ -1221,81 +852,13 @@ class Stage1_5 extends Phaser.Scene
         }
     }
 
-    spawnDesObj()
+    spawnEnemies()
     {
         var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
+        var tmpPos;
+        //Instanciar al jefe.
 
-        var changed = false;
-        for (let i = 0; i < 32; i++) 
-        {
-            changed = false;
-
-            var randomPos;
-            var tmpPos;
-            while(!changed)
-            {
-                var samePos = false;
-                randomPos = [Phaser.Math.Between(2, 14), Phaser.Math.Between(1, 11)];
-                
-                //Destructible objects
-                if(this.desObjs.getLength() != 0)
-                {
-                    var desObjs = this.desObjs.getChildren();
-                    desObjs.forEach(obj => {
-                        var dPos = this.convertWorldPositionToTile(obj.x, obj.y);
-                        if(dPos == randomPos)
-                        {
-                            samePos = true;
-                        }
-                    });
-                }
-
-                if(samePos)
-                {
-                    continue;
-                }
-
-                //Player pos
-                if(randomPos[0] - playerPos[0] < 2 && randomPos[1] - playerPos[1] < 2)
-                {
-                    continue;
-                }
-
-                //Indestructible objects
-                tmpPos = this.convertTilePositionToWorld(randomPos[0], randomPos[1]);
-
-                if(this.blocks.getTileAtWorldXY(tmpPos[0], tmpPos[1]) == null)
-                {
-                    changed = true;
-                }
-            }
-
-            this.desObjs.add(new DestructibleBlocks(this, tmpPos[0], tmpPos[1], 'desBlock2', 1, 100, false));
-
-            randomPos = this.convertWorldPositionToTile(tmpPos[0], tmpPos[1]);
-            console.log(randomPos);
-            if(randomPos[0] == 15)
-            {
-                randomPos[0]--;
-            }
-            this.desTileMap[randomPos[0]][randomPos[1]] = 1;
-        }
-        console.log(this.desTileMap);
-    }
-
-    spawnDoor()
-    {
-        var destrObj = this.desObjs.getChildren();
-        var rand = Phaser.Math.Between(0, destrObj.length - 1);
-        var conversion = this.convertWorldPositionToTile(destrObj[rand].x, destrObj[rand].y);
-
-        console.log(destrObj[rand]);
-        destrObj[rand].anims.stop();
-        destrObj[rand].exitDoor = true;
-
-        console.log("Door position:", conversion[0]-3, conversion[1]- 1);
-        this.exit = new exitDoorManager(this, destrObj[rand].x, destrObj[rand].y, 'exit', rand);
-        this.exit.anims.play('exitDoorAnim');
+        var changedPos = false;
     }
 
     getTime()
@@ -1307,8 +870,6 @@ class Stage1_5 extends Phaser.Scene
     updateScore()
     {
         var enemies = this.enemies.getChildren();
-        var desObjs = this.desObjs.getChildren();
-        var powerUps = this.powerUps.getChildren();
 
         enemies.forEach(_e => {
             if(_e.killed)
@@ -1351,82 +912,6 @@ class Stage1_5 extends Phaser.Scene
                         return;
                     }
                 });
-            }
-        });
-
-
-        desObjs.forEach(_e => {
-            if(_e.killed)
-            {
-                if(_e.exitDoor)
-                {
-                    console.log("Exit spawned");
-                    this.exit.resetSpawn();
-                }
-                else
-                {
-                    var random = Phaser.Math.Between(0, 100);
-                    if(random >= 0 && random <= gamePrefs.POWER_UP_SPAWN_RATE) // 20%
-                    {
-                        var powerUp = this.powerUps.getFirst(false);
-    
-                        random = Phaser.Math.Between(0,1);
-                        random = Math.round(random);
-                        if(random == 0) // Speed Up
-                        {
-                            console.log(powerUp);
-                            if(!powerUp)
-                            {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'speedUp', PowerUpTypes.SPEED_UP);
-    
-                                this.powerUps.add(powerUp);
-                            }
-                            else
-                            {
-                                powerUp.active = true;
-                                powerUp.type = PowerUpTypes.FIRE_UP;
-
-                                powerUp.used = false;
-                                
-                                powerUp.body.reset(_e.x, _e.y);
-                            }
-                        }
-                        else //Vest 
-                        {
-                            if(!powerUp)
-                            {
-                                powerUp = new PowerUps(this, _e.x, _e.y, 'vest', PowerUpTypes.VEST);
-                                
-                                this.powerUps.add(powerUp);
-                            }
-                            else
-                            {
-                                powerUp.active = true;
-                                powerUp.type = PowerUpTypes.VEST;
-
-                                powerUp.used = false;
-                                
-                                powerUp.body.reset(_e.x, _e.y);
-                            }
-                        }
-                    }
-                }
-
-               // console.log(this.desTileMap);
-                var tilePos = this.convertWorldPositionToTile(_e.x, _e.y);
-                //console.log(tilePos);
-                this.desTileMap[tilePos[0]][tilePos[1]] = null;
-                this.scoreUp(_e.scoreEarned);
-
-                _e.destroy();
-            }
-        });
-
-        powerUps.forEach(_e => {
-            if(_e.used)
-            {
-                this.itemGet.play();
-                _e.used = false;
             }
         });
     }
@@ -1502,16 +987,10 @@ class Stage1_5 extends Phaser.Scene
         //Update last time
         this.start = this.getTime();
 
-        if (this.exit.changeScene == true)
-        {
-            //Cargar siguiente nivel
-        }
-
         if(this.bombs.maxSize != this.player.bombNum)
         {
             this.bombs.maxSize = this.player.bombNum;
         }  
-        
         
         //ShortCuts a Niveles
         if (this.cursor.F1.isDown)
@@ -1569,17 +1048,7 @@ class Stage1_5 extends Phaser.Scene
                             FireDistance: this.player.fireDistance,
                             Speed: this.player.playerSpeed});
         }
-        else if(this.cursor.F6.isDown)
-        {
-            this.music.stop();
-            this.scene.start('Stage_BossArena', 
-                            {Lives: this.player.lives, 
-                            Score: this.scoreValue,
-                            BombNum: this.player.bombNum,
-                            FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed});
-        }
-
+        
         this.gameOver();
     }
 }
