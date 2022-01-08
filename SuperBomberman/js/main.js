@@ -7,7 +7,7 @@ var config=
     render:{pixelArt:true},
     physics:{
         default:'arcade',
-        arcade:{debug:false}
+        arcade:{debug:true}
     }
 }
 var juego = new Phaser.Game(config);
