@@ -15,6 +15,7 @@ class Player extends Phaser.GameObjects.Sprite
         this.lives = 5;
         this.playerSpeed = gamePrefs.speedPlayer;
         this.kickActive = false;
+        this.controlBomb = false;
 
         this.killed = false;
         

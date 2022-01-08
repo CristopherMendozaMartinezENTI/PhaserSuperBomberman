@@ -1,27 +1,30 @@
 class bombPrefab extends Phaser.GameObjects.Sprite
 {
-    constructor(_scene, _positionX, _positionY, _sprite, _immovable, _playerBomb = true)
+    constructor(_scene, _positionX, _positionY, _sprite, _immovable,  _playerBomb = true)
     { //crea la escena
         super(_scene,_positionX, _positionY, _sprite);
         _scene.add.existing(this);
 
         this.setOrigin(0.5);
 
-        this.playerKick = false;
         this.anims.play('bombAnim');
-
+        this.playerKick = false;
+        
         this.playerBomb = _playerBomb;
+        this.isRemote = false;
+        this.remoteActivated = false;
         
         _scene.physics.add.collider(this, _scene.blocks, this.collided);
         _scene.physics.add.collider(this, _scene.desObjs, this.collided);
         _scene.physics.add.collider(this, _scene.enemies, this.collided);
-
+        
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_left_end, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_right_end, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.explode, null, this);
+        
 
         this.exploded = false;
         this.explosionX = _positionX;
@@ -38,13 +41,27 @@ class bombPrefab extends Phaser.GameObjects.Sprite
             this.body.setVelocity(0,0);
         }
 
-        if(this.liveTime < 0 && !this.exploded)
+        if (!this.isRemote)
         {
-            console.log("Explota");
-            
-            this.explode(this);
+            if(this.liveTime < 0 && !this.exploded)
+            {
+                console.log("Explota no remote");
+                
+                this.explode(this);
+            }
+            this.liveTime -= delta;
         }
-        this.liveTime -= delta;
+        else if (this.isRemote)
+        {
+            this.anims.play('remoteBombAnim');
+            if (this.remoteActivated)
+            {
+                console.log("Explota REMOTE");
+                this.explode(this);
+
+                this.remoteActivated = false;
+            }
+        }
         
         super.preUpdate(time, delta);
     }
