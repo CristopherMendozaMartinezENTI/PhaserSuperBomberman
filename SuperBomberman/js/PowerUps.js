@@ -60,7 +60,7 @@ class PowerUps extends Phaser.GameObjects.Sprite
         }
         else if(_powerUp.type == PowerUpTypes.REMOTE_CONTROL)
         {
-
+            _player.controlBomb = true;
         }
 
         console.log(_player.fireDistance);
