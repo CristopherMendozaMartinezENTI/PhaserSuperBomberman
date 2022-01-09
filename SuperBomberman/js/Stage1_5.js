@@ -148,12 +148,12 @@ class Stage1_5 extends Phaser.Scene
         this.cursor.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.cursor.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.cursor.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.cursor.F1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F1);
-        this.cursor.F2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
-        this.cursor.F3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F3);
-        this.cursor.F4 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F4);
-        this.cursor.F5 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F5);
-        this.cursor.F6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F6);
+        this.cursor.F1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.cursor.F2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.cursor.F3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
+        this.cursor.F4 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR);
+        this.cursor.F5 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE);
+        this.cursor.F6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
         this.cursor.CTRL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
 
         this.spacePressed = false;

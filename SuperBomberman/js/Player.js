@@ -169,7 +169,6 @@ class Player extends Phaser.GameObjects.Sprite
             _hero.body.velocity.x = 0;
             _hero.body.velocity.y = 0;
             _hero.playerHit = true;
-            //console.log("animacion: ", _hero.anims.isPlaying);
         }
     }
 }
