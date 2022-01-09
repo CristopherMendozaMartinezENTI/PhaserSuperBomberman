@@ -376,7 +376,7 @@ class Stage_BossArena extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('bigaron', {start:1, end:3}),
                 frameRate:5,
                 yoyo:false,
-                repeat:-1
+                repeat:0 
             }   
         );
         //#endregion
@@ -388,7 +388,7 @@ class Stage_BossArena extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('bigaron', {start:4, end:4}),
                 frameRate:5,
                 yoyo:false,
-                repeat:-1
+                repeat:0
             }   
         );
         //#endregion

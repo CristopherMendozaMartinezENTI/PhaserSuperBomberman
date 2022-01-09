@@ -40,8 +40,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.lastDir = Directions.LEFT;
         this.speed = 2;
         this.body.velocity.x = this.speed * -15;
-        this.attackTimeDown = 1500;
-        this.currentTimeDown = 10000;
+        this.attackTimeDown = 2500;
+        this.currentTimeDown = 3500;
         this.attackMode = false;
     }
 
@@ -55,21 +55,21 @@ class Bigaron extends Phaser.GameObjects.Sprite
         else
         {
             this.moveEnemy();
-            this.timeDown(delta);
+             //Activate attack mode
+            this.attackTimeDown -= delta;
+            if(this.attackTimeDown < 0 && !this.attackMode)
+            {
+                console.log("Martillazo");
+                this.attackMode = true;
+                this.lastDir = this.dir;
+                this.dir = Directions.NONE;
+                this.speed = 0;
+                this.anims.play("bigaronAttack");
+            }
         }
         super.preUpdate(time, delta);
-
-        //Activate attack mode
-        this.attackTimeDown -= delta;
-        if(this.attackTimeDown < 0 && !this.attackMode)
-        {
-            console.log("Martillazo");
-            this.attackMode = true;
-            this.lastDir = this.dir;
-            this.dir = Directions.NONE;
-            this.speed = 0;
-            this.anims.play("bigaronAttack");
-        }
+        this.timeDown(delta);
+        
     } 
 
     update(_delta)
@@ -101,11 +101,11 @@ class Bigaron extends Phaser.GameObjects.Sprite
         {
             this.invulnerability = false;
             this.speed = 2;
-            this.attackTimeDown = 1500;
-            this.currentTimeDown = 10000;
+            this.attackTimeDown = 2500;
+            this.currentTimeDown = 3500;
             this.attackMode = false;
-            this.dir = this.lastDir;
             this.anims.play("bigaronIdle"); 
+            this.dir = this.lastDir;
         }
     }
 
