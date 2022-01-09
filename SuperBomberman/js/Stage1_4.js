@@ -624,7 +624,7 @@ class Stage1_4 extends Phaser.Scene
         _enemy.changeDirection(_enemy);
     }
 
-    spawnExplosion(_posX, _posY, _explosionLenght)
+    spawnExplosion(_posX, _posY)
     {
         //console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
@@ -633,7 +633,7 @@ class Stage1_4 extends Phaser.Scene
         var up = false;
         var down = false;
         
-        for (let index = 0; index <= _explosionLenght; index++) {
+        for (let index = 0; index <= this.player.fireDistance; index++) {
             var explosion;
             if(index == 0)//Central
             {
@@ -655,7 +655,7 @@ class Stage1_4 extends Phaser.Scene
 
                 explosion.body.setSize(17,17);
             }
-            else if(index == _explosionLenght)//Ends
+            else if(index == this.player.fireDistance)//Ends
             {
                 var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
                 if(tilePos[0] == 15)

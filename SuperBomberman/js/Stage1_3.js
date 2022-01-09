@@ -587,7 +587,7 @@ class Stage1_3 extends Phaser.Scene
 
     spawnExplosion(_posX, _posY)
     {
-        console.log(this.convertWorldPositionToTile(_posX, _posY));
+        //console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
         var right = false;
         var left = false;
@@ -624,7 +624,7 @@ class Stage1_3 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_left_end.getFirst(false);
 
@@ -648,7 +648,7 @@ class Stage1_3 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_right_end.getFirst(false);
 
@@ -672,7 +672,7 @@ class Stage1_3 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_up_end.getFirst(false);
     
@@ -696,7 +696,7 @@ class Stage1_3 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     
                     explosion = this.explosion_down_end.getFirst(false);
@@ -724,7 +724,7 @@ class Stage1_3 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -752,7 +752,7 @@ class Stage1_3 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
@@ -780,7 +780,7 @@ class Stage1_3 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -808,7 +808,7 @@ class Stage1_3 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && this.edges.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
