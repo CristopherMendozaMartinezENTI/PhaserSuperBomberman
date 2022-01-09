@@ -24,14 +24,7 @@ class Bakuda extends Enemies
 
     preUpdate(time,delta)
     {
-        if(this.health <= 0)
-        {
-            console.log(EnemyTypes.BAKUDA + " killed");
-
-            this.x = -10;
-            this.active = false;
-        }
-        else if(this.attackMode && !this.anims.isPlaying)
+        if(this.attackMode && !this.anims.isPlaying)
         {
             if(!this.spawnBomb && this.x < 500)
             {

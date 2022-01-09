@@ -15,12 +15,7 @@ class Nuts_Star extends Enemies
 
     preUpdate(time,delta)
     {
-        if(this.health <= 0)
-        {
-            this.x = -10;
-            this.active = false;
-        }
-        else if(this.dirChanged)
+        if(this.dirChanged)
         {
             this.anims.play(EnemyTypes.NUTS_STAR + this.dir);
             this.dirChanged = false;

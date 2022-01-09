@@ -20,12 +20,7 @@ class Denkyun extends Enemies
             this.dirChanged = false;
         }
 
-        if(this.health <= 0)
-        {
-            this.x = -10;
-            this.active = false;
-        }
-        else if(this.body.speed < this.speed * 15)
+        if(this.body.speed < this.speed * 15)
         {
             if(this.dir == Directions.UP)
             {
