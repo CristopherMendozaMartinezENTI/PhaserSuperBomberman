@@ -16,7 +16,6 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.rectColBody.body.setOffset(32, 24);
         //this.rectColBody.setOrigin(.5);
 
-
         this.depth = 1;
 
         this.health = _health;
@@ -87,12 +86,9 @@ class Bigaron extends Phaser.GameObjects.Sprite
                 this.body.velocity.x = 0;
                 this.body.velocity.y = 0;
                 this.anims.play("bigaronAttack");
-                if (this.anims.getProgress() >= 0.75)
-                {
-                    console.log("si lo es");
-                    this.rectColBody.body.setSize(32,120, false);
-                    this.rectColBody.body.setOffset(48, 24);
-                }
+                console.log("si lo es");
+                this.rectColBody.body.setSize(32,120, false);
+                this.rectColBody.body.setOffset(48, 24);   
             }
 
         }
