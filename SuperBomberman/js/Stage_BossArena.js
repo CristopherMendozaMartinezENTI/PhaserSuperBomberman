@@ -1037,6 +1037,9 @@ class Stage_BossArena extends Phaser.Scene
             this.scoreUp(this.boss.scoreEarned);
             this.boss.killed = false;
             this.boss.destroy();
+
+            this.win = true;
+            this.menuTimeDown = 5;
         }
         else if(this.boss.invulnerability)
         {
@@ -1064,6 +1067,17 @@ class Stage_BossArena extends Phaser.Scene
                     explosions = this.explosion_up_end.getChildren();
                     break;
             }
+        }
+    }
+
+    MenuLoad()
+    {
+        this.menuTimeDown -= this._delta;
+
+        if(this.menuTimeDown < 0)
+        {
+            this.music.stop();
+            this.scene.start("TitleScreen");
         }
     }
 
@@ -1223,5 +1237,10 @@ class Stage_BossArena extends Phaser.Scene
         }
         
         this.gameOver();
+
+        if(this.win)
+        {
+            this.MenuLoad();
+        }
     }
 }

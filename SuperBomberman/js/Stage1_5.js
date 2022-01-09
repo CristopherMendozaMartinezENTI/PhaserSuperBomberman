@@ -2067,7 +2067,8 @@ class Stage1_5 extends Phaser.Scene
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,
                             FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed});
+                            Speed: this.player.playerSpeed,
+                            RemoteControl: this.player.controlBomb});
         }
 
         this.gameOver();
