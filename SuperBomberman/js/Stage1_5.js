@@ -252,7 +252,6 @@ class Stage1_5 extends Phaser.Scene
     {
         if (this.player.lives <= 0 || !this.hudTime.anims.isPlaying)
             {
-                this.music.stop();
                 console.log("GAME OVER");
                 this.scene.start('Stage1_1');
             }
@@ -723,7 +722,7 @@ class Stage1_5 extends Phaser.Scene
         }
     }
 
-    spawnExplosion(_posX, _posY)
+    spawnExplosion(_posX, _posY, _explosionLenght = this.player.fireDistance)
     {
         //console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
@@ -732,7 +731,7 @@ class Stage1_5 extends Phaser.Scene
         var up = false;
         var down = false;
         
-        for (let index = 0; index <= this.player.fireDistance; index++) {
+        for (let index = 0; index <= _explosionLenght; index++) {
             var explosion;
             if(index == 0)//Central
             {
@@ -754,7 +753,7 @@ class Stage1_5 extends Phaser.Scene
 
                 explosion.body.setSize(17,17);
             }
-            else if(index == this.player.fireDistance)//Ends
+            else if(index == _explosionLenght)//Ends
             {
                 var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
                 if(tilePos[0] == 15)
@@ -976,9 +975,6 @@ class Stage1_5 extends Phaser.Scene
     {
         var bombs = this.bombs.getChildren();
         var enemies = this.enemies.getChildren();
-
-        var pakupa;
-        
 
         bombs.forEach(bomb => {
             if(bomb.exploded)
@@ -1958,9 +1954,9 @@ class Stage1_5 extends Phaser.Scene
                 //console.log("pase control");
             }
         }
-        else
-        {
+        else{
             this.controlPressed = false;
+
         }
 
         if (this.cursor.shift.isDown)
@@ -2071,8 +2067,7 @@ class Stage1_5 extends Phaser.Scene
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,
                             FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed,
-                            RemoteControl: this.player.controlBomb});
+                            Speed: this.player.playerSpeed});
         }
 
         this.gameOver();
