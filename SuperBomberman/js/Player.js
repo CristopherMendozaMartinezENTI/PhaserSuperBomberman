@@ -15,6 +15,7 @@ class Player extends Phaser.GameObjects.Sprite
         this.lives = 5;
         this.playerSpeed = gamePrefs.speedPlayer;
         this.kickActive = false;
+        this.controlBomb = false;
 
         this.killed = false;
         
@@ -37,7 +38,7 @@ class Player extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.hit, null, this);
 
         _scene.physics.add.overlap(this, _scene.enemies, this.hit, null, this);
-
+        _scene.physics.add.overlap(this, _scene.boss, this.hit, null, this);
 
         //Set de la posicion inicial
         this.dir = Directions.DOWN;

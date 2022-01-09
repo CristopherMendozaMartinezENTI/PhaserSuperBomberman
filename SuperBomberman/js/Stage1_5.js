@@ -21,6 +21,7 @@ class Stage1_5 extends Phaser.Scene
         this.load.spritesheet('bakuda_atack', 'Enemy_BakudaAttack.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
+        this.load.spritesheet('remoteBomb', 'RemoteBomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('score','HUD_Numbers.png', {frameWidth:8, frameHeight:14});
         this.load.spritesheet('hudClock', 'HUDTimeAnim.png', {frameWidth:272, frameHeight:32});
@@ -31,6 +32,7 @@ class Stage1_5 extends Phaser.Scene
 
         this.load.spritesheet('speedUp', 'PowerUp_SpeedUp.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('vest', 'PowerUp_Vest.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('controlBomb', 'PowerUp_RemoteBomb.png', {frameWidth:16, frameHeight:16});
         
         this.load.setPath("assets/Tiles/");
         this.load.image('Lvl3_Tile','Lvl3_Tile.png');
@@ -152,8 +154,10 @@ class Stage1_5 extends Phaser.Scene
         this.cursor.F4 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F4);
         this.cursor.F5 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F5);
         this.cursor.F6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F6);
+        this.cursor.CTRL = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
 
         this.spacePressed = false;
+        this.controlPressed = false;
         this.shiftPressed = false;
 
         //Music
@@ -347,6 +351,15 @@ class Stage1_5 extends Phaser.Scene
             {
                 key:'bombAnim',
                 frames:this.anims.generateFrameNumbers('bomb', {start:0, end:2}),
+                frameRate:5,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:'remoteBombAnim',
+                frames:this.anims.generateFrameNumbers('remoteBomb', {start:0, end:1}),
                 frameRate:5,
                 yoyo:true,
                 repeat:-1
@@ -603,6 +616,16 @@ class Stage1_5 extends Phaser.Scene
                 repeat:-1
             }   
         );
+
+        this.anims.create(
+            {
+                key:PowerUpTypes.REMOTE_CONTROL,
+                frames:this.anims.generateFrameNumbers('controlBomb', {start:0, end:1}),
+                frameRate:25,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
         //#endregion
     }
 
@@ -647,6 +670,11 @@ class Stage1_5 extends Phaser.Scene
                 }
                 else
                 {//Reset bomb
+                    if(this.player.controlBomb)
+                    {
+                        bomb.setTexture("remoteBomb");
+                        bomb.isRemote = true;
+                    }
                     bomb.active = true;
                     bomb.explosionX = _posX;
                     
@@ -1780,7 +1808,7 @@ class Stage1_5 extends Phaser.Scene
                     {
                         var powerUp = this.powerUps.getFirst(false);
     
-                        random = Phaser.Math.Between(0,1);
+                        random = Phaser.Math.Between(0,2);
                         random = Math.round(random);
                         if(random == 0) // Speed Up
                         {
@@ -1794,7 +1822,26 @@ class Stage1_5 extends Phaser.Scene
                             else
                             {
                                 powerUp.active = true;
-                                powerUp.type = PowerUpTypes.FIRE_UP;
+                                powerUp.type = PowerUpTypes.SPEED_UP;
+
+                                powerUp.used = false;
+                                
+                                powerUp.body.reset(_e.x, _e.y);
+                            }
+                        }
+                        else if (random == 1)   //Remote Bomb
+                        {
+                            console.log(powerUp);
+                            if(!powerUp)
+                            {
+                                powerUp = new PowerUps(this, _e.x, _e.y, 'controlBomb', PowerUpTypes.REMOTE_CONTROL);
+    
+                                this.powerUps.add(powerUp);
+                            }
+                            else
+                            {
+                                powerUp.active = true;
+                                powerUp.type = PowerUpTypes.REMOTE_CONTROL;
 
                                 powerUp.used = false;
                                 
@@ -1803,6 +1850,7 @@ class Stage1_5 extends Phaser.Scene
                         }
                         else //Vest 
                         {
+                            console.log(powerUp);
                             if(!powerUp)
                             {
                                 powerUp = new PowerUps(this, _e.x, _e.y, 'vest', PowerUpTypes.VEST);
@@ -1892,6 +1940,28 @@ class Stage1_5 extends Phaser.Scene
             this.spacePressed = false;
         }
 
+        if (this.cursor.CTRL.isDown)
+        {
+            if (!this.controlPressed)
+            { 
+                this.controlPressed = true;
+
+                var bombs = this.bombs.getChildren();
+                bombs.forEach(bomb => {
+                    if(bomb.isRemote)
+                    {
+                        bomb.remoteActivated = true;
+                        //console.log("activado control");
+                    }
+                });
+                //console.log("pase control");
+            }
+        }
+        else{
+            this.controlPressed = false;
+
+        }
+
         if (this.cursor.shift.isDown)
         {
             if (!this.shiftPressed)
@@ -1921,6 +1991,13 @@ class Stage1_5 extends Phaser.Scene
         if (this.exit.changeScene == true)
         {
             //Cargar siguiente nivel
+            this.music.stop();
+            this.scene.start('Stage_BossArena', 
+                            {Lives: this.player.lives, 
+                            Score: this.scoreValue,
+                            BombNum: this.player.bombNum,
+                            FireDistance: this.player.fireDistance,
+                            Speed: this.player.playerSpeed});
         }
 
         if(this.bombs.maxSize != this.player.bombNum)

@@ -14,8 +14,7 @@ class Stage_BossArena extends Phaser.Scene
         this.load.setPath('assets/Sprites/');
         this.load.spritesheet('bombermanWhite', 'Player_White.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('playerDeath', 'Player_White_Dead_Anim.png', {frameWidth:16, frameHeight:24});
-        this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
-        this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('bigaron', 'Boss_Bigaron.png', {frameWidth:77, frameHeight:152});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
@@ -355,7 +354,43 @@ class Stage_BossArena extends Phaser.Scene
             }   
         );
         //#endregion
-    
+
+        //#region BigaronIdle
+        this.anims.create(
+            {
+                key:'bigaronIdle',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:0, end:0}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion 
+
+         //#region BigaronAttack
+        this.anims.create(
+            {
+                key:'bigaronAttack',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:1, end:3}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+
+         //#region BigaronHurt
+         this.anims.create(
+            {
+                key:'bigaronHurt',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:4, end:4}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+        
     }
 
     createPools()
@@ -977,11 +1012,9 @@ class Stage_BossArena extends Phaser.Scene
 
     spawnEnemies()
     {
-        var playerPos = this.convertWorldPositionToTile(this.player.x, this.player.y);
-        var tmpPos;
+        var tmpPos = this.convertTilePositionToWorld(8, 5);
         //Instanciar al jefe.
-
-        var changedPos = false;
+        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 10, 10.000);
     }
 
     getTime()
