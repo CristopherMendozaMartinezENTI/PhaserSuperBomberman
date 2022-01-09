@@ -252,6 +252,7 @@ class Stage1_5 extends Phaser.Scene
     {
         if (this.player.lives <= 0 || !this.hudTime.anims.isPlaying)
             {
+                this.music.stop();
                 console.log("GAME OVER");
                 this.scene.start('Stage1_1');
             }
@@ -1957,9 +1958,9 @@ class Stage1_5 extends Phaser.Scene
                 //console.log("pase control");
             }
         }
-        else{
+        else
+        {
             this.controlPressed = false;
-
         }
 
         if (this.cursor.shift.isDown)
@@ -2070,7 +2071,8 @@ class Stage1_5 extends Phaser.Scene
                             Score: this.scoreValue,
                             BombNum: this.player.bombNum,
                             FireDistance: this.player.fireDistance,
-                            Speed: this.player.playerSpeed});
+                            Speed: this.player.playerSpeed,
+                            RemoteControl: this.player.controlBomb});
         }
 
         this.gameOver();
