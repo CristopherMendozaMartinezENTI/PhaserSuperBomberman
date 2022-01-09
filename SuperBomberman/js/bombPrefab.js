@@ -69,8 +69,7 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         {
             this.anims.play('bombAnim', true);
         }
-        
-
+    
         super.preUpdate(time, delta);
     }
 

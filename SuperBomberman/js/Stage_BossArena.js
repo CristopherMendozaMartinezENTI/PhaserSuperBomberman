@@ -63,6 +63,7 @@ class Stage_BossArena extends Phaser.Scene
         this.currentbombNum = data.BombNum;
         this.currentFireDistance = data.FireDistance;
         this.currentSpeed = data.Speed;
+        this.remoteControl = data.RemoteControl;
     }
 
     create()
@@ -122,6 +123,7 @@ class Stage_BossArena extends Phaser.Scene
         this.player.bombNum = this.currentbombNum;
         this.player.fireDistance = this.currentFireDistance;
         this.player.playerSpeed = this.currentSpeed;
+        this.player.controlBomb = this.remoteControl;
 
         this.playerLivesManager = new livesControl(this, 272/3 - 55, 16, 'score');
         this.playerLivesManager.setLives(this.player.lives);
@@ -203,6 +205,7 @@ class Stage_BossArena extends Phaser.Scene
     {
         if (this.player.lives <= 0 || !this.hudTime.anims.isPlaying)
             {
+                this.music.stop();
                 console.log("GAME OVER");
                 this.scene.start('Stage1_1');
             }
@@ -429,12 +432,21 @@ class Stage_BossArena extends Phaser.Scene
 
             if(!bomb)
             {//Generate new bomb
-                bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive);
-
+                bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive, false);
+                if(this.player.controlBomb)
+                {
+                    bomb.isRemote = true;
+                }
                 this.bombs.add(bomb);
             }
             else
             {//Reset bomb
+                if(this.player.controlBomb)
+                {
+                    bomb.isRemote = true;
+                    bomb.remoteActivated = false;
+                    this.bombs.add(bomb);
+                }
                 bomb.active = true;
                 bomb.explosionX = posX;
                 
@@ -443,7 +455,6 @@ class Stage_BossArena extends Phaser.Scene
             }
     
             bomb.body.setVelocity(0,0);
-            
             console.log(!this.player.kickActive);
             bomb.body.immovable = true;
             
@@ -1099,6 +1110,28 @@ class Stage_BossArena extends Phaser.Scene
         else
         {
             this.spacePressed = false;
+        }
+
+        if (this.cursor.CTRL.isDown)
+        {
+            if (!this.controlPressed)
+            { 
+                this.controlPressed = true;
+
+                var bombs = this.bombs.getChildren();
+                bombs.forEach(bomb => {
+                    if(bomb.isRemote)
+                    {
+                        bomb.remoteActivated = true;
+                        //console.log("activado control");
+                    }
+                });
+                //console.log("pase control");
+            }
+        }
+        else
+        {
+            this.controlPressed = false;
         }
 
         if (this.cursor.shift.isDown)
