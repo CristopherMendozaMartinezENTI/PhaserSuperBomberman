@@ -7,9 +7,15 @@ class Bigaron extends Phaser.GameObjects.Sprite
         _scene.add.existing(this);
 
         this.body.setSize(16,16,false);
-        this.body.setOffset(32, 84);
-        
+        this.body.setOffset(31, 84);
         this.setOrigin(.5);
+
+        this.rectColBody = new Phaser.GameObjects.Rectangle(_scene, _positionX, _positionY);
+        _scene.physics.add.existing(this.rectColBody);
+        this.rectColBody.body.setSize(64,64, false);
+        this.rectColBody.body.setOffset(32, 24);
+        //this.rectColBody.setOrigin(.5);
+
 
         this.depth = 1;
 
@@ -67,6 +73,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
         else
         {
             this.moveEnemy();
+            this.rectColBody.x = this.x;
+            this.rectColBody.y = this.y;
              //Activate attack mode
             this.attackTimeDown -= delta;
             if(this.attackTimeDown < 0 && !this.attackMode)
@@ -79,7 +87,14 @@ class Bigaron extends Phaser.GameObjects.Sprite
                 this.body.velocity.x = 0;
                 this.body.velocity.y = 0;
                 this.anims.play("bigaronAttack");
+                if (this.anims.getProgress() >= 0.75)
+                {
+                    console.log("si lo es");
+                    this.rectColBody.body.setSize(32,120, false);
+                    this.rectColBody.body.setOffset(48, 24);
+                }
             }
+
         }
 
         this.timeDown(delta);
@@ -97,6 +112,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
             this.speed = 2;
             this.attackTimeDown = 2500;
             this.currentTimeDown = 3500;
+            this.rectColBody.body.setSize(64,64, false);
+            this.rectColBody.body.setOffset(32, 24);
             this.attackMode = false;
             this.anims.play("bigaronIdle"); 
             this.dir = this.lastDir;
