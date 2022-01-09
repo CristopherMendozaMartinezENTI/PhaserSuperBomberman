@@ -24,7 +24,7 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.explosionCollided_Type = 0;
         
         this.invulnerability = false;
-        this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
+        this.invulnerableTime = gamePrefs.BOMB_EXPLOSION_TIME;
 
         _scene.physics.add.collider(this, _scene.limits, this.changeDirection, null, this);
 
@@ -52,6 +52,18 @@ class Bigaron extends Phaser.GameObjects.Sprite
             this.killed = true;
             //this.anims.play("enemymExAnim");
         }
+        else if(this.invulnerability)
+        {
+            //console.log("Boss Hitted");
+            this.anims.play("bigaronHurt");
+            
+            this.invulnerableTime -= delta;
+            if (this.invulnerableTime <= 0)
+            {
+                this.invulnerability = false;
+                this.invulnerableTime = gamePrefs.BOMB_EXPLOSION_TIME ;
+            }
+        }
         else
         {
             this.moveEnemy();
@@ -69,39 +81,19 @@ class Bigaron extends Phaser.GameObjects.Sprite
                 this.anims.play("bigaronAttack");
             }
         }
-        super.preUpdate(time, delta);
+
         this.timeDown(delta);
+        super.preUpdate(time, delta);
         
     } 
 
-    update(_delta)
-    {
-        if(this.invulnerability)
-        {
-            console.log("Boss Hitted");
-            if(this.tintFill)
-            {
-                this.anims.play("bigaronHurt");
-            }
-            else{
-                this.anims.play("bigaronIdle"); 
-            }
-            this.invulnerableTime -= _delta;
-            if (this.invulnerableTime <= 0)
-            {
-                this.invulnerability = false;
-                this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
-                this.tintFill = false;
-            }
-        }
-    }
 
     timeDown(delta)
     {
         this.currentTimeDown -= delta;
         if(this.currentTimeDown <= 0)
         {
-            this.invulnerability = false;
+            //this.invulnerability = false;
             this.speed = 2;
             this.attackTimeDown = 2500;
             this.currentTimeDown = 3500;
@@ -214,6 +206,7 @@ class Bigaron extends Phaser.GameObjects.Sprite
             _enemy.explosionCollided_X = _explosion.x;
             _enemy.explosionCollided_Y = _explosion.y;
             _enemy.health--;
+            console.log("bigaronn", _enemy.health);
             _enemy.invulnerability = true;
         }
     }
