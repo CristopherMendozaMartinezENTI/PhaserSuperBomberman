@@ -191,7 +191,7 @@ class Stage1_1 extends Phaser.Scene
 
     gameOver()
     {
-        if (this.player.lives <= 0)
+        if (this.player.lives <= 0 || !this.hudTime.anims.isPlaying)
         {
             //console.log("GAME OVER");
             this.scene.restart();
@@ -270,7 +270,7 @@ class Stage1_1 extends Phaser.Scene
                 frames:this.anims.generateFrameNumbers('hudTime', {start:0, end:13}),
                 duration:112000,
                 yoyo:false,
-                repeat:-1
+                repeat:0
             }   
         );
         //#endregion
