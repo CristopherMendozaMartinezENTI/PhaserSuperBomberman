@@ -428,7 +428,7 @@ class Stage1_1 extends Phaser.Scene
             {
                 key:'enemymExAnim',
                 frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
-                frameRate:15,
+                frameRate:25,
                 yoyo:false,
                 repeat:0
             }   

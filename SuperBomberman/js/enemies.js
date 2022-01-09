@@ -216,6 +216,7 @@ class Enemies extends Phaser.GameObjects.Sprite
 
         if(this.health <= 0)
         {
+            this.body.destroy();
             this.anims.play("enemymExAnim");
         }
     }

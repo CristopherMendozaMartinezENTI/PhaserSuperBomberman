@@ -15,7 +15,6 @@ class Puropen extends Enemies
 
     preUpdate(time,delta)
     {
-       
         if(this.dirChanged)
         {
             this.anims.play(EnemyTypes.PUROPEN+this.dir);
