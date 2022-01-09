@@ -1015,7 +1015,7 @@ class Stage_BossArena extends Phaser.Scene
     {
         var tmpPos = this.convertTilePositionToWorld(8, 5);
         //Instanciar al jefe.
-        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 1, 10000);
+        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 2, 10000);
     }
 
     getTime()
@@ -1058,14 +1058,7 @@ class Stage_BossArena extends Phaser.Scene
                     break;
             }
 
-            explosions.forEach(_explosion => {
-                if(_explosion.exploded_X == this.boss.explosionCollided_X && _explosion.y == this.boss.explosionCollided_Y && !_explosion.active)
-                {
-                    this.boss.invulnerability = false;
-                    console.log("Soy vulnerable");
-                    return;
-                }
-            });
+            
         }
     }
 
