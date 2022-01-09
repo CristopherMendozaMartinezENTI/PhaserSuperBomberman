@@ -582,6 +582,7 @@ class Stage1_1 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
+                console.log(tilePos);
                 if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_left_end.getFirst(false);

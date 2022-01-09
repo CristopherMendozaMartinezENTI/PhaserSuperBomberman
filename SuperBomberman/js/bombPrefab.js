@@ -76,7 +76,10 @@ class bombPrefab extends Phaser.GameObjects.Sprite
     explode(_bomb)
     {
         _bomb.exploded = true;
-        _bomb.explosionX = _bomb.x;
+        if(_bomb.x >= 0)
+        {
+            _bomb.explosionX = _bomb.x;
+        }
         _bomb.x = -100;
         _bomb.active = false;
     }
