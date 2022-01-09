@@ -24,9 +24,10 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.explosionCollided_Type = 0;
         
         this.invulnerability = false;
+        this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
 
         _scene.physics.add.collider(this, _scene.edges, this.changeDirection, null, this);
-        _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
+        _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
 
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_up_end, this.kill, null, this);
@@ -34,9 +35,17 @@ class Bigaron extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
+
+        this.dir = Directions.RIGHT;
+        this.lastDir = Directions.LEFT;
+        this.speed = 2;
+        this.body.velocity.x = this.speed * -15;
+        this.attackTimeDown = 1500;
+        this.currentTimeDown = 10000;
+        this.attackMode = false;
     }
 
-    preUpdate(time,delta)
+    preUpdate(time, delta)
     {
         if(this.health <= 0 && !this.anims.isPlaying)
         {
@@ -46,8 +55,58 @@ class Bigaron extends Phaser.GameObjects.Sprite
         else
         {
             this.moveEnemy();
+            this.timeDown(delta);
         }
         super.preUpdate(time, delta);
+
+        //Activate attack mode
+        this.attackTimeDown -= delta;
+        if(this.attackTimeDown < 0 && !this.attackMode)
+        {
+            console.log("Martillazo");
+            this.attackMode = true;
+            this.lastDir = this.dir;
+            this.dir = Directions.NONE;
+            this.speed = 0;
+            this.anims.play("bigaronAttack");
+        }
+    } 
+
+    update(_delta)
+    {
+        if(this.invulnerability)
+        {
+            console.log("Boss Hitted");
+            if(this.tintFill)
+            {
+                this.anims.play("bigaronHurt");
+            }
+            else{
+                this.anims.play("bigaronIdle"); 
+            }
+            this.invulnerableTime -= _delta;
+            if (this.invulnerableTime <= 0)
+            {
+                this.invulnerability = false;
+                this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
+                this.tintFill = false;
+            }
+        }
+    }
+
+    timeDown(delta)
+    {
+        this.currentTimeDown -= delta;
+        if(this.currentTimeDown <= 0)
+        {
+            this.invulnerability = false;
+            this.speed = 2;
+            this.attackTimeDown = 1500;
+            this.currentTimeDown = 10000;
+            this.attackMode = false;
+            this.dir = this.lastDir;
+            this.anims.play("bigaronIdle"); 
+        }
     }
 
     moveEnemy()
@@ -70,73 +129,31 @@ class Bigaron extends Phaser.GameObjects.Sprite
         }
     }
 
-    turnBack(_enemy, _collidedEnemy)
+    turnBack(_enemy)
     {
         if(_enemy.health > 0 && !_enemy.dirChanged)
         {
             if(_enemy.dir == Directions.UP)
             {
-                if(_enemy.body.position.y > _collidedEnemy.body.position.y)//Current enemy
-                {
-                    _enemy.body.velocity.y = _enemy.speed * 15;
-                    _enemy.dir = Directions.DOWN;
-                }
-
-                //Collided enemy
-                if(_collidedEnemy.dir == Directions.DOWN)
-                {
-                    _collidedEnemy.body.velocity.y = _collidedEnemy.speed * -15;
-                    _collidedEnemy.dir = Directions.UP;
-                }
+                _enemy.body.velocity.y = _enemy.speed * 15;
+                _enemy.dir = Directions.DOWN;
+                
             }
             else if(_enemy.dir == Directions.DOWN)
             {
-                if(_enemy.body.position.y < _collidedEnemy.body.position.y)//Current enemy
-                {
-                    _enemy.body.velocity.y = _enemy.speed * -15;
-                    _enemy.dir = Directions.UP;
-                }
-
-                //Collided enemy
-                if(_collidedEnemy.dir == Directions.UP)
-                {
-                    _collidedEnemy.body.velocity.y = _collidedEnemy.speed * 15;
-                    _collidedEnemy.dir = Directions.DOWN;
-                }
+                 _enemy.body.velocity.y = _enemy.speed * -15;
+                 _enemy.dir = Directions.UP;
             }
             else if(_enemy.dir == Directions.RIGHT)
-            {
-                if(_enemy.body.position.x < _collidedEnemy.body.position.x)//Current enemy
-                {
-                    _enemy.body.velocity.x = _enemy.speed * -15;
-                    _enemy.dir = Directions.LEFT;
-                }
-
-                //Collided enemy
-                
-                if(_collidedEnemy.dir == Directions.LEFT)
-                {
-                    _collidedEnemy.body.velocity.x = _collidedEnemy.speed * 15;
-                    _collidedEnemy.dir = Directions.RIGHT;
-                }
+            {  
+                _enemy.body.velocity.x = _enemy.speed * -15;
+                _enemy.dir = Directions.LEFT;    
             }
             else if(_enemy.dir == Directions.LEFT)
             {
-                if(_enemy.body.position.x > _collidedEnemy.body.position.x)//Current enemy
-                {
-                    _enemy.body.velocity.x = _enemy.speed * 15;
-                    _enemy.dir = Directions.RIGHT;
-                }
-
-                //Collided enemy
-                if(_collidedEnemy.dir == Directions.RIGHT)
-                {
-                    _collidedEnemy.body.velocity.x = _collidedEnemy.speed * -15;
-                    _collidedEnemy.dir = Directions.LEFT;
-                }
+                _enemy.body.velocity.x = _enemy.speed * 15;
+                _enemy.dir = Directions.RIGHT;
             }
-
-            _collidedEnemy.dirChanged = true;
             _enemy.dirChanged = true;
         }
     }

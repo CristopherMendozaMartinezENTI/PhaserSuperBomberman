@@ -354,7 +354,43 @@ class Stage_BossArena extends Phaser.Scene
             }   
         );
         //#endregion
-    
+
+        //#region BigaronIdle
+        this.anims.create(
+            {
+                key:'bigaronIdle',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:0, end:0}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion 
+
+         //#region BigaronAttack
+        this.anims.create(
+            {
+                key:'bigaronAttack',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:1, end:3}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+
+         //#region BigaronHurt
+         this.anims.create(
+            {
+                key:'bigaronHurt',
+                frames:this.anims.generateFrameNumbers('bigaron', {start:4, end:4}),
+                frameRate:5,
+                yoyo:false,
+                repeat:-1
+            }   
+        );
+        //#endregion
+        
     }
 
     createPools()
