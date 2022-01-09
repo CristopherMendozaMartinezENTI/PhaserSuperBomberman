@@ -79,6 +79,7 @@ class Stage_BossArena extends Phaser.Scene
         //Pintamos las capas/layers
         this.blocks = this.map.createLayer('blocks','BossArenaTile');
         this.edges = this.map.createLayer('edges', 'BossArenaTile');
+        this.limits = this.map.createLayer('limits', 'BossArenaTile');
         this.map.createLayer('ground','BossArenaTile');
         this.blocks.debug = true;
         
@@ -95,6 +96,7 @@ class Stage_BossArena extends Phaser.Scene
         //Indicamos las colisiones con bloques
         this.map.setCollisionBetween(1,19,true,true,'blocks');
         this.map.setCollisionBetween(1,19,true,true,'edges');
+        this.map.setCollisionBetween(1,19,true,true,'limits');
 
         //Creamos un listener para detectar colisiones entre el hero y las paredes
         this.physics.add.collider(this.player,this.blocks, this.checkSmoothTransitionBetweenPlayerAndBlocks, null, this);

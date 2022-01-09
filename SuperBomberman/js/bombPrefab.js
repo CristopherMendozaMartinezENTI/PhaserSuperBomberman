@@ -24,13 +24,13 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.explode, null, this);
 
-        if (!this.isRemote)
+        if (this.isRemote)
         {
-            this.anims.play('bombAnim');
+            this.anims.play('remoteBombAnim');
         }
         else
         {
-            this.anims.play('remoteBombAnim');
+            this.anims.play('bombAnim');
         }
         
         this.exploded = false;

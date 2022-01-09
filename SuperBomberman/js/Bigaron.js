@@ -26,7 +26,7 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.invulnerability = false;
         this.invulnerableTime = gamePrefs.INVULNERABLE_TIME;
 
-        _scene.physics.add.collider(this, _scene.edges, this.changeDirection, null, this);
+        _scene.physics.add.collider(this, _scene.limits, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
 
         _scene.physics.add.overlap(this, _scene.explosion_down_end, this.kill, null, this);
