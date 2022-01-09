@@ -42,6 +42,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_central, this.kill, null, this);
 
+        _scene.physics.add.overlap(this.rectColBody, _scene.player, this.hitPlayer, null, this);
+
         this.dir = Directions.RIGHT;
         this.lastDir = Directions.LEFT;
         this.speed = 2;
@@ -87,12 +89,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
                 this.body.velocity.x = 0;
                 this.body.velocity.y = 0;
                 this.anims.play("bigaronAttack");
-                if (this.anims.getProgress() >= 0.75)
-                {
-                    console.log("si lo es");
-                    this.rectColBody.body.setSize(32,120, false);
-                    this.rectColBody.body.setOffset(48, 24);
-                }
+                this.rectColBody.body.setSize(32,120, false);
+                this.rectColBody.body.setOffset(48, 24);
             }
 
         }
@@ -226,5 +224,10 @@ class Bigaron extends Phaser.GameObjects.Sprite
             console.log("bigaronn", _enemy.health);
             _enemy.invulnerability = true;
         }
+    }
+
+    hitPlayer(_boss, _player)
+    {
+        _player.hit(_player);
     }
 }

@@ -110,7 +110,8 @@ class Stage_BossArena extends Phaser.Scene
         }
 
         //Creamos Enemigos
-        this.spawnEnemies();
+        var tmpPos = this.convertTilePositionToWorld(8, 5);
+        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 10, 10000);
 
         this.scoreTotal = this.add.group();
         this.createScore();
@@ -1012,13 +1013,7 @@ class Stage_BossArena extends Phaser.Scene
         }
     }
 
-    spawnEnemies()
-    {
-        var tmpPos = this.convertTilePositionToWorld(8, 5);
-        //Instanciar al jefe.
-        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 10, 10000);
-    }
-
+   
     getTime()
     { //Calculate Current Time
         let d = new Date();
