@@ -577,7 +577,7 @@ class Stage1_5 extends Phaser.Scene
             {
                 key:'enemymExAnim',
                 frames:this.anims.generateFrameNumbers('enemymEx', {start:0, end:9}),
-                frameRate:15,
+                frameRate:25,
                 yoyo:false,
                 repeat:0
             }   
@@ -664,7 +664,7 @@ class Stage1_5 extends Phaser.Scene
     
                 if(!bomb)
                 {//Generate new bomb
-                    bomb = new bombPrefab(this, _posX, _posY, 'bomb', !this.player.kickActive);
+                    bomb = new bombPrefab(this, _posX, _posY, 'bomb', !this.player.kickActive, false);
                     this.bombs.add(bomb);
                 }
                 else
@@ -672,6 +672,8 @@ class Stage1_5 extends Phaser.Scene
                     if(this.player.controlBomb)
                     {
                         bomb.isRemote = true;
+                        bomb.remoteActivated = false;
+                        this.bombs.add(bomb);
                     }
                     bomb.active = true;
                     bomb.explosionX = _posX;
@@ -1130,7 +1132,7 @@ class Stage1_5 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Pakupa(this, tmpPos[0], tmpPos[1], EnemyTypes.PAKUPA));
+            //this.enemies.add(new Pakupa(this, tmpPos[0], tmpPos[1], EnemyTypes.PAKUPA));
         }
 
         

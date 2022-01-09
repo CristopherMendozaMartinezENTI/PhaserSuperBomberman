@@ -1,6 +1,6 @@
 class bombPrefab extends Phaser.GameObjects.Sprite
 {
-    constructor(_scene, _positionX, _positionY, _sprite, _immovable, _playerBomb = true)
+    constructor(_scene, _positionX, _positionY, _sprite, _immovable, _isRemote, _playerBomb = true)
     { //crea la escena
         super(_scene,_positionX, _positionY, _sprite);
         _scene.add.existing(this);
@@ -10,7 +10,7 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         this.playerKick = false;
 
         this.playerBomb = _playerBomb;
-        this.isRemote;
+        this.isRemote = _isRemote;
         this.remoteActivated = false;
 
         _scene.physics.add.collider(this, _scene.blocks, this.collided);
@@ -24,18 +24,10 @@ class bombPrefab extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.explode, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.explode, null, this);
 
-        if (this.isRemote)
-        {
-            this.anims.play('remoteBombAnim');
-        }
-        else
-        {
-            this.anims.play('bombAnim');
-        }
-        
         this.exploded = false;
         this.explosionX = _positionX;
-        
+
+     
         this.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
     }
 
@@ -68,7 +60,17 @@ class bombPrefab extends Phaser.GameObjects.Sprite
                 this.remoteActivated = false;
             }
         }
+
+        if (this.isRemote)
+        {
+            this.anims.play('remoteBombAnim', true);
+        }
+        else
+        {
+            this.anims.play('bombAnim', true);
+        }
         
+
         super.preUpdate(time, delta);
     }
 

@@ -48,7 +48,6 @@ class Enemies extends Phaser.GameObjects.Sprite
         if(this.health <= 0 && !this.anims.isPlaying)
         {
             this.killed = true;
-            this.anims.play("enemymExAnim");
         }
         else
         {
@@ -213,6 +212,12 @@ class Enemies extends Phaser.GameObjects.Sprite
             _enemy.explosionCollided_Y = _explosion.y;
             _enemy.health--;
             _enemy.invulnerability = true;
+        }
+
+        if(this.health <= 0)
+        {
+            this.body.destroy();
+            this.anims.play("enemymExAnim");
         }
     }
 }

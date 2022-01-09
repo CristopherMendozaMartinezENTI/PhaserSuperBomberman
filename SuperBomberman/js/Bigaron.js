@@ -16,7 +16,6 @@ class Bigaron extends Phaser.GameObjects.Sprite
         this.rectColBody.body.setOffset(32, 24);
         //this.rectColBody.setOrigin(.5);
 
-
         this.depth = 1;
 
         this.health = _health;

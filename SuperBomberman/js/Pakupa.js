@@ -20,12 +20,7 @@ class Pakupa extends Enemies
 
     preUpdate(time,delta)
     {
-        if(this.health <= 0)
-        {
-            this.x = -10;
-            this.active = false;
-        }
-        else if(this.targetFound)
+        if(this.targetFound)
         {
             
         }

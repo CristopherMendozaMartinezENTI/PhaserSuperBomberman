@@ -15,14 +15,7 @@ class Puropen extends Enemies
 
     preUpdate(time,delta)
     {
-        if(this.health <= 0)
-        {
-            //console.log(EnemyTypes.PUROPEN + " killed");
-
-            this.x = -10;
-            this.active = false;
-        }
-        else if(this.dirChanged)
+        if(this.dirChanged)
         {
             this.anims.play(EnemyTypes.PUROPEN+this.dir);
             this.dirChanged = false;
