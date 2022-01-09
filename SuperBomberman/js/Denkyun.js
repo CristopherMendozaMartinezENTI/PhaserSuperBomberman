@@ -8,6 +8,8 @@ class Denkyun extends Enemies
         this.speed = 2;
         this.body.velocity.x = this.speed * -15;
         
+        _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
+        
         this.anims.play(EnemyTypes.DENKYUN);
     }
 

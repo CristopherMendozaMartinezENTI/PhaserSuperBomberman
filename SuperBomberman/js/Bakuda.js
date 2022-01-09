@@ -17,6 +17,8 @@ class Bakuda extends Enemies
         this.tmpX = _positionX;
         this.spawnBombPositionX = _positionX;
         
+        _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
+        
         this.anims.play(EnemyTypes.BAKUDA + this.dir);
     }
 
@@ -64,8 +66,6 @@ class Bakuda extends Enemies
 
             this.anims.play("bakudaAttack");
         }
-
-        console.log(this.spawnBombPositionX);
     }
 
     timeDown(delta)
@@ -85,13 +85,10 @@ class Bakuda extends Enemies
 
             this.anims.play(EnemyTypes.BAKUDA + this.dir);
             this.attackMode = false;
-            console.log(this.tmpX);
-            console.log("deja de explotar");
         }
         else if(this.currentTimeDown <= 500)
         {
             this.invulnerability = true;
         }
-        console.log("Invulnerability: " + this.invulnerability);
     }
 }

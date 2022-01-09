@@ -6,8 +6,11 @@ class Enemies extends Phaser.GameObjects.Sprite
         _scene.physics.add.existing(this);
         _scene.add.existing(this);
 
-        this.body.setSize(16,16,false);
-        this.body.setOffset(0, 16/ 2);
+        if(_enemyType != EnemyTypes.PAKUPA)
+        {
+            this.body.setSize(16,16,false);
+            this.body.setOffset(0, 16/ 2);
+        }
         this.setOrigin(.5);
 
         this.depth = 1;
@@ -26,7 +29,6 @@ class Enemies extends Phaser.GameObjects.Sprite
 
         _scene.physics.add.collider(this, _scene.blocks, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.edges, this.changeDirection, null, this);
-        _scene.physics.add.collider(this, _scene.bombs, this.changeDirection, null, this);
         _scene.physics.add.collider(this, _scene.desObjs, this.changeDirection, null, this);
 
         _scene.physics.add.collider(this, _scene.enemies, this.turnBack, null, this);
@@ -150,6 +152,10 @@ class Enemies extends Phaser.GameObjects.Sprite
     {
         //console.log(_enemy.health);
         if(_enemy.type == EnemyTypes.BAKUDA && _enemy.attackMode)
+        {
+            return;
+        }
+        if(_enemy.type == EnemyTypes.PAKUPA && _enemy.targetFound)
         {
             return;
         }

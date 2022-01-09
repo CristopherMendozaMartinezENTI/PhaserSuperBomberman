@@ -16,6 +16,9 @@ class Stage1_5 extends Phaser.Scene
         this.load.spritesheet('playerDeath', 'Player_White_Dead_Anim.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('puropen', 'Enemy_Porupen.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('denkyun', 'Enemy_Denkyun.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('pakupa', 'Enemy_Pakupa.png', {frameWidth:16, frameHeight:16});
+        this.load.spritesheet('bakuda', 'Enemy_Bakuda.png', {frameWidth:16, frameHeight:24});
+        this.load.spritesheet('bakuda_atack', 'Enemy_BakudaAttack.png', {frameWidth:16, frameHeight:24});
         this.load.spritesheet('enemymEx', 'EnemyDieAnim.png', {frameWidth:16, frameHeight:16});
         this.load.spritesheet('bomb', 'Bomb.png',{frameWidth:16, frameHeight:16});
         this.load.spritesheet('explosion', 'Fire.png',{frameWidth:16, frameHeight:16});
@@ -119,6 +122,11 @@ class Stage1_5 extends Phaser.Scene
         //Creamos Enemigos
         this.spawnEnemies();
 
+        //Create map
+        this.graph = this.CreateGraph();
+
+        console.log("Graph: " + this.graph);
+        //Score
         this.scoreTotal = this.add.group();
         this.createScore();
         
@@ -152,6 +160,38 @@ class Stage1_5 extends Phaser.Scene
         this.loadSounds();
 
         this.cameras.main.fadeIn(1000, 0, 0, 0);
+    }
+
+    CreateGraph()
+    {
+        var graph = new Array(15);
+
+        for (let i = 0; i < 15; i++)
+        {
+            graph[i] = new Array(13);
+            for (let j = 0; j < 13; j++) 
+            {
+                graph[i][j] = 0;
+                if(this.edges.getTileAt(i,j) != null)
+                {
+                    graph[i][j] += 100;
+                }
+                if(this.blocks.getTileAt(i,j) != null)
+                {
+                    graph[i][j] += 100;
+                }
+
+                console.log("Graph in pos: " + i + ", " + j + " = " + graph[i][j]);
+            }
+        }
+
+        var objs = this.desObjs.getChildren();
+        objs.forEach(obj => {
+            var objPos = this.convertWorldPositionToTile(obj.x, obj.y);
+            graph[objPos[0]][objPos[1]] += 100;
+        });
+
+        return graph;
     }
 
     loadSounds()
@@ -426,6 +466,99 @@ class Stage1_5 extends Phaser.Scene
         );
         //#endregion
 
+        //#region Bakuda
+        
+        //Movement
+        this.anims.create(
+            {
+                key:EnemyTypes.BAKUDA + Directions.UP,
+                frames:this.anims.generateFrameNumbers('bakuda', {start:0, end:2}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.BAKUDA + Directions.DOWN,
+                frames:this.anims.generateFrameNumbers('bakuda', {start:3, end:5}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.BAKUDA + Directions.LEFT,
+                frames:this.anims.generateFrameNumbers('bakuda', {start:6, end:8}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.BAKUDA + Directions.RIGHT,
+                frames:this.anims.generateFrameNumbers('bakuda', {start:9, end:11}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+
+        //Atack
+        this.anims.create(
+            {
+                key:"bakudaAttack",
+                frames:this.anims.generateFrameNumbers('bakuda_atack', {start:0, end:9}),
+                frameRate:7,
+                yoyo:false,
+                repeat:0
+            }   
+        );
+        
+        //#endregion
+
+        //#region Pakupa
+        this.anims.create(
+            {
+                key:EnemyTypes.PAKUPA + Directions.UP,
+                frames:this.anims.generateFrameNumbers('pakupa', {start:0, end:3}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PAKUPA + Directions.DOWN,
+                frames:this.anims.generateFrameNumbers('pakupa', {start:10, end:19}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PAKUPA + Directions.LEFT,
+                frames:this.anims.generateFrameNumbers('pakupa', {start:20, end:25}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+        this.anims.create(
+            {
+                key:EnemyTypes.PAKUPA + Directions.RIGHT,
+                frames:this.anims.generateFrameNumbers('pakupa', {start:30, end:35}),
+                frameRate:15,
+                yoyo:true,
+                repeat:-1
+            }   
+        );
+
+        //#endregion
+
         //#region Enemy Explosion
         this.anims.create(
             {
@@ -476,12 +609,14 @@ class Stage1_5 extends Phaser.Scene
     createPools()
     {
         this.bombs = this.physics.add.group();
+        this.enemyBombs = this.physics.add.group();
         this.enemies = this.add.group();
         this.desObjs = this.add.group();
 
         this.powerUps = this.physics.add.group();
 
         this.bombs.maxSize = 1;
+        this.enemyBombs.maxSize = 3;
 
         //#region Explosion Pool
         this.explosion_horizontal = this.physics.add.group();
@@ -494,54 +629,81 @@ class Stage1_5 extends Phaser.Scene
         //#endregion
     }
 
-    spawnBomb()
+    spawnBomb(_posX, _posY, _enemy = false)
     {
         this.placeBomb.play();
 
-        if(this.bombs.getTotalFree())
+        if(!_enemy)
         {
-            var bomb = this.bombs.getFirst(false);
+            if(this.bombs.getTotalFree())
+            {
+                var bomb = this.bombs.getFirst(false);
     
-            var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
-            pos = this.convertTilePositionToWorld(pos[0] + 1, pos[1]);
-
-            var posX = pos[0];
-            var posY = pos[1];
-
-            if(!bomb)
-            {//Generate new bomb
-                bomb = new bombPrefab(this, posX, posY, 'bomb', !this.player.kickActive);
-
-                this.bombs.add(bomb);
-            }
-            else
-            {//Reset bomb
-                bomb.active = true;
-                bomb.explosionX = posX;
+                if(!bomb)
+                {//Generate new bomb
+                    bomb = new bombPrefab(this, _posX, _posY, 'bomb', !this.player.kickActive);
+    
+                    this.bombs.add(bomb);
+                }
+                else
+                {//Reset bomb
+                    bomb.active = true;
+                    bomb.explosionX = _posX;
+                    
+                    bomb.body.reset(_posX, _posY);
+                    bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+                }
+        
+                bomb.body.setVelocity(0,0);
                 
-                bomb.body.reset(posX, posY);
-                bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+                console.log(!this.player.kickActive);
+                bomb.body.immovable = true;
+                
+                this.physics.add.collider(this.player, bomb);
             }
+        }
+        else
+        {
+            if(this.enemyBombs.getTotalFree())
+            {
+                var bomb = this.enemyBombs.getFirst(false);
     
-            bomb.body.setVelocity(0,0);
-            
-            console.log(!this.player.kickActive);
-            bomb.body.immovable = true;
-            
-            this.physics.add.collider(this.player, bomb);
+                if(!bomb)
+                {//Generate new bomb
+                    bomb = new bombPrefab(this, _posX, _posY, 'bomb', !this.player.kickActive);
+    
+                    this.enemyBombs.add(bomb);
+                }
+                else
+                {//Reset bomb
+                    bomb.active = true;
+                    bomb.explosionX = _posX;
+                    
+                    bomb.body.reset(_posX, _posY);
+                    bomb.liveTime = gamePrefs.BOMB_EXPLOSION_TIME;
+                }
+        
+                bomb.body.setVelocity(0,0);
+                
+                console.log(!this.player.kickActive);
+                bomb.body.immovable = true;
+                
+                this.physics.add.collider(this.player, bomb);
+                this.physics.add.collider(this.enemies, bomb, this.enemies.changeDirection, null, this.enemies);
+            }
         }
     }
 
-    spawnExplosion(_posX, _posY)
+    spawnExplosion(_posX, _posY, _explosionLenght = this.player.fireDistance)
     {
-        console.log(this.convertWorldPositionToTile(_posX, _posY));
+        //console.log(this.convertWorldPositionToTile(_posX, _posY));
         this.bombExplodes.play();
         var right = false;
         var left = false;
         var up = false;
         var down = false;
         
-        for (let index = 0; index <= this.player.fireDistance; index++) {
+        for (let index = 0; index <= _explosionLenght; index++) {
             var explosion;
             if(index == 0)//Central
             {
@@ -563,7 +725,7 @@ class Stage1_5 extends Phaser.Scene
 
                 explosion.body.setSize(17,17);
             }
-            else if(index == this.player.fireDistance)//Ends
+            else if(index == _explosionLenght)//Ends
             {
                 var tilePos = this.convertWorldPositionToTile(_posX - index * gamePrefs.TILE_SIZE, _posY);
                 if(tilePos[0] == 15)
@@ -571,7 +733,7 @@ class Stage1_5 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_left_end.getFirst(false);
 
@@ -595,7 +757,7 @@ class Stage1_5 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_right_end.getFirst(false);
 
@@ -619,7 +781,7 @@ class Stage1_5 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_up_end.getFirst(false);
     
@@ -643,7 +805,7 @@ class Stage1_5 extends Phaser.Scene
                 {
                     tilePos[0]--;
                 }
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     
                     explosion = this.explosion_down_end.getFirst(false);
@@ -671,7 +833,7 @@ class Stage1_5 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY - index * gamePrefs.TILE_SIZE) == null && !up && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -699,7 +861,7 @@ class Stage1_5 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
+                if(this.blocks.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && this.edges.getTileAtWorldXY(_posX, _posY + index * gamePrefs.TILE_SIZE) == null && !down && this.desTileMap[tilePos[0]][tilePos[1]] == null) 
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
@@ -727,7 +889,7 @@ class Stage1_5 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                if(this.blocks.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && this.edges.getTileAtWorldXY(_posX - index * gamePrefs.TILE_SIZE, _posY) == null && !left && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
     
@@ -755,7 +917,7 @@ class Stage1_5 extends Phaser.Scene
                     tilePos[0]--;
                 }
 
-                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
+                if(this.blocks.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && this.edges.getTileAtWorldXY(_posX + index * gamePrefs.TILE_SIZE, _posY) == null  && !right && this.desTileMap[tilePos[0]][tilePos[1]] == null)
                 {
                     explosion = this.explosion_vertical.getFirst(false);
 
@@ -784,11 +946,39 @@ class Stage1_5 extends Phaser.Scene
     bombExploded()
     {
         var bombs = this.bombs.getChildren();
+        var enemies = this.enemies.getChildren();
+
+        var pakupa;
+        
 
         bombs.forEach(bomb => {
             if(bomb.exploded)
             {
                 this.spawnExplosion(bomb.explosionX, bomb.y);
+                bomb.exploded = false;
+
+                enemies.forEach(_e => {
+                    if(_e.type == EnemyTypes.PAKUPA)
+                    {
+                        if(_e.target.x == bomb.explosionX && _e.target.y == bomb.y)
+                        {
+
+                            _e.target = new Phaser.Math.Vector2(-10,-10);
+                            _e.targetFound = false;
+                        }
+                    }
+                });
+
+                
+            }
+        });
+        
+        bombs = this.enemyBombs.getChildren();
+
+        bombs.forEach(bomb => {
+            if(bomb.exploded)
+            {
+                this.spawnExplosion(bomb.explosionX, bomb.y, 3);
                 bomb.exploded = false;
             }
         });
@@ -854,11 +1044,11 @@ class Stage1_5 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'puropen'));
+            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], EnemyTypes.PUROPEN));
         }
 
-        //Denkyun
-        for (let i = 0; i < 2; i++) 
+        //Pakupa
+        for (let i = 0; i < 1; i++) 
         {
             changedPos = false;
 
@@ -914,12 +1104,12 @@ class Stage1_5 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
+            this.enemies.add(new Pakupa(this, tmpPos[0], tmpPos[1], EnemyTypes.PAKUPA));
         }
 
         
-        //Bokuda
-        for (let i = 0; i < 2; i++) 
+        //Bakuda
+        for (let i = 0; i < 3; i++) 
         {
             changedPos = false;
 
@@ -975,7 +1165,7 @@ class Stage1_5 extends Phaser.Scene
 
                 changedPos = true;
             }
-            //this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'bokuda'));
+            this.enemies.add(new Bakuda(this, tmpPos[0], tmpPos[1], EnemyTypes.BAKUDA));
         }
     }
 
@@ -1506,41 +1696,66 @@ class Stage1_5 extends Phaser.Scene
                 this.scoreUp(_e.scoreEarned);
                 _e.destroy();
             }
-            else if(_e.invulnerability)
+            else
             {
-                var explosions;
-                switch (_e.explosionCollided_Type) {
-                    case Explosion_Tiles.CENTRAL:
-                        explosions = this.explosion_central.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL:
-                        explosions = this.explosion_horizontal.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL_END_LEFT:
-                        explosions = this.explosion_left_end.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL_END_RIGHT:
-                        explosions = this.explosion_right_end.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL:
-                        explosions = this.explosion_vertical.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL_END_DOWN:
-                        explosions = this.explosion_down_end.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL_END_UP:
-                        explosions = this.explosion_up_end.getChildren();
-                        break;
+                if(_e.type == EnemyTypes.PAKUPA)
+                {
+                    _e.CheckBombDistance(this);
+
+                    if(_e.targetFound)
+                    {
+                        _e.GoToNextPosition(this);
+                    }
                 }
 
-                explosions.forEach(_explosion => {
-                    if(_explosion.exploded_X == _e.explosionCollided_X && _explosion.y == _e.explosionCollided_Y && !_explosion.active)
+                if(_e.type == EnemyTypes.BAKUDA)
+                {
+                    if(_e.spawnBomb)
                     {
-                        _e.invulnerability = false;
-                        console.log("Soy vulnerable");
-                        return;
+                        var pos = this.convertWorldPositionToTile(_e.spawnBombPositionX, _e.body.position.y);
+                        pos = this.convertTilePositionToWorld(pos[0] + 1, pos[1]);
+                        _e.spawnBomb = false;
+                        this.spawnBomb(pos[0], pos[1], true);
+                        
+                        console.log(this.enemyBombs.countActive(true));
                     }
-                });
+                }
+                else if(_e.invulnerability)
+                {
+                    var explosions;
+                    switch (_e.explosionCollided_Type) {
+                        case Explosion_Tiles.CENTRAL:
+                            explosions = this.explosion_central.getChildren();
+                            break;
+                        case Explosion_Tiles.HORIZONTAL:
+                            explosions = this.explosion_horizontal.getChildren();
+                            break;
+                        case Explosion_Tiles.HORIZONTAL_END_LEFT:
+                            explosions = this.explosion_left_end.getChildren();
+                            break;
+                        case Explosion_Tiles.HORIZONTAL_END_RIGHT:
+                            explosions = this.explosion_right_end.getChildren();
+                            break;
+                        case Explosion_Tiles.VERTICAL:
+                            explosions = this.explosion_vertical.getChildren();
+                            break;
+                        case Explosion_Tiles.VERTICAL_END_DOWN:
+                            explosions = this.explosion_down_end.getChildren();
+                            break;
+                        case Explosion_Tiles.VERTICAL_END_UP:
+                            explosions = this.explosion_up_end.getChildren();
+                            break;
+                    }
+    
+                    explosions.forEach(_explosion => {
+                        if(_explosion.exploded_X == _e.explosionCollided_X && _explosion.y == _e.explosionCollided_Y && !_explosion.active)
+                        {
+                            _e.invulnerability = false;
+                            console.log("Soy vulnerable");
+                            return;
+                        }
+                    });
+                }
             }
         });
 
@@ -1548,6 +1763,11 @@ class Stage1_5 extends Phaser.Scene
         desObjs.forEach(_e => {
             if(_e.killed)
             {
+                var pos = this.convertWorldPositionToTile(_e.x, _e.y);
+                this.graph[pos[0]][pos[1]] -= 100;
+                console.log("Graph: " + this.graph);
+                
+
                 if(_e.exitDoor)
                 {
                     console.log("Exit spawned");
@@ -1657,7 +1877,13 @@ class Stage1_5 extends Phaser.Scene
         {
             if(!this.spacePressed)
             {
-                this.spawnBomb();
+                var pos = this.convertWorldPositionToTile(this.player.body.position.x, this.player.body.position.y);
+                pos = this.convertTilePositionToWorld(pos[0] + 1, pos[1]);
+
+                var posX = pos[0];
+                var posY = pos[1];
+
+                this.spawnBomb(posX, posY);
                 this.spacePressed = true;
             }
         }

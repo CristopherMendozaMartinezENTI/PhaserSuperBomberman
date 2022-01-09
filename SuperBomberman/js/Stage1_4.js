@@ -611,10 +611,16 @@ class Stage1_4 extends Phaser.Scene
                 bomb.body.immovable = true;
                 
                 this.physics.add.collider(this.player, bomb);
-                this.physics.add.collider(this.enemies, bomb, this.enemies.changeDirection, null, this.enemies);
+                this.physics.add.collider(this.enemies, bomb, this.ChangeEnemyDirection, null, this);
             }
         }
+    }
 
+    ChangeEnemyDirection(_enemy, bomb)
+    {
+        console.log("Enemy Collided: " + _enemy);
+
+        _enemy.changeDirection(_enemy);
     }
 
     spawnExplosion(_posX, _posY, _explosionLenght)
@@ -865,6 +871,7 @@ class Stage1_4 extends Phaser.Scene
             }
         }
     }
+
     bombExploded()
     {
         var bombs = this.bombs.getChildren();
@@ -948,7 +955,7 @@ class Stage1_4 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], 'puropen'));
+            this.enemies.add(new Puropen(this, tmpPos[0], tmpPos[1], EnemyTypes.PUROPEN));
         }
 
         //Denkyun
@@ -1008,7 +1015,7 @@ class Stage1_4 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], 'denkyun'));
+            this.enemies.add(new Denkyun(this, tmpPos[0], tmpPos[1], EnemyTypes.DENKYUN));
         }
 
         //Bakuda
@@ -1068,7 +1075,7 @@ class Stage1_4 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Bakuda(this, tmpPos[0], tmpPos[1], 'bakuda'));
+            this.enemies.add(new Bakuda(this, tmpPos[0], tmpPos[1], EnemyTypes.BAKUDA));
         }
     }
 
