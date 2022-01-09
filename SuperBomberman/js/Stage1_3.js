@@ -905,7 +905,7 @@ class Stage1_3 extends Phaser.Scene
 
                 changedPos = true;
             }
-            this.enemies.add(new Pakupa(this, tmpPos[0], tmpPos[1], EnemyTypes.NUTS_STAR));
+            this.enemies.add(new Nuts_Star(this, tmpPos[0], tmpPos[1], EnemyTypes.NUTS_STAR));
         }
 
     }

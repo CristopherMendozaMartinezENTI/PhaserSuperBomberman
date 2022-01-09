@@ -32,7 +32,6 @@ class DestructibleBlocks extends Phaser.GameObjects.Sprite
         
         if(this.isAnimated) this.anims.play("desObjAnim");
 
-        
 
         this.body.immovable = true;
     }

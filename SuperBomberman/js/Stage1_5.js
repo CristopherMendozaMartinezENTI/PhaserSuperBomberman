@@ -665,14 +665,12 @@ class Stage1_5 extends Phaser.Scene
                 if(!bomb)
                 {//Generate new bomb
                     bomb = new bombPrefab(this, _posX, _posY, 'bomb', !this.player.kickActive);
-    
                     this.bombs.add(bomb);
                 }
                 else
                 {//Reset bomb
                     if(this.player.controlBomb)
                     {
-                        bomb.setTexture("remoteBomb");
                         bomb.isRemote = true;
                     }
                     bomb.active = true;
