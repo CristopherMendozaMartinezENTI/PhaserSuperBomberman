@@ -398,7 +398,6 @@ class Stage_BossArena extends Phaser.Scene
     createPools()
     {
         this.bombs = this.physics.add.group();
-        this.enemies = this.add.group();
         this.bombs.maxSize = 1;
 
         //#region Explosion Pool
@@ -1016,7 +1015,7 @@ class Stage_BossArena extends Phaser.Scene
     {
         var tmpPos = this.convertTilePositionToWorld(8, 5);
         //Instanciar al jefe.
-        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 10, 10.000);
+        this.boss = new Bigaron(this, tmpPos[0], tmpPos[1], 'bigaron', 1, 10000);
     }
 
     getTime()
@@ -1027,51 +1026,47 @@ class Stage_BossArena extends Phaser.Scene
 
     updateScore()
     {
-        var enemies = this.enemies.getChildren();
-
-        enemies.forEach(_e => {
-            if(_e.killed)
-            {
-                this.scoreUp(_e.scoreEarned);
-                _e.destroy();
+        if(this.boss.killed)
+        {
+            this.scoreUp(this.boss.scoreEarned);
+            this.boss.destroy();
+        }
+        else if(this.boss.invulnerability)
+        {
+            var explosions;
+            switch (this.boss.explosionCollided_Type) {
+                case Explosion_Tiles.CENTRAL:
+                    explosions = this.explosion_central.getChildren();
+                    break;
+                case Explosion_Tiles.HORIZONTAL:
+                    explosions = this.explosion_horizontal.getChildren();
+                    break;
+                case Explosion_Tiles.HORIZONTAL_END_LEFT:
+                    explosions = this.explosion_left_end.getChildren();
+                    break;
+                case Explosion_Tiles.HORIZONTAL_END_RIGHT:
+                    explosions = this.explosion_right_end.getChildren();
+                    break;
+                case Explosion_Tiles.VERTICAL:
+                    explosions = this.explosion_vertical.getChildren();
+                    break;
+                case Explosion_Tiles.VERTICAL_END_DOWN:
+                    explosions = this.explosion_down_end.getChildren();
+                    break;
+                case Explosion_Tiles.VERTICAL_END_UP:
+                    explosions = this.explosion_up_end.getChildren();
+                    break;
             }
-            else if(_e.invulnerability)
-            {
-                var explosions;
-                switch (_e.explosionCollided_Type) {
-                    case Explosion_Tiles.CENTRAL:
-                        explosions = this.explosion_central.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL:
-                        explosions = this.explosion_horizontal.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL_END_LEFT:
-                        explosions = this.explosion_left_end.getChildren();
-                        break;
-                    case Explosion_Tiles.HORIZONTAL_END_RIGHT:
-                        explosions = this.explosion_right_end.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL:
-                        explosions = this.explosion_vertical.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL_END_DOWN:
-                        explosions = this.explosion_down_end.getChildren();
-                        break;
-                    case Explosion_Tiles.VERTICAL_END_UP:
-                        explosions = this.explosion_up_end.getChildren();
-                        break;
+
+            explosions.forEach(_explosion => {
+                if(_explosion.exploded_X == this.boss.explosionCollided_X && _explosion.y == this.boss.explosionCollided_Y && !_explosion.active)
+                {
+                    this.boss.invulnerability = false;
+                    console.log("Soy vulnerable");
+                    return;
                 }
-
-                explosions.forEach(_explosion => {
-                    if(_explosion.exploded_X == _e.explosionCollided_X && _explosion.y == _e.explosionCollided_Y && !_explosion.active)
-                    {
-                        _e.invulnerability = false;
-                        console.log("Soy vulnerable");
-                        return;
-                    }
-                });
-            }
-        });
+            });
+        }
     }
 
     update()
