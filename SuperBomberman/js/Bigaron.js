@@ -35,6 +35,7 @@ class Bigaron extends Phaser.GameObjects.Sprite
         _scene.physics.add.overlap(this, _scene.explosion_right_end, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_horizontal, this.kill, null, this);
         _scene.physics.add.overlap(this, _scene.explosion_vertical, this.kill, null, this);
+        _scene.physics.add.overlap(this, _scene.explosion_central, this.kill, null, this);
 
         this.dir = Directions.RIGHT;
         this.lastDir = Directions.LEFT;
@@ -64,6 +65,8 @@ class Bigaron extends Phaser.GameObjects.Sprite
                 this.lastDir = this.dir;
                 this.dir = Directions.NONE;
                 this.speed = 0;
+                this.body.velocity.x = 0;
+                this.body.velocity.y = 0;
                 this.anims.play("bigaronAttack");
             }
         }
